@@ -1,4 +1,5 @@
 // public/js/coin.js
+const BASE_URL = window.location.origin;
 const coin = document.getElementById("coin");
 const betAmount = document.getElementById("betinput");
 const betForm = document.getElementById("form");
@@ -72,7 +73,7 @@ betForm.addEventListener("submit", (e) => {
   }
 
   // Send only fixBetAmount
-  fetch(`http://localhost:${PORT}/coin`, {
+  fetch(`${BASE_URL}/coin`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fixBetAmount }),
@@ -117,7 +118,7 @@ betForm.addEventListener("submit", (e) => {
     }
     resultText.textContent = "Flipping...";
     
-    fetch(`http://localhost:${PORT}/coin`, {
+    fetch(`${BASE_URL}/coin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userChoice }),
@@ -138,7 +139,7 @@ betForm.addEventListener("submit", (e) => {
 
         setTimeout(() => {
           clearInterval(spinInterval);
-          fetch(`http://localhost:${PORT}/coin`, {
+          fetch(`${BASE_URL}/coin`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ timeOut: true }),
@@ -195,7 +196,7 @@ betForm.addEventListener("submit", (e) => {
 cashBtn.addEventListener("click", () => {
   if (cashBtn.disabled) return;
 
-  fetch(`http://localhost:${PORT}/coin`, {
+  fetch(`${BASE_URL}/coin`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ cashOut: true }),

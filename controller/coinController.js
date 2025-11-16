@@ -1,6 +1,7 @@
 const User = require("../model/user");
 const BetHistory = require("../model/coinGame");  // <-- add this
 
+
 exports.getDashboardPage = async (req, res) => {
   try {
     if (!req.isLoggedIn || !req.session.user) {
