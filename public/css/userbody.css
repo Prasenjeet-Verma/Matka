@@ -1,0 +1,439 @@
+
+@media (min-width: 1025px) and (max-width: 1500px) { 
+  .bodycontanermob{ display: none;}
+  .bodycontanertab{ display: none;}
+  
+}
+
+
+@media (min-width: 766px) and (max-width: 1024px) {
+  .bodycontanermob{ display: none;}
+  .bodycontanerdes{ display: none;}
+}
+
+
+@media (min-width: 320px) and (max-width: 765px) {
+  .bodycontanerdes{ display: none;}
+  .bodycontanertab{ display: none;}
+}
+
+
+
+
+
+
+
+
+
+
+.maincontanermob{
+    display: flex;
+    direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.bodycontaner{
+    width: 95%;
+    height: 60rem;
+}
+
+
+
+    .catagourypt3tab {
+        height: 2rem;
+        width: 95%;
+        margin-top: 1rem;
+        border-bottom: 1px solid red;
+        border-radius: 5px;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    
+    .catagoury1 {
+        font-size: medium;
+        font-weight: 600;
+        padding: 1rem;
+        background: linear-gradient(90deg, #ec6bb0, #3737a5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+    }
+
+
+
+.allservicesmob {
+    position: relative;
+   
+  display: flex;
+  justify-content: space-evenly;
+  gap: 0.1rem;
+  margin: 0.5rem auto;
+  max-width: 1000px;
+}
+
+.allservicesmob33 {
+    position: relative;
+    top: 90px;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 0.1rem;
+  margin: 0.5rem auto;
+  max-width: 1000px;
+}
+
+
+.eachservices {
+  height: auto;
+  width: 110px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(8px);
+  
+}
+
+.eachservices:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(236, 107, 176, 0.4),
+              0 6px 15px rgba(59, 130, 246, 0.3);
+}
+
+.eachservices1 {
+  height: 9rem;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eachservices2 {
+  font-size: xx-small;
+  font-weight: 600;
+  background: linear-gradient(90deg, #ec6bb0, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+}
+
+
+.eachservices14{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEinh2eKy3cQ82-LRb_EequdhsMTaz1_MWYiX4SWGviqoonbbDtPE9y_UcU2LJ2iBFMoEwSRImev9hgcrnzYN2ARTexFYBRgZiqtMVusVBoBAoXtOZV5dEBlA2-Fxgl_2rbMmbNGmvwad23Hhm-UCgI8zxIqFniJkrHANRfAcR_v_BDUQ8CC5qn6jSDu_P6l/s632/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices15{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_8cOLeGLxqDQoLMLTuE3JZPAZxncn4W7zFFtrNB3WRJHP1ofi7vU_NdKFedMaVOtkap6pySdcUwsy-UDPTxS5nxvJuaJlHwcepmc04uCDA0A9bnt_GzEl3H73e_lRQBdoqruMfOgumPv0HjZ6c6rk_6K10yqCiMGmyhyMRV-4a2Jwpm8WhMQ4wNLAcvfe/s360/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices16{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEht1pTY4PUPnESAm8u-GKPpKL1s3ASfDuN3i557ihUW2Pn2-dMswkFzfrp4c_Lg42UcE5ai4yyRoAeKSAOP8A-LonXD4vR3XDbIUYmxhDWjC8hDhMqzcxZX9T1QWB16Q9mV7Z16hgxLZKZe7R2mHaH8FRcodI8eb0Tl39ybu-Sx4yEX-UY_V9eV0IBV3rRu/s1013/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.eachservices17{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgiiG8G6oVat0iaJBXuG3Ub2Fa7yf05ZV5hmnUhqwdaTUG-LMfbUsZU-1pGCO_J2MFyW04TfSoEJaC8BWL6kPZ9O0YS9TfoeOv7t5X_cXG1MpJ6RlNlrM2maiC3sLGGLAgNFR1RhgG-mQz7CQiWs2QvRafF8kdkZBy2XFQOk6f1Z_8LJiuGkiVQ562wwFY2/s1820/WhatsApp%20Image%202025-10-25%20at%2012.48.58%20AM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices18{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQNoG36TyjgiRLa_V_dt1yC4_aNWmgZ8XX5p4gBP7VW-TSkgSUYlo-tC1GeyzTQ18fBRKKg1t5nbzKEIlXFKCCl2vUynYXJCy_X-o88ee1S75XybL-o5CmjtPbcxYFoVXRoLxeyWCXBLn79JHQtyeECGhalLtM8NRTYvXC-zFydurqtkN3SclTYoe8TYLF/s981/WhatsApp%20Image%202025-10-24%20at%2010.56.15%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices19{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5wuAWZD5YbZ0mdU3n6AR-NaXjWVV5_Tf6FvD5Hx21zlsGdK3-yoAxTfuGp9i4yr9kWxNK_E36OBblaZhSBRCt1gWzNvMKnRb5HOynGy6aAb4ETA27__u4SKMYNaadzLswAkZ3mNyvlZBLLDV9i8I18FWwP4RgHTEx_YRGPxIWptyE2TfRqyRv6ppm6-f0/s2389/adf496e9-2251-4d56-909d-51cf5c1a5a89.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices20{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2mJqSUQRt_qD1Z1EvtgCMgVR2RvhkxWbFPwIgJWPys4m-LSK_vAskN2xE39-4vADgWurTXk7xruox53JJQBux89U1kwHsm1opbZoUpSAOknludvQrNIxfPUZVpcivEL0BcQcuWl8-eqYWD277O_Gn8RjS8DfC_71ckXmLpmz4bkUCyc7XypctHwevhPXC/s816/WhatsApp%20Image%202025-10-24%20at%2010.56.14%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices21{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhBWsv2-vC7kw91wUZI9CPfapqmC-J3wp-Ug7yM0gR28J6zF4Z7sxnWoh6R2UqEUZVTMNTI_f89PJnqnJo83SM6eLkUhBcn_a0akThIgZ0B12xwqZTfUfxn6Zu7Bf75FHtVgCYqjyXoa1WMPWD87xKfrDyDeNTIWO2BJc6DxgdRafZW_KtiRfTrTqbeDRNH/s667/WhatsApp%20Image%202025-10-24%20at%2010.56.14%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices22{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_e9kWvPsPnHiPLjvwQ3mlAZhT6yrHmb-EW3zN-xd4ZxeFjqcfyUH3lEKELDeHucMnTNEDdbi-IrGkuZyNJ2tOuSLJYrpI7KUiTqVYHW68PLc2gptFbfwGoHFJvlqSluK9DyamjvfvBY4WADpfRRSsiPTESWSYn9TgRNgOczsKLflxFAmXd0SlJ4sK7cCZ/s800/Bingo_600x400%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices23{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhgx4JGPF_EJgeBPdE008N8gg0Jc3Uc8Hej1edfD-rxOUYOOc5zTexqVAkslxInRhedGWGj08ECnXWcVay7IqyZkkfcNNIxZOK_qOiGtjGguxzcbtbtnLoTgKdAiiivE-LRPZ5IOlpJannUCa98A1SGsUUdC82g3eOT2-5D68H4qgws8QogVKRVjrFwZhrw/s1525/Aviator-Game%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+/* destop */
+
+
+
+.eachservices24{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhEhknIVD2M_UVAqqMzNZPqjIlV6imqAfhpVN7sZgu8oLKbQxD4OxmIfPt5Uv1_7_2lzCtGr3ThS85KV0oL9neHY58Rm-YiuO5iTbK2axDnXe4jsy8dSJqfTyrniNR5S1a38RTj3GnoDRA2AHl8kAlsKioyUaZdTkgU_9rBmNyymZXegDo_G1ERtj0ZDicy/s843/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM%20.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices25{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWtxZqib4QwesRk37sBe9SMp9wIYjU8V0yzU1CPGV6VOzmqCJrFvxnA0Azzd_j-cdms6pMVY0YDNrMSfk_LBzQopVihyB0VaM5i9791irfio5wtzoUeIOYb2ZbVPtPsyI_IqmOynowTGqqe3ypd9Vp9MoCO_-ipuqAyXPt4IVyToxNsE_QcpT8erKrQXb9/s893/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices26{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigk0YnjOVfB-e9sJNW5Wzpof0MAxyVpok3tnXUJVpiOuZYYn7cW93RuLFRcEjQ6LJM1lwfL-UE9aJJgt_TcNwNb9OHIhWJBff7N_4QWinHVCgeV3ErckPN3_SC_pVtEtkZ9DyWYUGz5Ovl2z5OwA0UwUiCnFjqzZYBm1HxXpCnv0I2JsFuV8Bo2ObgfcrQ/s1827/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.eachservices27{
+  height: 15rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiL2WT6p47LHHrN-9tz-9uR6Z_519O9z7jFWZEwQW_GXB82nHA_Iy-xl6rM-UZoXGqm2F043pRE4rZuitj-Ai_CHLU-HFYVpdkSrsBsS_t6fTgarv5ApNKVjcd9SFOhUpU1zEnpE7UfR_o5V22oSO1TRBhe6CGBPWKWopCymolgwTSNWsVeCcKRHKuOuSLE/s1900/matka.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices28{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiBCQIBUaI99VSEQbTw79kX9dlmRhixVkldGRxMSP26ywccQjjyBkfk37krIC9u1cb3LWw04BLjK12YVj2yIRHvX9kOKnAciclXAPNO5B5i2kHkQ-ddDdP888syLbGA3eaacqmcfPZjU153NfFP20FNIFVXbSAxXAWv0taiS9K9plUwvxw7TSzZvZTsw-pX/s825/apps.9538.14287439009301981.9d2a4255-f087-4f14-a736-5bedfbf5493d.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices29{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiLTkveW9_vSNEOFc6olqsuTcqWvKYQuyBcSOYurinOYq4hpRt68H1uvHVW3B1Eofhcgji0bgulDWVVW06vwRAIk-OVOzGLxb9R7cuqF7karGrQR2iKeQSVVUjuIZTUwEoLaZ5wV5zMxC1hPF-BUhj9B-kcl0A631V6slHLmh6Z5Bmv7I_Guqvzre9Gxgzw/s742/WhatsApp%20Image%202025-10-24%20at%2010.56.15%20PM.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices30{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjiMaf-lNGSdGVsUUIJ_9Q-aj4gJz4msJhXNkBTf77pdUy8BKKsO6M0vJZbAkTtv8twuXTAp-rszUuH5rZaYXomtTa5O8AHJBQ7CZZsmpirHIVFq00LtjJ7vnyaB1gdvxFaTKBXc_uAXR1_uW9WWpd83AOVspdKc19VfTJj6xrau-uY4Oozy1B7JocmBqY3/s1776/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices31{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyNO2GCVeL-wjO0GzqSA7pRLXdK9q18BpG3yHz3gB6GnE43tCxYRtKh5xr6XqFgrlr4ueUIZtptUPJYtZovppZ2StYgROpR3grNuvrNaAB6MRWoqbqTIx7yz8GSZqt46irZYdihd2RGKzVt67cgvDAJ5HnPK43vE_v7-iAQINnLfthTk4JWabwOwlPL2I8/s1415/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices32{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeX18XeNdHaXaiR5krcPSVWBLLH_T4ByWOhw0lnURzd9NKHiI7vLCkGEtd6FxscmmVATW4nE3FQcmAusjgGigjm-QUr3hRbU02GKcAAVJGS4-LRAyd4mTXZfYKq_1qoykZpQluKXWNFWIxvThqXGvKOwOnPR9-xXJ6MA6MzQ_1MT3_O6pqvZmYcmodjCO_/s2048/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices33{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie-mkn-ZjU45Utz7Zo9G1uIuoVh7O5v1Vy7DJTOA6vgg0K27cpHgENff47yKm433CWzdtLdqG6q4WAXtHrILVcK1e5v8xsnxLQtCIf2XRyOtn0GYVC_N41Bv4fSHYeLiRwBmFmjBUPpwWFDzRfb_qpiD5jvct-L170L6GyIKjmzzrKb-LRSkTzeZraXRHq/s1000/1ade8d7f049909d34f5ae2ed3494cb2a.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+
+
+/* Tab */
+
+
+
+.eachservices34{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrhK3RCIsucqU5cU3FxHO6xM-5fteF1Y_1KoCMyYNzXd5gVZdG7WD1Ke8rNMBXo92URH-yDNgLUNW35ZWCZ9k8z3lYgkoZUfoG7hPVmz3MavwMJQr1vFwt8Pg_LCewyyo7309ZBgIIvy7lvVSyMK1zkDqTuFGF7Dp45PbmYyWjqTHvqV1A7YoiMiR4JCFh/s240/image-299.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices35{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgq4ZqGTnVa-nPdmbfJhf68butK_ZUVaO1Yr3P7otxsZcnivdzFwd0oZa269XXCniuTL_bM5GTpz1Swn5ugb02sVtRR6Qpzoim8Z8yZ_lPW12P0ak_WleLZYjbvYTLPfVI_NpiK0lQsH9nNuFXG9J-PLgIEeHBgqVsKmfx2VNzXTfvFPAAifUUysuHFdvY2/s270/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices36{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjql-zA7Wh0QkdUH12uUagmcmhuH7klavj_nBmvv1Bi129pOKo5gEh7vp0bqtnLTmJEuEgszxLuKGnpnvDmXWHfYRHod71_mpFJb1cZTqnfFU7fQ1W0P6vqpAMkvg0WenGXmK2tjhTAp5-kSonkTN0BzbSmdoT1r3QSX6Z20fZGZP_Od-O8MB4r43_gdW_h/s760/WhatsApp%20Image%202025-10-24%20at%2010.56.16%20PM%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.eachservices37{
+  height: 15rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiL2WT6p47LHHrN-9tz-9uR6Z_519O9z7jFWZEwQW_GXB82nHA_Iy-xl6rM-UZoXGqm2F043pRE4rZuitj-Ai_CHLU-HFYVpdkSrsBsS_t6fTgarv5ApNKVjcd9SFOhUpU1zEnpE7UfR_o5V22oSO1TRBhe6CGBPWKWopCymolgwTSNWsVeCcKRHKuOuSLE/s1900/matka.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices38{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgL-OMky0_c0uh2H-S8CKplTLiRS3Zp5228cL_wT_VabuTypeWk1wMMgYVMgWR6Q2HBeg7pF8A_4_N1njCjin7bvrgJiTNVPtijefaAZ_WSBJG7jXJj5rYjQ7J8RbT6aRkZ-OeXULs5KKRySndJH6QY4lEI47xoGob_pCZD55YPh4bKIdOshWKhxdC6lF6n/s736/WhatsApp%20Image%202025-10-24%20at%2010.56.15%20PM%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices39{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEwSAz26s0toe2Paj9SCRzQjJVXxCEBNAy0TUCscVmLhZXxAJOg__UgXS6XmARnYcVXuv9MFK_z44LMpdjRqpmuRBZ6CQRqzwuwIH16oaTSIBHFpJ5RXtzDh6lIoiqwpO7wPhrCKLt8JGbWx7Sc6SnBwLjLCrCneUQ6w7mPx7b15kEP4vtTYWCpq7S77km/s1792/adf496e9-2251-4d56-909d-51cf5c1a5a89.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices40{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiOu9oi_0SQt_cvtkoMD82nU2-2RV1m8hdL91NaPk-7Z6A21UEJmaCLOtasg50jfs2Q-eGCZJ2qXk2XUj7XlpPCQMMxf8QUvqveio5HXC4zK_bGk_FUWUIZFycSg9uZLL2AivRsK1PY6xuKxTM6l8giwtFyz0im__yz-AQXv3azRZz3IFL_Pl0KaF0jbt8r/s612/WhatsApp%20Image%202025-10-24%20at%2010.56.14%20PM%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.eachservices41{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEiPUQJ5mYqYRevnF9GeVutndk5YyEU5DMdZLCgE2tgIo_AbGdPA3scbab_OOw0fjfk1Ig5PQx8V4DyUJMv_8KLHDGO5eIb7WtUDvk3WvTVitnubnSRHGtyqj6W38wQUjTM-h892FurfEE4y4Sv93wXXOtc1jEBj3naBOBFozmLK-ywqQ5LUo5wPowutJH/s500/WhatsApp%20Image%202025-10-24%20at%2010.56.14%20PM%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices42{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgThq9gj9nI4gajtEuCjDzaYnKXQ4n9EbodOEcezAZLCnrwDS3nehBVJLp9Sl-AOBeL9cFz-ySxbG3KU1uybJF6_9WkqaRpuTliHtpxXiuJLbb8fRzLK37RkfIoZVF5cpRLeG3nryywlhi55oKY4cqRpem-N1p22wPkuPNfQW8mp4yfVHzfkl4mXFMEzsD1/s1351/Airbrush-image-extender%20.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.eachservices43{
+  height: 8.9rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie-mkn-ZjU45Utz7Zo9G1uIuoVh7O5v1Vy7DJTOA6vgg0K27cpHgENff47yKm433CWzdtLdqG6q4WAXtHrILVcK1e5v8xsnxLQtCIf2XRyOtn0GYVC_N41Bv4fSHYeLiRwBmFmjBUPpwWFDzRfb_qpiD5jvct-L170L6GyIKjmzzrKb-LRSkTzeZraXRHq/s1000/1ade8d7f049909d34f5ae2ed3494cb2a.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}

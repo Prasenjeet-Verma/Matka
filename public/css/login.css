@@ -1,0 +1,42 @@
+
+        /*
+         * 1. CUSTOM CSS for Gradient Background
+         * Applying the requested gradient: rgb(255, 0, 0) to rgb(242, 242, 245)
+         */
+        body {
+            /* Linear gradient from top-left to bottom-right (135deg) */
+            background: linear-gradient(135deg, rgb(255, 0, 0), rgb(242, 242, 245));
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* 2. Custom Style for Login Card */
+        #login-card {
+            /* Semi-transparent white background with strong shadow for lift */
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 3. Button Animation for Login */
+        .login-button {
+            background-color: rgb(255, 0, 0); /* Pure Red */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+        }
+        .login-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            background-color: rgb(220, 0, 0); /* Slightly darker red on hover */
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
+        }
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        /* 4. Title Gradient Accent */
+        .matka-title {
+            background: linear-gradient(to right, rgb(255, 0, 0) 30%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }

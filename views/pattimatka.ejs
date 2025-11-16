@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matka  69</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+ <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="css/headerlogin.css">
+    <link rel="stylesheet" href="css/pattilivematka.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/footer.css">
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/rendomsidebar.js"></script>
+    <script src="/js/betbox.js"></script>
+    <!-- <script src="js/footer.js"></script> -->
+</head>
+<body>
+<!-- Bet Message Box -->
+<div id="betMessageBox"
+     class="hidden fixed inset-0 items-center justify-center bg-black/50 backdrop-blur-sm z-[9999] transition-opacity duration-300 ease-in-out">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg text-center w-72 animate-fadeIn" id="betBoxInner">
+    <!-- Loader (normal spin) -->
+    <div id="betLoader" class="flex flex-col items-center justify-center space-y-3">
+      <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-gray-600 font-medium">Placing your bet...</p>
+    </div>
+
+    <!-- Result -->
+    <div id="betResultMsg" class="hidden">
+      <p id="betResultText" class="text-lg font-semibold mb-4"></p>
+      <button id="closeBetMsg" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">OK</button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- ==================================================Header======================================= -->
+
+  <%- include('partials/header') %>
+
+   <div class="header"></div>  <!-- ========================= overflow header solve -->
+
+
+<!-- +++++++++++++++++++++++++++  Slider Banner +++++++++++++++++++++++ -->
+ <div class="mbanner">
+ 
+
+    <div class=" mx-auto">
+        
+        <!-- Banner Wrapper -->
+        <div class="banner-container shadow-3xl">
+            
+            <!-- Slide 1 -->
+            <div class="banner-slide active" data-index="0">
+                <img src="images/egaming1.png" 
+                     class="w-full h-full object-cover" 
+                     alt="Placeholder Image 1: Feature A">
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="banner-slide" data-index="1">
+                <img src="images/egaming2.png" 
+                     class="w-full h-full object-cover" 
+                     alt="Placeholder Image 2: Feature B">
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="banner-slide" data-index="2">
+                <img src="images/egaming3.png" 
+                     class="w-full h-full object-cover" 
+                     alt="Placeholder Image 3: Feature C">
+            </div>
+
+
+            <!-- Navigation Buttons -->
+            <div class="absolute inset-0 flex items-center justify-between p-4 z-20">
+                <button id="prevBtn" 
+                        class="transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                </button>
+                <button id="nextBtn" 
+                        class=" transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                </button>
+            </div>
+            
+        </div>
+        
+        <!-- Pagination Dots -->
+        <div id="pagination" class="flex justify-center space-x-2 mt-4">
+            <!-- Dots will be generated here by JS -->
+        </div>
+        
+    </div>
+
+</div>
+
+
+<!-- +++++++++++++++++++++++++++ body stert +++++++++++++++++++++++ -->
+
+
+<div class="bdycenter">
+    
+  <!-- SINGLE NUMBERS -->
+  <div class="single-container" aria-label="single">
+
+     <h2>Patti</h2>
+
+     <!-- =========================    1 -->
+    <div class="number-grid" role="list">
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">1</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">2</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">3</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">4</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">5</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">6</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">7</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">8</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">9</div>
+      <div style="border: 1px solid red; column-rule-color: red; border-radius: 50%; height: 25px; width: 25px; color: red;">0</div>
+
+     
+
+
+
+      <!-- =========================    2 -->
+      <div class="num" role="listitem" tabindex="0" data-num="100">100</div>
+      <div class="num" role="listitem" tabindex="0" data-num="200">200</div>
+      <div class="num" role="listitem" tabindex="0" data-num="300">300</div>
+      <div class="num" role="listitem" tabindex="0" data-num="400">400</div>
+      <div class="num" role="listitem" tabindex="0" data-num="500">500</div>
+      <div class="num" role="listitem" tabindex="0" data-num="600">600</div>
+      <div class="num" role="listitem" tabindex="0" data-num="700">700</div>
+      <div class="num" role="listitem" tabindex="0" data-num="800">800</div>
+      <div class="num" role="listitem" tabindex="0" data-num="900">900</div>
+      <div class="num" role="listitem" tabindex="0" data-num="000">000</div>
+
+
+
+            <!-- =========================    3 -->
+      <div class="num" role="listitem" tabindex="0" data-num="678">678</div>
+      <div class="num" role="listitem" tabindex="0" data-num="345">345</div>
+      <div class="num" role="listitem" tabindex="0" data-num="120">120</div>
+      <div class="num" role="listitem" tabindex="0" data-num="789">789</div>
+      <div class="num" role="listitem" tabindex="0" data-num="456">456</div>
+      <div class="num" role="listitem" tabindex="0" data-num="123">123</div>
+      <div class="num" role="listitem" tabindex="0" data-num="890">890</div>
+      <div class="num" role="listitem" tabindex="0" data-num="567">567</div>
+      <div class="num" role="listitem" tabindex="0" data-num="234">234</div>
+      <div class="num" role="listitem" tabindex="0" data-num="127">127</div>
+
+
+
+
+            <!-- =========================    4 -->
+      <div class="num" role="listitem" tabindex="0" data-num="777">777</div>
+      <div class="num" role="listitem" tabindex="0" data-num="444">444</div>
+      <div class="num" role="listitem" tabindex="0" data-num="111">111</div>
+      <div class="num" role="listitem" tabindex="0" data-num="888">888</div>
+      <div class="num" role="listitem" tabindex="0" data-num="555">555</div>
+      <div class="num" role="listitem" tabindex="0" data-num="222">222</div>
+      <div class="num" role="listitem" tabindex="0" data-num="999">999</div>
+      <div class="num" role="listitem" tabindex="0" data-num="666">666</div>
+      <div class="num" role="listitem" tabindex="0" data-num="333">333</div>
+      <div class="num" role="listitem" tabindex="0" data-num="190">190</div>
+
+
+
+
+      <!-- =========================    5 -->
+      <div class="num" role="listitem" tabindex="0" data-num="560">560</div>
+      <div class="num" role="listitem" tabindex="0" data-num="570">570</div>
+      <div class="num" role="listitem" tabindex="0" data-num="560">560</div>
+      <div class="num" role="listitem" tabindex="0" data-num="590">590</div>
+      <div class="num" role="listitem" tabindex="0" data-num="140">140</div>
+      <div class="num" role="listitem" tabindex="0" data-num="150">150</div>
+      <div class="num" role="listitem" tabindex="0" data-num="160">160</div>
+      <div class="num" role="listitem" tabindex="0" data-num="170">170</div>
+      <div class="num" role="listitem" tabindex="0" data-num="180">180</div>
+      <div class="num" role="listitem" tabindex="0" data-num="280">280</div>
+
+
+
+
+
+
+
+            <!-- =========================    6 -->
+      <div class="num" role="listitem" tabindex="0" data-num="470">470</div>
+      <div class="num" role="listitem" tabindex="0" data-num="480">480</div>
+      <div class="num" role="listitem" tabindex="0" data-num="490">490</div>
+      <div class="num" role="listitem" tabindex="0" data-num="130">130</div>
+      <div class="num" role="listitem" tabindex="0" data-num="230">230</div>
+      <div class="num" role="listitem" tabindex="0" data-num="330">330</div>
+      <div class="num" role="listitem" tabindex="0" data-num="340">340</div>
+      <div class="num" role="listitem" tabindex="0" data-num="350">350</div>
+      <div class="num" role="listitem" tabindex="0" data-num="360">360</div>
+      <div class="num" role="listitem" tabindex="0" data-num="370">370</div>
+
+
+
+
+
+
+
+            <!-- =========================    7 -->
+      <div class="num" role="listitem" tabindex="0" data-num="380">380</div>
+      <div class="num" role="listitem" tabindex="0" data-num="390">390</div>
+      <div class="num" role="listitem" tabindex="0" data-num="670">670</div>
+      <div class="num" role="listitem" tabindex="0" data-num="680">680</div>
+      <div class="num" role="listitem" tabindex="0" data-num="690">690</div>
+      <div class="num" role="listitem" tabindex="0" data-num="240">240</div>
+      <div class="num" role="listitem" tabindex="0" data-num="250">250</div>
+      <div class="num" role="listitem" tabindex="0" data-num="260">260</div>
+      <div class="num" role="listitem" tabindex="0" data-num="270">270</div>
+      <div class="num" role="listitem" tabindex="0" data-num="460">460</div>
+
+
+
+
+
+
+            <!-- =========================    8 -->
+      <div class="num" role="listitem" tabindex="0" data-num="290">290</div>
+      <div class="num" role="listitem" tabindex="0" data-num="660">660</div>
+      <div class="num" role="listitem" tabindex="0" data-num="238">238</div>
+      <div class="num" role="listitem" tabindex="0" data-num="248">248</div>
+      <div class="num" role="listitem" tabindex="0" data-num="258">258</div>
+      <div class="num" role="listitem" tabindex="0" data-num="268">268</div>
+      <div class="num" role="listitem" tabindex="0" data-num="278">278</div>
+      <div class="num" role="listitem" tabindex="0" data-num="288">288</div>
+      <div class="num" role="listitem" tabindex="0" data-num="450">450</div>
+      <div class="num" role="listitem" tabindex="0" data-num="550">550</div>
+
+
+
+
+
+
+
+
+            <!-- =========================    9 -->
+      <div class="num" role="listitem" tabindex="0" data-num="119">119</div>
+      <div class="num" role="listitem" tabindex="0" data-num="129">129</div>
+      <div class="num" role="listitem" tabindex="0" data-num="139">139</div>
+      <div class="num" role="listitem" tabindex="0" data-num="149">149</div>
+      <div class="num" role="listitem" tabindex="0" data-num="159">159</div>
+      <div class="num" role="listitem" tabindex="0" data-num="169">169</div>
+      <div class="num" role="listitem" tabindex="0" data-num="179">179</div>
+      <div class="num" role="listitem" tabindex="0" data-num="189">189</div>
+      <div class="num" role="listitem" tabindex="0" data-num="199">199</div>
+      <div class="num" role="listitem" tabindex="0" data-num="235">235</div>
+
+
+
+
+
+
+
+
+            <!-- =========================    10 -->
+      <div class="num" role="listitem" tabindex="0" data-num="137">137</div>
+      <div class="num" role="listitem" tabindex="0" data-num="237">237</div>
+      <div class="num" role="listitem" tabindex="0" data-num="337">337</div>
+      <div class="num" role="listitem" tabindex="0" data-num="347">347</div>
+      <div class="num" role="listitem" tabindex="0" data-num="357">357</div>
+      <div class="num" role="listitem" tabindex="0" data-num="367">367</div>
+      <div class="num" role="listitem" tabindex="0" data-num="377">377</div>
+      <div class="num" role="listitem" tabindex="0" data-num="116">116</div>
+      <div class="num" role="listitem" tabindex="0" data-num="117">117</div>
+      <div class="num" role="listitem" tabindex="0" data-num="118">118</div>
+
+
+
+
+
+
+
+                  <!-- =========================    11 -->
+      <div class="num" role="listitem" tabindex="0" data-num="236">236</div>
+      <div class="num" role="listitem" tabindex="0" data-num="336">336</div>
+      <div class="num" role="listitem" tabindex="0" data-num="157">157</div>
+      <div class="num" role="listitem" tabindex="0" data-num="158">158</div>
+      <div class="num" role="listitem" tabindex="0" data-num="799">799</div>
+      <div class="num" role="listitem" tabindex="0" data-num="448">448</div>
+      <div class="num" role="listitem" tabindex="0" data-num="467">467</div>
+      <div class="num" role="listitem" tabindex="0" data-num="233">233</div>
+      <div class="num" role="listitem" tabindex="0" data-num="469">469</div>
+      <div class="num" role="listitem" tabindex="0" data-num="578">578</div>
+
+
+
+
+
+
+
+
+
+                  <!-- =========================    12 -->
+      <div class="num" role="listitem" tabindex="0" data-num="669">669</div>
+      <div class="num" role="listitem" tabindex="0" data-num="679">679</div>
+      <div class="num" role="listitem" tabindex="0" data-num="689">689</div>
+      <div class="num" role="listitem" tabindex="0" data-num="446">446</div>
+      <div class="num" role="listitem" tabindex="0" data-num="267">267</div>
+      <div class="num" role="listitem" tabindex="0" data-num="899">899</div>
+      <div class="num" role="listitem" tabindex="0" data-num="115">115</div>
+      <div class="num" role="listitem" tabindex="0" data-num="125">125,</div>
+      <div class="num" role="listitem" tabindex="0" data-num="667">667</div>
+      <div class="num" role="listitem" tabindex="0" data-num="479">479</div>
+
+
+
+
+
+
+
+
+                  <!-- =========================    13 -->
+      <div class="num" role="listitem" tabindex="0" data-num="579">579</div>
+      <div class="num" role="listitem" tabindex="0" data-num="255">255</div>
+      <div class="num" role="listitem" tabindex="0" data-num="355">355</div>
+      <div class="num" role="listitem" tabindex="0" data-num="699">699</div>
+      <div class="num" role="listitem" tabindex="0" data-num="780">780</div>
+      <div class="num" role="listitem" tabindex="0" data-num="178">178</div>
+      <div class="num" role="listitem" tabindex="0" data-num="124">124</div>
+      <div class="num" role="listitem" tabindex="0" data-num="224">224</div>
+      <div class="num" role="listitem" tabindex="0" data-num="478">478</div>
+      <div class="num" role="listitem" tabindex="0" data-num="668">668</div>
+
+
+
+
+
+
+
+
+                  <!-- =========================    14 -->
+      <div class="num" role="listitem" tabindex="0" data-num="399">399</div>
+      <div class="num" role="listitem" tabindex="0" data-num="147">147</div>
+      <div class="num" role="listitem" tabindex="0" data-num="247">247</div>
+      <div class="num" role="listitem" tabindex="0" data-num="455">455</div>
+      <div class="num" role="listitem" tabindex="0" data-num="447">447</div>
+      <div class="num" role="listitem" tabindex="0" data-num="790">790</div>
+      <div class="num" role="listitem" tabindex="0" data-num="223">223</div>
+      <div class="num" role="listitem" tabindex="0" data-num="477">477</div>
+      <div class="num" role="listitem" tabindex="0" data-num="135">135</div>
+      <div class="num" role="listitem" tabindex="0" data-num="299">299</div>
+
+
+
+
+
+
+
+
+                  <!-- =========================    15 -->
+      <div class="num" role="listitem" tabindex="0" data-num="568">568</div>
+      <div class="num" role="listitem" tabindex="0" data-num="228">228</div>
+      <div class="num" role="listitem" tabindex="0" data-num="256">256</div>
+      <div class="num" role="listitem" tabindex="0" data-num="266">266</div>
+      <div class="num" role="listitem" tabindex="0" data-num="366">366</div>
+      <div class="num" role="listitem" tabindex="0" data-num="466">466</div>
+      <div class="num" role="listitem" tabindex="0" data-num="566">566</div>
+      <div class="num" role="listitem" tabindex="0" data-num="990">990</div>
+      <div class="num" role="listitem" tabindex="0" data-num="225">225</div>
+      <div class="num" role="listitem" tabindex="0" data-num="334">334</div>
+
+
+
+
+
+
+
+
+                        <!-- =========================    16 -->
+      <div class="num" role="listitem" tabindex="0" data-num="489">489</div>
+      <div class="num" role="listitem" tabindex="0" data-num="499">499</div>
+      <div class="num" role="listitem" tabindex="0" data-num="166">166</div>
+      <div class="num" role="listitem" tabindex="0" data-num="112">112</div>
+      <div class="num" role="listitem" tabindex="0" data-num="113">113</div>
+      <div class="num" role="listitem" tabindex="0" data-num="358">358</div>
+      <div class="num" role="listitem" tabindex="0" data-num="557">557</div>
+      <div class="num" role="listitem" tabindex="0" data-num="134">134</div>
+      <div class="num" role="listitem" tabindex="0" data-num="144">144</div>
+      <div class="num" role="listitem" tabindex="0" data-num="488">488</div>
+
+
+
+
+
+
+
+
+
+                        <!-- =========================    17 -->
+      <div class="num" role="listitem" tabindex="0" data-num="245">245</div>
+      <div class="num" role="listitem" tabindex="0" data-num="688">688</div>
+      <div class="num" role="listitem" tabindex="0" data-num="599">599</div>
+      <div class="num" role="listitem" tabindex="0" data-num="356">356</div>
+      <div class="num" role="listitem" tabindex="0" data-num="122">122</div>
+      <div class="num" role="listitem" tabindex="0" data-num="880">880</div>
+      <div class="num" role="listitem" tabindex="0" data-num="368">368</div>
+      <div class="num" role="listitem" tabindex="0" data-num="558">558</div>
+      <div class="num" role="listitem" tabindex="0" data-num="379">379</div>
+      <div class="num" role="listitem" tabindex="0" data-num="389">389</div>
+
+
+
+
+
+
+
+
+
+
+                        <!-- =========================    18 -->
+      <div class="num" role="listitem" tabindex="0" data-num="155">155</div>
+      <div class="num" role="listitem" tabindex="0" data-num="778">778</div>
+      <div class="num" role="listitem" tabindex="0" data-num="148">148</div>
+      <div class="num" role="listitem" tabindex="0" data-num="239">239</div>
+      <div class="num" role="listitem" tabindex="0" data-num="177">177</div>
+      <div class="num" role="listitem" tabindex="0" data-num="114">114</div>
+      <div class="num" role="listitem" tabindex="0" data-num="359">359</div>
+      <div class="num" role="listitem" tabindex="0" data-num="369">369</div>
+      <div class="num" role="listitem" tabindex="0" data-num="559">559</div>
+      <div class="num" role="listitem" tabindex="0" data-num="226">226</div>
+
+
+
+
+
+
+
+
+
+                        <!-- =========================    19 -->
+      <div class="num" role="listitem" tabindex="0" data-num="227">227</div>
+      <div class="num" role="listitem" tabindex="0" data-num="138">138</div>
+      <div class="num" role="listitem" tabindex="0" data-num="788">788</div>
+      <div class="num" role="listitem" tabindex="0" data-num="338">338</div>
+      <div class="num" role="listitem" tabindex="0" data-num="249">249</div>
+      <div class="num" role="listitem" tabindex="0" data-num="556">556</div>
+      <div class="num" role="listitem" tabindex="0" data-num="449">449</div>
+      <div class="num" role="listitem" tabindex="0" data-num="378">378</div>
+      <div class="num" role="listitem" tabindex="0" data-num="289">289</div>
+      <div class="num" role="listitem" tabindex="0" data-num="569">569</div>
+
+
+
+
+
+
+
+
+
+                        <!-- =========================    20 -->
+      <div class="num" role="listitem" tabindex="0" data-num="344">344</div>
+      <div class="num" role="listitem" tabindex="0" data-num="156">156</div>
+      <div class="num" role="listitem" tabindex="0" data-num="445">445</div>
+      <div class="num" role="listitem" tabindex="0" data-num="257">257</div>
+      <div class="num" role="listitem" tabindex="0" data-num="339">339</div>
+      <div class="num" role="listitem" tabindex="0" data-num="259">259</div>
+      <div class="num" role="listitem" tabindex="0" data-num="269">269</div>
+      <div class="num" role="listitem" tabindex="0" data-num="440">440</div>
+      <div class="num" role="listitem" tabindex="0" data-num="388">388</div>
+      <div class="num" role="listitem" tabindex="0" data-num="677">677</div>
+
+
+
+
+
+
+                              <!-- =========================    21 -->
+      <div class="num" role="listitem" tabindex="0" data-num="335">335</div>
+      <div class="num" role="listitem" tabindex="0" data-num="110">110</div>
+      <div class="num" role="listitem" tabindex="0" data-num="229">229</div>
+      <div class="num" role="listitem" tabindex="0" data-num="220">220</div>
+      <div class="num" role="listitem" tabindex="0" data-num="889">889</div>
+      <div class="num" role="listitem" tabindex="0" data-num="349">349</div>
+      <div class="num" role="listitem" tabindex="0" data-num="133">133</div>
+      <div class="num" role="listitem" tabindex="0" data-num="279">279</div>
+      <div class="num" role="listitem" tabindex="0" data-num="577">577</div>
+      <div class="num" role="listitem" tabindex="0" data-num="136">136</div>
+
+
+
+
+
+
+
+
+
+
+                            <!-- =========================    22 -->
+      <div class="num" role="listitem" tabindex="0" data-num="128">128</div>
+      <div class="num" role="listitem" tabindex="0" data-num="569">569</div>
+      <div class="num" role="listitem" tabindex="0" data-num="779">779</div>
+      <div class="num" role="listitem" tabindex="0" data-num="770">770</div>
+      <div class="num" role="listitem" tabindex="0" data-num="348">348</div>
+      <div class="num" role="listitem" tabindex="0" data-num="457">457</div>
+      <div class="num" role="listitem" tabindex="0" data-num="188">188</div>
+      <div class="num" role="listitem" tabindex="0" data-num="468">468</div>
+      <div class="num" role="listitem" tabindex="0" data-num="568">568</div>
+      <div class="num" role="listitem" tabindex="0" data-num="244">244</div>
+
+
+
+
+
+
+
+
+                                  <!-- =========================    22 -->
+      <div class="num" role="listitem" tabindex="0" data-num="146">146</div>
+      <div class="num" role="listitem" tabindex="0" data-num="246">246</div>
+      <div class="num" role="listitem" tabindex="0" data-num="346">346</div>
+      <div class="num" role="listitem" tabindex="0" data-num="167">167</div>
+      <div class="num" role="listitem" tabindex="0" data-num="168">168</div>
+      <div class="num" role="listitem" tabindex="0" data-num="277">277</div>
+      <div class="num" role="listitem" tabindex="0" data-num="458">458</div>
+      <div class="num" role="listitem" tabindex="0" data-num="459">459</div>
+      <div class="num" role="listitem" tabindex="0" data-num="126">126</div>
+      <div class="num" role="listitem" tabindex="0" data-num="145">145</div>
+
+
+
+    </div>
+
+
+
+
+ </div>
+
+
+  </div>
+
+  <!-- BET PANEL -->
+  <div class="bet-container" aria-hidden="true">
+    <div class="bet-display">
+      <div class="amount" aria-live="polite">0</div>
+      <div class="number" aria-live="polite">-</div>
+    </div>
+
+    <div class="bet-buttons">
+      <button data-value="100">+100</button>
+      <button data-value="200">+200</button>
+      <button data-value="500">+500</button>
+      <button data-value="1000">+1000</button>
+      <button data-value="2000">+2000</button>
+      <button data-value="5000">+5000</button>
+    </div>
+
+    <div class="circle-buttons" aria-hidden="false">
+      <button data-value="5">+5</button>
+      <button data-value="10">+10</button>
+      <button data-value="30">+30</button>
+      <button data-value="40">+40</button>
+      <button data-value="50">+50</button>
+    </div>
+
+    <div class="action-buttons">
+      <button class="cancel" type="button">Cancel</button>
+      <button class="place" type="button">Place Bet</button>
+    </div>
+
+    <div class="muted">Click a number to start — then add amounts</div>
+  </div>
+
+
+</div>
+
+
+
+
+<!-- =================================== Footer Start ============================== -->
+  <%- include('partials/footer') %>
+
+</body>
+</html>
+
+
+
+
+
+

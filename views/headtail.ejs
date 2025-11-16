@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+</head>
+<style>
+  #coin {
+    transform-style: preserve-3d;
+  }
+
+  #coin>div {
+    backface-visibility: hidden;
+  }
+</style>
+<%- include('partials/coinGameHeader') %>
+
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+
+  <!-- Main Section -->
+  <div class="flex flex-col items-center justify-center flex-1 space-y-8">
+    <!-- Coin Container -->
+    <div class="relative w-24 h-24" style="perspective: 1000px;">
+      <div id="coin" class="relative w-full h-full transition-transform duration-1000">
+        <!-- Tails (Front) -->
+        <div
+          class="absolute inset-0 bg-blue-500 rounded-full flex items-center justify-center shadow-lg border-4 border-blue-700">
+          <div class="w-10 h-10 bg-black rotate-45 rounded-md"></div>
+        </div>
+        <!-- Heads (Back) -->
+        <div
+          class="absolute inset-0 bg-orange-500 rounded-full flex items-center justify-center shadow-lg border-4 border-orange-700"
+          style="transform: rotateY(180deg);">
+          <div class="w-16 h-16 bg-gray-900 rounded-full border-2 border-gray-700"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bet Form-->
+    <p class="text-lg font-medium text-gray-200 mb-2">Bet Amount</p>
+    <form id="form" class="flex flex-col items-center space-y-4 w-full max-w-xs">
+      <input id="betinput" name="betinput" type="number" placeholder="Bet Amount"
+        class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        required>
+      <div class="flex space-x-2 w-full">
+        <!-- Place Bet (submit) -->
+        <button id="placeBetBtn" type="submit"
+          class="flex-1 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold shadow">
+          Place Bet
+        </button>
+
+        <!-- Cash Out (separate button, NOT submit) -->
+        <button id="cashbtn" type="button"
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition font-semibold shadow disabled:opacity-60"
+          disabled>
+          Cash Out
+        </button>
+      </div>
+    </form>
+
+    <!-- Current profit -->
+    <p id="currentprofit" class="text-gray-200">Total Profit: ₹0</p>
+
+    <!-- Head & Tails Button Section -->
+    <p class="text-lg font-semibold text-indigo-400 mb-2">Pick Random Side</p>
+    <div class="flex space-x-4">
+      <button id="Heads" degree="180"
+        class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold shadow" disabled>
+        Head 🟠
+      </button>
+      <button id="Tails" degree="0"
+        class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold shadow" disabled>
+        Tails 🔵
+      </button>
+    </div>
+    <!-- Result Text -->
+    <p id="resultText" class="mt-4 text-xl font-semibold text-white h-6 text-center">Flip</p>
+  </div>
+
+  <script src="/js/coin.js" defer></script>
+</body>
+
+</html>
