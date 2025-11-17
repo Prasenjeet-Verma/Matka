@@ -9,7 +9,9 @@ let rotation = 0;
 
 // ------------------ UPDATE WALLET DISPLAY ------------------
 function updateWallet(amount) {
-  document.getElementById("user-wallet").textContent = `₹ ${parseFloat(amount).toFixed(2)}`;
+  document.getElementById("user-wallet").textContent = `₹ ${parseFloat(
+    amount
+  ).toFixed(2)}`;
 }
 
 // ------------------ PICK DISABLE / ENABLE ------------------
@@ -22,6 +24,18 @@ disablePick();
 function enablePick() {
   btnHead.disabled = false;
   btnTail.disabled = false;
+}
+
+function disableChips() {
+  amountChipsButtons.forEach((chip) => {
+    chip.disabled = true;
+  });
+}
+
+function enableChips() {
+  amountChipsButtons.forEach((chip) => {
+    chip.disabled = false;
+  });
 }
 
 // ------------------ CHIP BUTTON LOGIC (STUCK SELECT) ------------------
@@ -63,7 +77,7 @@ amountChipsButtons.forEach((chip) => {
         }
 
         if (data.remainingBalance !== undefined) {
-        updateWallet(data.remainingBalance);
+          updateWallet(data.remainingBalance);
           enablePick();
         } else {
           showMessage("Unexpected response from server", "bg-red-600");
@@ -82,6 +96,7 @@ amountChipsButtons.forEach((chip) => {
 [btnHead, btnTail].forEach((button) => {
   button.addEventListener("click", () => {
     disablePick();
+    disableChips();
     const userChoice = parseInt(button.getAttribute("degree"), 10);
     if (isNaN(userChoice)) {
       showMessage("Invalid choice", "bg-red-600");
@@ -101,7 +116,7 @@ amountChipsButtons.forEach((chip) => {
           return;
         }
 
-       // button.disabled = true;
+        // button.disabled = true;
 
         // ------------------ COIN SPIN ------------------
         let spinInterval = setInterval(() => {
@@ -137,13 +152,16 @@ amountChipsButtons.forEach((chip) => {
                 // WIN
                 if (data.totalProfit !== undefined) {
                   updateWallet(data.remainingBalance);
-                  showMessage(`You Won! 🎉 +${data.totalProfit}`, "bg-green-600");
+                  showMessage(
+                    `You Won! 🎉 +${data.totalProfit}`,
+                    "bg-green-600"
+                  );
                   return resetUI();
                 }
 
                 // LOSS
                 if (data.totalLoss !== undefined) {
-                 updateWallet(data.remainingBalance);
+                  updateWallet(data.remainingBalance);
                   showMessage(`You Lost! ❌ -${data.totalLoss}`, "bg-red-600");
                   return resetUI();
                 }
@@ -158,10 +176,6 @@ amountChipsButtons.forEach((chip) => {
 
 // ------------------ RESET UI ------------------
 function resetUI() {
-
-  // 1️⃣ Disable Pick Buttons
-  disablePick();
-
   // 2️⃣ Remove Selected Chip Highlight
   if (selectedChip) {
     selectedChip.classList.remove("selected");
@@ -169,11 +183,11 @@ function resetUI() {
   }
 
   // 3️⃣ Reset Result Text
-  const resultText = document.getElementById("resultText");
-  if (resultText) {
-    resultText.textContent = "Flip";
-    resultText.className = "mt-4 text-xl font-semibold text-black h-6 text-center";
-  }
+  // const resultText = document.getElementById("resultText");
+  // if (resultText) {
+  //   resultText.textContent = "Flip";
+  //   resultText.className = "mt-4 text-xl font-semibold text-black h-6 text-center";
+  // }
 
   // 4️⃣ Reset Coin Rotation Smoothly
   rotation = 0;
@@ -185,14 +199,10 @@ function resetUI() {
   //fetch(`${BASE_URL}/coinreset`, { method: "POST" }).catch(() => {});
 
   // 6️⃣ Enable Chips Again (you want user to choose new bet again)
-  amountChipsButtons.forEach(chip => {
-    chip.disabled = false;
-  });
-
+  enableChips();
   // 7️⃣ Disable Head/Tail (they only enable after bet)
-  btnHead.disabled = true;
-  btnTail.disabled = true;
-};
+  disablePick();
+}
 
 function showMessage(text, bgColor = "bg-black") {
   let container = document.getElementById("messageContainer");
@@ -226,6 +236,5 @@ function showMessage(text, bgColor = "bg-black") {
         container.parentNode.removeChild(container);
       }
     }, 300);
-
   }, 3500);
 };

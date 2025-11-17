@@ -112,7 +112,8 @@ exports.postDashboard = async (req, res) => {
         return res.status(400).json({ error: "Invalid user choice" });
       }
 
-      const pickText = choice === 0 ? "HEAD" : "TAIL";
+      const pickText = choice === 0 ? "TAIL" : "HEAD";
+
 
       // Old manipulation system — NO random for first few plays
       const wallet = currentUser.wallet;
