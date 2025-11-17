@@ -1,6 +1,5 @@
 const User = require("../model/user");
-const BetHistory = require("../model/coinGame");  // <-- add this
-
+const BetHistory = require("../model/coinGame");
 
 exports.getDashboardPage = async (req, res) => {
   try {
@@ -39,7 +38,9 @@ exports.postDashboard = async (req, res) => {
     const { fixBetAmount, userChoice, timeOut, cashOut } = req.body;
 
     const validKeys = ["fixBetAmount", "userChoice", "timeOut", "cashOut"];
-    const receivedKeys = Object.keys(req.body).filter(k => validKeys.includes(k));
+    const receivedKeys = Object.keys(req.body).filter((k) =>
+      validKeys.includes(k)
+    );
 
     if (receivedKeys.length !== 1) {
       return res.status(400).json({ error: "Invalid request format" });
@@ -49,24 +50,29 @@ exports.postDashboard = async (req, res) => {
     if (fixBetAmount !== undefined) {
       const amount = Number(fixBetAmount);
       if (!amount || amount <= 0 || Number.isNaN(amount)) {
-        return res.status(400).json({ error: "Bet amount must be a valid number greater than zero" });
+        return res.status(400).json({
+          error: "Bet amount must be a valid number greater than zero",
+        });
       }
 
       if (amount > currentUser.wallet) {
         return res.status(400).json({ error: "Insufficient funds" });
       }
 
+      // reset playCount if wallet empty (legacy)
       if (currentUser.wallet <= 0) {
         currentUser.playCount = 0;
         await currentUser.save();
       }
 
+      // Save bet in session and reset running profit for new bet sequence
       req.session.lastBetAmount = amount;
       req.session.totalProfit = 0;
       await new Promise((r) => req.session.save(r));
 
-      currentUser.wallet -= amount;
-      await currentUser.save();
+      // Deduct bet from wallet immediately
+      // currentUser.wallet -= amount;
+      // await currentUser.save();
 
       return res.status(200).json({
         message: "Bet Accepted",
@@ -83,6 +89,8 @@ exports.postDashboard = async (req, res) => {
 
       currentUser.playCount = (currentUser.playCount || 0) + 1;
       currentUser.currentUserChoiceBandS = choiceNum;
+      //Deduct bet from wallet immediately
+      currentUser.wallet -= Number(req.session.lastBetAmount || 0);
       await currentUser.save();
 
       return res.status(200).json({ message: "Choice saved" });
@@ -90,13 +98,14 @@ exports.postDashboard = async (req, res) => {
 
     // ---------------------- TIMEOUT = FINAL RESULT ----------------------
     if (timeOut !== undefined) {
-      const bet = req.session.lastBetAmount;
+      const bet = Number(req.session.lastBetAmount || 0);
       if (!bet || bet <= 0) {
         return res.status(400).json({ error: "No active bet found" });
       }
 
-      const choice = currentUser.currentUserChoiceBandS;
+      const choice = Number(currentUser.currentUserChoiceBandS);
       if (![0, 180].includes(choice)) {
+        // reset session state when user choice invalid
         req.session.lastBetAmount = 0;
         req.session.totalProfit = 0;
         await new Promise((r) => req.session.save(r));
@@ -105,7 +114,7 @@ exports.postDashboard = async (req, res) => {
 
       const pickText = choice === 0 ? "HEAD" : "TAIL";
 
-      // Old manipulation system — NO random!
+      // Old manipulation system — NO random for first few plays
       const wallet = currentUser.wallet;
       let isWin = false;
 
@@ -114,15 +123,35 @@ exports.postDashboard = async (req, res) => {
       else isWin = Math.random() < 0.5;
 
       if (isWin) {
-        req.session.totalProfit = (req.session.totalProfit || 0) + bet;
+        const profit = bet; // 👈 User ko dikhana wala profit
+        const walletAdd = bet * 2; // 👈 Wallet me add hone wala amount (casino rule)
+
+        // SAVE HISTORY
+        await BetHistory.create({
+          userId: currentUser._id,
+          gameName: "COIN GAME",
+          userPick: pickText,
+          amount: bet,
+          result: "WIN",
+          profit: profit, // 👈 History me profit 100 hi jayega
+        });
+
+        // UPDATE WALLET
+        currentUser.wallet += walletAdd;
+        await currentUser.save();
+
+        // RESET SESSION
+        req.session.lastBetAmount = 0;
+        req.session.totalProfit = 0;
         await new Promise((r) => req.session.save(r));
 
         return res.status(200).json({
           rotation: choice,
-          totalProfit: req.session.totalProfit,
+          totalProfit: profit, // 👈 Frontend ko sirf 100 milega
+          remainingBalance: currentUser.wallet,
         });
       } else {
-        // -------- SAVE LOSS HISTORY --------
+        // LOSS: save loss history
         await BetHistory.create({
           userId: currentUser._id,
           gameName: "COIN GAME",
@@ -132,258 +161,48 @@ exports.postDashboard = async (req, res) => {
           profit: -bet,
         });
 
+        // reset session
         req.session.lastBetAmount = 0;
         req.session.totalProfit = 0;
         await new Promise((r) => req.session.save(r));
 
         const opposite = choice === 0 ? 180 : 0;
-        return res.status(200).json({ rotation: opposite });
+        return res.status(200).json({
+          rotation: opposite,
+          totalLoss: bet,
+          remainingBalance: currentUser.wallet, // wallet unchanged on loss (already deducted at bet)
+        });
       }
     }
 
-    // ---------------------- CASHOUT (FINAL WIN) ----------------------
-    if (cashOut !== undefined) {
-      const total = req.session.totalProfit || 0;
-      if (total <= 0) {
-        return res.status(400).json({ error: "Nothing to cash out" });
-      }
-
-      // SAVE WIN HISTORY
-      await BetHistory.create({
-        userId: currentUser._id,
-        gameName: "COIN GAME",
-        userPick: currentUser.currentUserChoiceBandS === 0 ? "HEAD" : "TAIL",
-        amount: total,
-        result: "WIN",
-        profit: total,
-      });
-
-      currentUser.wallet += total;
-      await currentUser.save();
-
-      req.session.totalProfit = 0;
-      req.session.lastBetAmount = 0;
-      await new Promise((r) => req.session.save(r));
-
-      return res.status(200).json({ addTotalProfit: currentUser.wallet });
-    }
-
-    return res.status(400).json({ error: "Invalid request" });
-
+    // Fallback (shouldn't hit)
+    return res.status(400).json({ error: "No recognized action in request" });
   } catch (err) {
     console.error("Coin Error:", err);
     return res.status(500).json({ error: "Server Error" });
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// exports.getDashboardPage = async (req, res, next) => {
+// Optional: route handler to explicitly reset session (used by frontend resetUI)
+// exports.resetCoinGame = async (req, res) => {
 //   try {
-//     // 1️⃣ Check login session
-//     if (!req.isLoggedIn || !req.session.user) {
-//       return res.redirect("/login");
-//     }
-//     // 2️⃣ Fetch fresh user data from DB (in case of updates)
-//     const user = await User.findById(req.session.user._id);
-//     if (!user) {
-//       req.session.destroy(() => {
-//         res.redirect("/login");
-//       });
-//       return;
-//     }
-//     // 3️⃣ Render dashboard EJS with user data
-//     res.render("headtail", {
-//       username: user.username,
-//       referCode: user.referCode,
-//       wallet: user.wallet || 0,
-//       user: user,
-//       isLoggedIn: req.session.isLoggedIn,
-//     });
-//   } catch (err) {
-//     console.error("❌ Dashboard Error:", err);
-//     res.status(500).send("Server Error");
-//   } 
-// };
-
-
-
-
-
-// exports.postDashboard = async (req, res, next) => {
-//   if (!req.session.user || !req.isLoggedIn) {
-//     return res.redirect("/");
-//   }
-
-//   const currentUser = await User.findById(req.session.user._id);
-//   if (!currentUser) return res.redirect("/");
-
-//   // backend
-//   const { fixBetAmount, userChoice, timeOut, cashOut } = req.body;
-//   console.log("fixAmount", fixBetAmount);
-//   console.log("userChoice", userChoice)
-//   const isValidFixBet =
-//     fixBetAmount !== undefined &&
-//     userChoice === undefined &&
-//     timeOut === undefined &&
-//     cashOut === undefined;
-//   const isValidUserChoice =
-//     userChoice !== undefined &&
-//     fixBetAmount === undefined &&
-//     timeOut === undefined &&
-//     cashOut === undefined;
-//   const isValidTimeOut =
-//     timeOut !== undefined &&
-//     userChoice === undefined &&
-//     fixBetAmount === undefined &&
-//     cashOut === undefined;
-//   const isValidCashOut =
-//     cashOut !== undefined &&
-//     fixBetAmount === undefined &&
-//     userChoice === undefined &&
-//     timeOut === undefined;
-
-//   if (
-//     !(isValidFixBet || isValidUserChoice || isValidTimeOut || isValidCashOut)
-//   ) {
-//     return res.status(200).json({}); // invalid or mixed data, ignore it
-//   }
-
-//   let amount;
-
-//   // 💰 Subtract deposit only if a valid fixBetAmount is sent
-//   if (fixBetAmount !== undefined && fixBetAmount !== null) {
-//     amount = parseFloat(fixBetAmount);
-//     req.session.lastBetAmount = amount;
-//     req.session.totalProfit = 0;
-//     req.session.save()
-
-//     if (isNaN(amount)) {
-//       return res
-//         .status(400)
-//         .json({ error: "Bet amount must be a valid number" });
-//     }
-
-//     if (amount <= 0) {
-//       return res
-//         .status(400)
-//         .json({ error: "Bet amount must be greater than zero" });
-//     }
-
-//     if (amount > currentUser.wallet) {
-//       return res.status(400).json({ error: "Insufficient funds" });
-//     }
-
-//     // Optional: reset playCount if user loses all deposit
-//     if (currentUser.wallet <= 0) {
-//       currentUser.playCount = 0;
-//       await currentUser.save();
-//     }
-
-//     currentUser.wallet -= amount;
-//     await currentUser.save();
-//   }
-
-//   // Fetch admin data
-//   // const adminData = await Admin.findOne({ email: "admin832@gmail.com" });
-//   // if (!adminData) {
-//   //   return res.status(404).json({ error: "Admin data not found" });
-//   // }
-
-//   if (userChoice !== undefined && userChoice !== null) {
-//     // ⏱️ Only increment play count if userChoice sent
-//     currentUser.playCount = (currentUser.playCount || 0) + 1;
-//     currentUser.currentUserChoiceBandS = userChoice;
-//     await currentUser.save();
-//   }
-
-//   // 🎲 Only run win/lose logic if timeOut is passed (second fetch)
-//   if (timeOut !== undefined && timeOut !== null) {
-//     // ⛔ Protect: if amount wasn't defined in the first step
-//     if (
-//       typeof req.session.lastBetAmount !== "number" ||
-//       req.session.lastBetAmount <= 0
-//     ) {
-//       return res.status(400).json({ error: "Invalid or missing bet amount" });
-//     }
-
-//     // 💡 Define win logic
-//     let winChance;
-//     if (currentUser.playCount <= 3) {
-//       winChance = 1; // easy win at start
-//     } else if (currentUser.wallet <= 20) {
-//       winChance = 0.1; // hard win if low balance
-//     } else {
-//       winChance = 0.5;//parseFloat(adminData.winChance);
-//     }
-
-//     const shouldWin = Math.random() < winChance;
- 
-//     // 🪙 Rotation logic
-//     let rotation;
-//     if (shouldWin) {
-//       req.session.totalProfit =(req.session.totalProfit || 0) + req.session.lastBetAmount;
-//       req.session.save()
-//       rotation = currentUser.currentUserChoiceBandS === 0 ? 0 : currentUser.currentUserChoiceBandS === 180  ? 180 : null;
-
-//       if (rotation === null) {
-//         req.session.totalProfit = 0;
-//         req.session.lastBetAmount = 0;
-//         req.session.save()
-//         return res.status(404).json({ error: "Invalid userChoice" });
-//       }
-
-//       return res.status(200).json({
-//         rotation,
-//         totalProfit: req.session.totalProfit,
-//       });
-//     } else {
-//       rotation = currentUser.currentUserChoiceBandS === 0 ? 180 : currentUser.currentUserChoiceBandS === 180 ? 0 : null;
-
-//       if (rotation === null) {
-//         req.session.totalProfit = 0;
-//         req.session.lastBetAmount = 0;
-//         req.session.save()
-//         return res.status(404).json({ error: "Invalid userChoice" });
-//       }
-//       req.session.lastBetAmount = 0;
-//       req.session.totalProfit = 0;
-//       req.session.save()
-//       return res.status(200).json({ rotation });
-//     }
-//   }
-
-//   if (cashOut !== undefined && cashOut !== null) {
-//     req.session.totalProfit += req.session.lastBetAmount;
-//     req.session.save()
-//     currentUser.wallet += req.session.totalProfit;
-//     await currentUser.save();
-//     req.session.totalProfit = 0;
+//     if (!req.session) return res.status(200).json({ ok: true });
 //     req.session.lastBetAmount = 0;
-//     req.session.save()
-//     return res.status(200).json({ addTotalProfit: currentUser.wallet });
+//     req.session.totalProfit = 0;
+//     await new Promise((r) => req.session.save(r));
+//     return res.status(200).json({ ok: true });
+//   } catch (err) {
+//     console.error("Reset Error:", err);
+//     return res.status(500).json({ error: "Server Error" });
 //   }
-
-//   // ✅ Fallback if only placing the bet (first fetch)
-//   return res.status(200).json({
-//     message: "Balance updated successfully",
-//     remainingBalance: currentUser.wallet,
-//   });
 // };
 
+// exports.postResultPage = async (req, res) => {
+// if(!req.session.user || !req.isLoggedIn) {
+//     return res.status(401).json({ error: "Unauthorized" });
+//   }
 
-
+//  req.session.lastBetAmount = 0;
+//   req.session.totalProfit = 0;
+//   req.session.save(() => res.json({ ok: true }));
+// }

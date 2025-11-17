@@ -1,114 +1,84 @@
-// public/js/coin.js
 const BASE_URL = window.location.origin;
-const coin = document.getElementById("coin");
-const betAmount = document.getElementById("betinput");
-const betForm = document.getElementById("form");
+const amountChipsButtons = document.querySelectorAll(".chip-button");
 const btnTail = document.getElementById("Tails");
 const btnHead = document.getElementById("Heads");
-const resultText = document.getElementById("resultText");
 const userTotalBalance = document.getElementById("user-wallet");
-const placeBetBtn = document.getElementById("placeBetBtn");
-const cashBtn = document.getElementById("cashbtn");
-let currentProfit = document.getElementById("currentprofit");
+const coin = document.getElementById("coin");
+let selectedChip = null; // chip animation
 let rotation = 0;
-let PORT = 3000;
 
-disablePick(); // initially disable head/tails
+// ------------------ UPDATE WALLET DISPLAY ------------------
+function updateWallet(amount) {
+  document.getElementById("user-wallet").textContent = `₹ ${parseFloat(amount).toFixed(2)}`;
+}
 
+// ------------------ PICK DISABLE / ENABLE ------------------
 function disablePick() {
   btnHead.disabled = true;
   btnTail.disabled = true;
 }
+disablePick();
 
 function enablePick() {
   btnHead.disabled = false;
   btnTail.disabled = false;
 }
 
-function resetUI() {
-  rotation = 0;
-  betAmount.value = "";
-  placeBetBtn.disabled = false;
-  cashBtn.disabled = true;
-  cashBtn.textContent = "Cash Out";
-  currentProfit.textContent = `Total Profit: ₹0`;
-  resultText.textContent = "Flip";
-  disablePick();
-}
+// ------------------ CHIP BUTTON LOGIC (STUCK SELECT) ------------------
+amountChipsButtons.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const amountValue = parseInt(chip.getAttribute("data-value"));
 
-function showMessage(text, bgColor = "bg-black") {
-  let container = document.getElementById("messageContainer");
-  if (!container) {
-    container = document.createElement("div");
-    container.id = "messageContainer";
-    container.className = `fixed top-4 left-1/2 transform -translate-x-1/2 z-50
-        px-6 py-3 rounded-xl text-white text-base font-semibold shadow-lg
-        ${bgColor} transition-all duration-300`;
-    container.textContent = text;
-    document.body.appendChild(container);
-  } else {
-    container.textContent = text;
-  }
+    // remove old selection
+    if (selectedChip) selectedChip.classList.remove("selected");
 
-  setTimeout(() => {
-    if (container && container.parentNode) container.parentNode.removeChild(container);
-  }, 1500);
-}
+    // add new selection
+    chip.classList.add("selected");
+    selectedChip = chip;
 
-// ------------- Place Bet (form submit) -------------
-betForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+    console.log(`Bet Chip selected: ${amountValue}`);
 
-  const userTotalMoney = parseFloat(userTotalBalance.textContent);
-  const fixBetAmount = parseFloat(betAmount.value);
+    // validate
+    if (
+      isNaN(amountValue) ||
+      amountValue <= 0 ||
+      amountValue >
+        parseFloat(userTotalBalance.textContent.replace(/[^\d.-]/g, ""))
+    ) {
+      showMessage("Enter valid amount", "bg-red-600");
+      return;
+    }
 
-  if (isNaN(fixBetAmount) || fixBetAmount <= 0) {
-    showMessage("Enter valid amount", "bg-red-600");
-    return;
-  }
-
-  if (fixBetAmount > userTotalMoney) {
-    showMessage("You don't have enough money.", "bg-red-600");
-    return;
-  }
-
-  // Send only fixBetAmount
-  fetch(`${BASE_URL}/coin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fixBetAmount }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.error) {
-        showMessage(data.error, "bg-red-600");
-        return resetUI();
-      }
-
-      if (data.remainingBalance !== undefined) {
-        userTotalBalance.textContent = parseFloat(data.remainingBalance).toFixed(2);
-
-        // ⭐⭐⭐ Bet Lagte Hi Message ⭐⭐⭐
-        showMessage("Bet Placed Successfully!", "bg-green-600");
-
-        // Lock place bet, enable pick and cash out
-        placeBetBtn.disabled = true;
-        enablePick();
-        cashBtn.disabled = false;
-        resultText.textContent = "Pick a side";
-      } else {
-        showMessage("Unexpected response from server", "bg-red-600");
-        resetUI();
-      }
+    // send amount to backend
+    fetch(`${BASE_URL}/coin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fixBetAmount: amountValue }),
     })
-    .catch((err) => {
-      console.error("Place Bet error:", err);
-      showMessage("Server error", "bg-red-600");
-      resetUI();
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          showMessage(data.error, "bg-red-600");
+          return resetUI();
+        }
+
+        if (data.remainingBalance !== undefined) {
+        updateWallet(data.remainingBalance);
+          enablePick();
+        } else {
+          showMessage("Unexpected response from server", "bg-red-600");
+          resetUI();
+        }
+      })
+      .catch((err) => {
+        console.error("Place Bet error:", err);
+        showMessage("Server error", "bg-red-600");
+        resetUI();
+      });
+  });
 });
 
-// ------------- Pick Head/Tails -------------
+// ------------------ USER HEAD / TAIL PICK ------------------
 [btnHead, btnTail].forEach((button) => {
   button.addEventListener("click", () => {
     const userChoice = parseInt(button.getAttribute("degree"), 10);
@@ -116,8 +86,7 @@ betForm.addEventListener("submit", (e) => {
       showMessage("Invalid choice", "bg-red-600");
       return;
     }
-    resultText.textContent = "Flipping...";
-    
+
     fetch(`${BASE_URL}/coin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -132,13 +101,17 @@ betForm.addEventListener("submit", (e) => {
         }
 
         button.disabled = true;
+
+        // ------------------ COIN SPIN ------------------
         let spinInterval = setInterval(() => {
           rotation += 360;
           coin.style.transform = `rotateY(${rotation}deg)`;
-        }, 200);
+        }, 300);
 
+        // ------------------ FINAL RESULT AFTER SPIN ------------------
         setTimeout(() => {
           clearInterval(spinInterval);
+
           fetch(`${BASE_URL}/coin`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -147,74 +120,111 @@ betForm.addEventListener("submit", (e) => {
             .then((res) => res.json())
             .then((data) => {
               if (data.error) {
-                showMessage(data.error, "bg-red-600");
-                resetUI();
+                setTimeout(() => {
+                  showMessage(data.error, "bg-red-600");
+                  resetUI();
+                }, 600);
                 return;
               }
 
-              if (data.rotation !== undefined) {
-                rotation = data.rotation;
-                coin.style.transform = `rotateY(${rotation}deg)`;
-                resultText.textContent = "Flip";
+              // Set final rotation on coin
+              rotation = data.rotation || 0;
+              coin.style.transform = `rotateY(${rotation}deg)`;
 
+              // ------------------ WAIT FOR COIN TO STOP ------------------
+              setTimeout(() => {
+                // WIN
                 if (data.totalProfit !== undefined) {
-                  currentProfit.textContent = `Total Profit: ₹${data.totalProfit}`;
-                  cashBtn.disabled = false;
-                } else {
-                  setTimeout(() => {
-                    resetUI();
-                  }, 900);
+                  updateWallet(data.remainingBalance);
+                  showMessage(`You Won! 🎉 +${data.totalProfit}`, "bg-green-600");
+                  return resetUI();
                 }
-              } else {
-                showMessage("No rotation received", "bg-red-600");
-                resetUI();
-              }
 
-              if (placeBetBtn.disabled) {
-                btnHead.disabled = false;
-                btnTail.disabled = false;
-              } else {
-                disablePick();
-              }
-            })
-            .catch((err) => {
-              console.error("Timeout fetch error:", err);
-              showMessage("Server error", "bg-red-600");
-              resetUI();
+                // LOSS
+                if (data.totalLoss !== undefined) {
+                 updateWallet(data.remainingBalance);
+                  showMessage(`You Lost! ❌ -${data.totalLoss}`, "bg-red-600");
+                  return resetUI();
+                }
+
+                resetUI();
+              }, 800); // <-- coin stop delay
             });
-        }, 2000);
-      })
-      .catch((err) => {
-        console.error("UserChoice request failed:", err);
-        showMessage("Server error", "bg-red-600");
-        resetUI();
+        }, 3000); // <-- spin duration
       });
   });
 });
 
-// ------------- Cash Out -------------
-cashBtn.addEventListener("click", () => {
-  if (cashBtn.disabled) return;
+// ------------------ RESET UI ------------------
+function resetUI() {
 
-  fetch(`${BASE_URL}/coin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cashOut: true }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.addTotalProfit !== undefined) {
-        showMessage("Cash Out successful!", "bg-green-600");
-        userTotalBalance.textContent = parseFloat(data.addTotalProfit).toFixed(2);
-        resetUI();
-      } else if (data.error) {
-        showMessage(data.error, "bg-red-600");
-      } else {
-        showMessage("Cash Out failed", "bg-red-600");
+  // 1️⃣ Disable Pick Buttons
+  disablePick();
+
+  // 2️⃣ Remove Selected Chip Highlight
+  if (selectedChip) {
+    selectedChip.classList.remove("selected");
+    selectedChip = null;
+  }
+
+  // 3️⃣ Reset Result Text
+  const resultText = document.getElementById("resultText");
+  if (resultText) {
+    resultText.textContent = "Flip";
+    resultText.className = "mt-4 text-xl font-semibold text-black h-6 text-center";
+  }
+
+  // 4️⃣ Reset Coin Rotation Smoothly
+  rotation = 0;
+  coin.style.transition = "transform 0.5s ease-out";
+  coin.style.transform = "rotateY(0deg)";
+  setTimeout(() => (coin.style.transition = ""), 600);
+
+  // 5️⃣ Clear last server bet (optional safer)
+  //fetch(`${BASE_URL}/coinreset`, { method: "POST" }).catch(() => {});
+
+  // 6️⃣ Enable Chips Again (you want user to choose new bet again)
+  amountChipsButtons.forEach(chip => {
+    chip.disabled = false;
+  });
+
+  // 7️⃣ Disable Head/Tail (they only enable after bet)
+  btnHead.disabled = true;
+  btnTail.disabled = true;
+};
+
+function showMessage(text, bgColor = "bg-black") {
+  let container = document.getElementById("messageContainer");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "messageContainer";
+
+    container.className = `
+      fixed top-1/2 left-1/2 
+      transform -translate-x-1/2 -translate-y-1/2
+      z-50 px-6 py-4 rounded-2xl text-white 
+      text-lg font-semibold shadow-xl
+      ${bgColor} transition-all duration-300
+      animate-fadeIn opacity-100
+    `;
+
+    container.textContent = text;
+    document.body.appendChild(container);
+  } else {
+    if (container.textContent === text) return;
+    container.textContent = text;
+    container.classList.remove("opacity-0");
+  }
+
+  setTimeout(() => {
+    container.classList.add("opacity-0");
+
+    setTimeout(() => {
+      if (container?.parentNode) {
+        container.parentNode.removeChild(container);
       }
-    })
-    .catch((err) => {
-      console.error("Cashout error:", err);
-      showMessage("Cashout error", "bg-red-600");
-    });
-});
+    }, 300);
+
+  }, 3500);
+};
