@@ -144,7 +144,8 @@ amountChipsButtons.forEach((chip) => {
               }
 
               // Set final rotation on coin
-              rotation = data.rotation || 0;
+
+              rotation = data.rotation;
               coin.style.transform = `rotateY(${rotation}deg)`;
 
               // ------------------ WAIT FOR COIN TO STOP ------------------
@@ -156,17 +157,27 @@ amountChipsButtons.forEach((chip) => {
                     `You Won! 🎉 +${data.totalProfit}`,
                     "bg-green-600"
                   );
-                  return resetUI();
+
+                  setTimeout(() => {
+                    showMessage("Game Resetting...", "bg-black");
+                   return resetUI();
+                  }, 1500);
+                  
                 }
 
                 // LOSS
                 if (data.totalLoss !== undefined) {
-                  updateWallet(data.remainingBalance);
                   showMessage(`You Lost! ❌ -${data.totalLoss}`, "bg-red-600");
-                  return resetUI();
+                  updateWallet(data.remainingBalance);
+                  
+                 setTimeout(() => {
+                    showMessage("Game Resetting...", "bg-black");
+                   return resetUI();
+                  }, 1500);
+
                 }
 
-                resetUI();
+      
               }, 800); // <-- coin stop delay
             });
         }, 3000); // <-- spin duration
@@ -181,13 +192,6 @@ function resetUI() {
     selectedChip.classList.remove("selected");
     selectedChip = null;
   }
-
-  // 3️⃣ Reset Result Text
-  // const resultText = document.getElementById("resultText");
-  // if (resultText) {
-  //   resultText.textContent = "Flip";
-  //   resultText.className = "mt-4 text-xl font-semibold text-black h-6 text-center";
-  // }
 
   // 4️⃣ Reset Coin Rotation Smoothly
   rotation = 0;
