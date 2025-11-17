@@ -1,3 +1,7 @@
+footer {
+  height: 60px;
+}
+
 .navbar {
   display: flex;
   justify-content: space-around;
@@ -9,17 +13,17 @@
 .nav-item {
   text-align: center;
   color: white;
-  padding: 8px 20px;
   text-decoration: none;
-  transition: 0.3s ease;
-  font-size: 14px;
+  padding: 8px 20px;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
 .nav-item i {
   display: block;
   font-size: 22px;
   margin-bottom: 3px;
-  transition: 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .nav-item:hover i {
@@ -27,11 +31,14 @@
 }
 
 .nav-item.active {
-  background: white;
-  color: red;
-  border-radius: 0 0 20px 20px;
+  background: #fff;
+  color: rgb(255, 0, 0);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  animation: pop 0.4s ease;
 }
 
-footer {
-  height: 60px;
+@keyframes pop {
+  0% { transform: translateY(15px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
 }
