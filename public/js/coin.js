@@ -81,6 +81,7 @@ amountChipsButtons.forEach((chip) => {
 // ------------------ USER HEAD / TAIL PICK ------------------
 [btnHead, btnTail].forEach((button) => {
   button.addEventListener("click", () => {
+    disablePick();
     const userChoice = parseInt(button.getAttribute("degree"), 10);
     if (isNaN(userChoice)) {
       showMessage("Invalid choice", "bg-red-600");
@@ -100,7 +101,7 @@ amountChipsButtons.forEach((chip) => {
           return;
         }
 
-        button.disabled = true;
+       // button.disabled = true;
 
         // ------------------ COIN SPIN ------------------
         let spinInterval = setInterval(() => {
