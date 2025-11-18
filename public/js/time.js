@@ -107,6 +107,8 @@
 // });
 
 
+
+
 // ================== Matka Sessions ==================
 const matkaSessions = [
   { className: "NineToNineFifthy", start: "09:00", end: "09:50" },
@@ -153,46 +155,40 @@ function updateMatka() {
     cardEls.forEach(card => {
       // Enable / disable buttons
       card.querySelectorAll("button").forEach(btn => {
-        btn.disabled = !isActive;
-        btn.style.opacity = isActive ? "1" : "0.5";
-        btn.style.cursor = isActive ? "pointer" : "not-allowed";
+        btn.disabled = isActive; // Disable buttons while session is active
+        btn.style.opacity = isActive ? "0.5" : "1";
+        btn.style.cursor = isActive ? "not-allowed" : "pointer";
       });
 
       // Timer
       const timerEl = card.querySelector(".timer");
       if (!timerEl) return;
 
-      let diff;
-      if (now < startTime) {
-        // Upcoming session → countdown till start
-        diff = startTime - now;
-      } else if (isActive) {
-        // Active session → countdown till end
-        diff = endTime - now;
-      } else {
-        // Session over → hide timer
+      if (isActive) {
+        // Session active → hide timer
         timerEl.textContent = "";
         return;
       }
 
-      if (diff <= 0) {
-        timerEl.textContent = "";
-        return;
+      let diff;
+      if (now < startTime) {
+        // Before session → show time left till start
+        diff = startTime - now;
+      } else {
+        // After session → show time left till next session start
+        diff = startTime.getTime() + 24*60*60*1000 - now; // next day same session
       }
 
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-      // Show timer in HH:MM:SS (if you want only minutes left, can change to MM:SS)
-      timerEl.textContent = `${hours.toString().padStart(2, "0")}:${mins
-        .toString()
-        .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+      timerEl.textContent = `${hours.toString().padStart(2,"0")}:${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`;
     });
   });
 }
 
 // ========== Initial + Auto Update ==========
 updateMatka();
-setInterval(updateMatka, 1000); // every 1 second
+setInterval(updateMatka, 1000); // update every 1 second
 
