@@ -20,18 +20,22 @@ const userSchema = new mongoose.Schema({
 
   wallet: {
     type: Number,
-    default: 0, // har new user ka starting wallet 0
+    default: 0,
   },
 
   // 💰 BET HISTORY ARRAY
   bets: [
     {
-      number: { type: String, required: true }, // selected number
-      amount: { type: Number, required: true }, // bet amount
-      time: { type: String, required: true }, // Indian time string (like "27/10/2025, 10:22:15 pm")
-      createdAt: { type: Date, default: Date.now }, // store as actual Date too
-      matkaNo: { type: String, required: true }, // matka game name
-      gameName: { type: String, required: true }, // game name based on number
+      number: { type: String, required: true },
+      amount: { type: Number, required: true },
+
+      // DATE & TIME FIXED
+      time: { type: String, required: true }, // Example: "15:27:32"
+      date: { type: String, required: true }, // Example: "18,11,2025"
+
+      createdAt: { type: Date, default: Date.now },
+      matkaNo: { type: String, required: true },
+      gameName: { type: String, required: true },
     },
   ],
 
@@ -44,11 +48,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-// Export model
 module.exports = mongoose.model("User", userSchema);

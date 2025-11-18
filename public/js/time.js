@@ -106,10 +106,6 @@
 //   });
 // });
 
-
-
-
-// ================== Matka Sessions ==================
 // ================== Matka Sessions ==================
 const matkaSessions = [
   { className: "NineToNineFifthy", start: "09:00", end: "09:50" },
@@ -123,15 +119,17 @@ const matkaSessions = [
   { className: "FiveToFiveFifthy", start: "17:00", end: "17:50" },
   { className: "SixToSixFifthy", start: "18:00", end: "18:50" },
   { className: "SevenToSevenFifthy", start: "19:00", end: "19:50" },
-  { className: "EightToEightFifthy", start: "20:00", end: "20:50" }
+  { className: "EightToEightFifthy", start: "20:00", end: "20:50" },
 ];
 
+// ========== Get current IST time ==========
 function getCurrentIST() {
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   return new Date(utc + 5.5 * 60 * 60 * 1000);
 }
 
+// ========== Convert "HH:MM" to IST Date ==========
 function getISTDate(hourMin) {
   const [h, m] = hourMin.split(":").map(Number);
   const now = getCurrentIST();
@@ -140,59 +138,126 @@ function getISTDate(hourMin) {
   return date;
 }
 
+// ========== Update Cards & Timers ==========
+// function updateMatka() {
+//   const now = getCurrentIST();
+
+//   matkaSessions.forEach((session) => {
+//     const cardEls = document.querySelectorAll(`.${session.className}`);
+//     const startTime = getISTDate(session.start);
+//     const endTime = getISTDate(session.end);
+
+//     let isActive = now >= startTime && now <= endTime;
+
+//     cardEls.forEach((card) => {
+//       // Enable / disable buttons
+//       card.querySelectorAll("button").forEach((btn) => {
+//         // FIXED LOGIC
+//         btn.disabled = !isActive; // Active → enable
+//         btn.style.opacity = isActive ? "1" : "0.5"; // Active → full opacity
+//         btn.style.cursor = isActive ? "pointer" : "not-allowed";
+//       });
+
+//       // Timer
+//       const timerEl = card.querySelector(".timer");
+//       if (!timerEl) return;
+
+//       if (isActive) {
+//         // Session active → hide timer
+//         timerEl.textContent = "";
+//         return;
+//       }
+
+//       let diff;
+//       if (now < startTime) {
+//         // Before session → show time left till start
+//         diff = startTime - now;
+//       } else {
+//         // After session → show time left till next session start
+//         diff = startTime.getTime() + 24 * 60 * 60 * 1000 - now; // next day same session
+//       }
+
+//       const hours = Math.floor(diff / (1000 * 60 * 60));
+//       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+//       const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+//       timerEl.textContent = `${hours.toString().padStart(2, "0")}:${mins
+//         .toString()
+//         .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+//     });
+//   });
+// }
+
 function updateMatka() {
   const now = getCurrentIST();
 
-  // ⭐ Reset UI after last session ends (20:50 ke baad)
-  const lastSession = matkaSessions[matkaSessions.length - 1];
-  const lastEnd = getISTDate(lastSession.end);
+  let isLastSessionOver = false;
+
+  // Check last session (20:00–20:50)
+  const last = matkaSessions[matkaSessions.length - 1];
+  const lastStart = getISTDate(last.start);
+  const lastEnd = getISTDate(last.end);
 
   if (now > lastEnd) {
-    document.querySelectorAll(".matka-card").forEach(card => {
-      card.style.display = "block";
-      const timerEl = card.querySelector(".timer");
-      if (timerEl) timerEl.textContent = "00:00:00";
-    });
+    isLastSessionOver = true; // whole day sessions ended
   }
 
-  matkaSessions.forEach(session => {
-    const cards = document.querySelectorAll(`.${session.className}`);
+  matkaSessions.forEach((session) => {
+    const cardEls = document.querySelectorAll(`.${session.className}`);
     const startTime = getISTDate(session.start);
     const endTime = getISTDate(session.end);
 
-    cards.forEach(card => {
+    let isActive = now >= startTime && now <= endTime;
+    let isSessionOver = now > endTime;
 
-      // ⭐ Card hide when session over
-      if (now > endTime) {
-        card.style.display = "none";
+    cardEls.forEach((card) => {
+      // ---------- NEW LOGIC ----------
+      if (!isLastSessionOver) {
+        // Hide only the sessions that are over
+        card.style.display = isSessionOver ? "none" : "block";
       } else {
+        // When last session is over → show all cards again
         card.style.display = "block";
       }
+      // --------------------------------
 
+      // Enable / disable buttons
+      card.querySelectorAll("button").forEach((btn) => {
+        btn.disabled = !isActive;
+        btn.style.opacity = isActive ? "1" : "0.5";
+        btn.style.cursor = isActive ? "pointer" : "not-allowed";
+      });
+
+      // Timer
       const timerEl = card.querySelector(".timer");
       if (!timerEl) return;
 
-      // ⭐ If active session → No countdown
-      if (now >= startTime && now <= endTime) {
+      if (isActive) {
         timerEl.textContent = "";
         return;
       }
 
-      // ⭐ Countdown to next start
-      let diff = startTime - now;
-      if (diff < 0) diff += 24 * 60 * 60 * 1000;
+      let diff;
+      if (now < startTime) {
+        diff = startTime - now;
+      } else {
+        diff = startTime.getTime() + 24 * 60 * 60 * 1000 - now;
+      }
 
-      const hrs = Math.floor(diff / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
       timerEl.textContent =
-        `${hrs.toString().padStart(2, "0")}:` +
+        `${hours.toString().padStart(2, "0")}:` +
         `${mins.toString().padStart(2, "0")}:` +
         `${secs.toString().padStart(2, "0")}`;
     });
   });
 }
 
+
+
+// ========== Initial + Auto Update ==========
 updateMatka();
-setInterval(updateMatka, 1000);
+setInterval(updateMatka, 1000); // update every 1 second

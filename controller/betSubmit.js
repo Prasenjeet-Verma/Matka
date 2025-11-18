@@ -24,27 +24,35 @@ exports.placeBet = async (req, res, next) => {
       return res.json({ success: false, message: 'Insufficient wallet balance' });
     }
 
-    // Matka No
+    // Matka slot number
     const matkaNo = getMatkaNo(ts);
     if (!matkaNo) {
       return res.json({ success: false, message: 'Invalid time for any Matka slot' });
     }
 
-    // Game Name
+    // Game Name Detection
     const singleNumbers = ['0','1','2','3','4','5','6','7','8','9'];
     const gameName = singleNumbers.includes(number.toString()) ? "Single patti" : "Patti";
 
-    // Deduct Wallet
+    // Deduct wallet
     user.wallet -= amount;
 
-    // 🔥 Convert UTC → IST → "HH:mm:ss"
-    const indianTime = moment(ts).tz("Asia/Kolkata").format("HH:mm:ss");
+    // 🔥 Convert UTC → IST
+    const ist = moment(ts).tz("Asia/Kolkata");
+
+    // 🔥 Format Time (HH:mm:ss)
+   const betTime = ist.format("h:mm:ss A");
+
+    // 🔥 Format Date (DD,MM,YYYY)
+    const betDate = ist.format("DD,MM,YYYY");
 
     // Save bet
     user.bets.push({
       number,
       amount,
-      time: indianTime,  // <--- INDIA TIME FIXED
+      time: betTime,      // only time
+      date: betDate,      // only date
+      createdAt: new Date(),
       matkaNo,
       gameName,
     });
@@ -55,7 +63,8 @@ exports.placeBet = async (req, res, next) => {
       success: true,
       message: `Bet placed successfully for ${matkaNo}`,
       gameName,
-      time: indianTime  // return back clean time
+      time: betTime,
+      date: betDate
     });
 
   } catch (error) {
@@ -64,6 +73,8 @@ exports.placeBet = async (req, res, next) => {
   }
 };
 
+
+// ================== GET MATKA SLOT ==================
 function getMatkaNo(ts) {
   const date = moment(ts).tz('Asia/Kolkata');
   const hour = date.hour();
@@ -84,6 +95,7 @@ function getMatkaNo(ts) {
 
   return null;
 }
+
 
 //getMatkaNo(ts) run hota hai
 
