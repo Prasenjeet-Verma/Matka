@@ -208,6 +208,11 @@ function resetUI() {
   disablePick();
 };
 
+
+
+
+
+
 // ------------------ SHOW MESSAGE FUNCTION ------------------
 /**
  * Displays a stylish, animated notification message.
@@ -218,25 +223,24 @@ function resetUI() {
 function showMessage(text, bgColor = "bg-gray-800") {
   let container = document.getElementById("messageContainer");
 
-  // --- 1. Audio and Setup (Unchanged but cleaned) ---
-  const audio = new Audio("https://freesound.org/data/previews/331/331912_3248244-lq.mp3"); // Example beep
+  // --- 1. Audio and Setup ---
+  const audio = new Audio("https://freesound.org/data/previews/331/331912_3248244-lq.mp3");
   audio.volume = 0.3;
-  audio.play().catch(() => {}); // Catch error if autoplay blocked
+  audio.play().catch(() => {});
 
-  // Prevent new message if the same one is already displayed
   if (container && container.textContent === text) return;
 
   if (!container) {
-    // --- 2. Create and Style New Container (Enhanced Styling) ---
     container = document.createElement("div");
     container.id = "messageContainer";
 
     // Dynamic keyframe classes for animation
     const styleSheet = document.styleSheets[0] || document.head.appendChild(document.createElement('style')).sheet;
     
-    // Add slide-in keyframe
+    // --- KEYFRAME ADJUSTMENT for smoother start/end ---
     try {
       if (styleSheet.cssRules.length === 0 || !Array.from(styleSheet.cssRules).some(rule => rule.name === 'slideIn')) {
+        // Adjusting start translateY to -100% means it starts completely out of view above the top-[5%] line.
         styleSheet.insertRule(`
           @keyframes slideIn {
             from {
@@ -245,41 +249,28 @@ function showMessage(text, bgColor = "bg-gray-800") {
             }
             to {
               opacity: 1;
-              transform: translate(-50%, -50%) scale(1);
+              /* Final Position: translate(-50%, 0) means horizontally centered and sitting exactly on the top-[5%] line */
+              transform: translate(-50%, 0) scale(1); 
             }
           }
         `, styleSheet.cssRules.length);
       }
-    } catch(e) {/* Ignore keyframe insert error if forbidden */}
-
-
-    // Classes for central positioning, high z-index, padding, text, shadows, and the new animation
-    container.className = `
-      fixed top-50% left-1/2 
-      transform -translate-x-1/2
-      z-[1000] px-6 py-3 rounded-xl text-white 
-      text-base font-semibold shadow-2xl transition-all
-      duration-500 ease-in-out
-      backdrop-blur-sm bg-opacity-90 border-t-4 border-white/50
-      ${bgColor} 
-      animate-[slideIn_0.5s_forwards]
-    `;
-
-    // Add a slight 3D/Pop effect (using Tailwind's shadow and hover utilities for appearance)
-    container.style.boxShadow = `
-      0 10px 30px rgba(0, 0, 0, 0.5), 
-      0 0 15px rgba(255, 255, 255, 0.3) inset
-    `;
-    
-    // Add a subtle pulse/lift effect to show it's active
-    container.style.animationName = "slideIn, pulse";
-    container.style.animationDuration = "0.5s, 1.5s";
-    container.style.animationTimingFunction = "forwards, ease-in-out";
-    container.style.animationIterationCount = "1, infinite";
-    container.style.animationDirection = "normal, alternate";
-    
-    // Adding the 'pulse' keyframe if it doesn't exist
-    try {
+      
+      if (!Array.from(styleSheet.cssRules).some(rule => rule.name === 'slideOut')) {
+        styleSheet.insertRule(`
+          @keyframes slideOut {
+            from {
+              opacity: 1;
+              transform: translate(-50%, 0) scale(1);
+            }
+            to {
+              opacity: 0;
+              transform: translate(-50%, -100%) scale(0.9);
+            }
+          }
+        `, styleSheet.cssRules.length);
+      }
+      
       if (!Array.from(styleSheet.cssRules).some(rule => rule.name === 'pulse')) {
         styleSheet.insertRule(`
           @keyframes pulse {
@@ -295,61 +286,56 @@ function showMessage(text, bgColor = "bg-gray-800") {
     } catch(e) {/* Ignore keyframe insert error if forbidden */}
 
 
+    // --- 2. Enhanced Styling with Top Position Fix ---
+    container.className = `
+      fixed **top-[5%]** left-1/2 
+      transform -translate-x-1/2 
+      z-[1000] px-6 py-3 rounded-xl text-white 
+      text-base font-semibold shadow-2xl transition-all
+      duration-500 ease-in-out
+      backdrop-blur-sm bg-opacity-90 border-t-4 border-white/50
+      ${bgColor} 
+      animate-[slideIn_0.5s_forwards]
+    `;
+
+    // The transform in CSS is now just -translate-x-1/2. 
+    // The Y translation is handled by the slideIn keyframe (starting at -100% and ending at 0).
+
+    container.style.boxShadow = `
+      0 10px 30px rgba(0, 0, 0, 0.5), 
+      0 0 15px rgba(255, 255, 255, 0.3) inset
+    `;
+    
+    container.style.animationName = "slideIn, pulse";
+    container.style.animationDuration = "0.5s, 1.5s";
+    container.style.animationTimingFunction = "forwards, ease-in-out";
+    container.style.animationIterationCount = "1, infinite";
+    container.style.animationDirection = "normal, alternate";
+
     container.textContent = text;
     document.body.appendChild(container);
 
   } else {
     // --- 3. Update Existing Container ---
-    // If a container already exists, update its text and reset the animation
     container.textContent = text;
-    // Remove all animation/transition classes to ensure a fresh display
-    container.classList.remove('opacity-0', 'animate-slideOut'); 
-    container.style.animationName = "slideIn, pulse";
+    container.style.animationName = "slideIn, pulse"; // Reset animation
   }
 
-  // --- 4. Timeout and Removal (Enhanced Animation) ---
+  // --- 4. Timeout and Removal ---
   setTimeout(() => {
-    // Add a stylish slide-out animation class
     container.style.animationName = "slideOut";
     container.style.animationDuration = "0.5s";
     container.style.animationTimingFunction = "forwards";
     container.style.animationIterationCount = "1";
 
-    // Adding the 'slideOut' keyframe if it doesn't exist
-    try {
-      const styleSheet = document.styleSheets[0];
-      if (styleSheet && !Array.from(styleSheet.cssRules).some(rule => rule.name === 'slideOut')) {
-        styleSheet.insertRule(`
-          @keyframes slideOut {
-            from {
-              opacity: 1;
-              transform: translate(-50%, -50%) scale(1);
-            }
-            to {
-              opacity: 0;
-              transform: translate(-50%, -100%) scale(0.9);
-            }
-          }
-        `, styleSheet.cssRules.length);
-      }
-    } catch(e) {/* Ignore keyframe insert error if forbidden */}
-
-    // Remove element after the slide-out animation is complete
     setTimeout(() => {
       if (container?.parentNode) {
         container.parentNode.removeChild(container);
       }
-    }, 500); // Matches the slideOut animation duration
+    }, 500);
 
-  }, 3500); // Display time before starting the slide-out
+  }, 3500);
 }
-
-// Example of how to call it:
-// showMessage("Success! Your action was completed.", "bg-green-600"); 
-// showMessage("Warning: Data might be outdated.", "bg-yellow-600");
-// showMessage("Error: Please check your connection.", "bg-red-700");
-
-
 
 
 // function showMessage(text, bgColor = "bg-black") {
