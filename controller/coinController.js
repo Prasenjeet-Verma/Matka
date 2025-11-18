@@ -100,7 +100,7 @@ exports.postDashboard = async (req, res) => {
       const pickText = userPick === 0 ? "TAIL" : "HEAD";
 
       if (isWin) {
-        const profit = bet;
+        // const profit = bet;
         const walletAdd = bet * 0.9;
         const multiplieProfit = walletAdd;
         currentUser.wallet += walletAdd;
@@ -111,7 +111,7 @@ exports.postDashboard = async (req, res) => {
           userPick: pickText,
           amount: bet,
           result: "WIN",
-          profit: profit,
+          profit: multiplieProfit,
         });
 
         await currentUser.save();
