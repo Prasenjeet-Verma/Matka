@@ -110,6 +110,7 @@
 
 
 // ================== Matka Sessions ==================
+// ================== Matka Sessions ==================
 const matkaSessions = [
   { className: "NineToNineFifthy", start: "09:00", end: "09:50" },
   { className: "TenToTenFifthy", start: "10:00", end: "10:50" },
@@ -142,12 +143,11 @@ function getISTDate(hourMin) {
 function updateMatka() {
   const now = getCurrentIST();
 
-  // ⭐ 1. Check if ALL sessions are finished (AFTER last card ends)
+  // ⭐ Reset UI after last session ends (20:50 ke baad)
   const lastSession = matkaSessions[matkaSessions.length - 1];
   const lastEnd = getISTDate(lastSession.end);
 
   if (now > lastEnd) {
-    // ⭐ All sessions complete → show all cards again + reset countdown UI
     document.querySelectorAll(".matka-card").forEach(card => {
       card.style.display = "block";
       const timerEl = card.querySelector(".timer");
@@ -156,49 +156,38 @@ function updateMatka() {
   }
 
   matkaSessions.forEach(session => {
-    const cardEls = document.querySelectorAll(`.${session.className}`);
+    const cards = document.querySelectorAll(`.${session.className}`);
     const startTime = getISTDate(session.start);
     const endTime = getISTDate(session.end);
 
-    let isActive = now >= startTime && now <= endTime;
+    cards.forEach(card => {
 
-    cardEls.forEach(card => {
-
-      // ⭐ 2. SESSION END → Hide card
+      // ⭐ Card hide when session over
       if (now > endTime) {
         card.style.display = "none";
       } else {
         card.style.display = "block";
       }
 
-      // Buttons disable/enable
-      card.querySelectorAll("button").forEach(btn => {
-        btn.disabled = isActive;
-        btn.style.opacity = isActive ? "0.5" : "1";
-        btn.style.cursor = isActive ? "not-allowed" : "pointer";
-      });
-
       const timerEl = card.querySelector(".timer");
       if (!timerEl) return;
 
-      if (isActive) {
+      // ⭐ If active session → No countdown
+      if (now >= startTime && now <= endTime) {
         timerEl.textContent = "";
         return;
       }
 
-      let diff;
-      if (now < startTime) {
-        diff = startTime - now;
-      } else {
-        diff = startTime.getTime() + 24 * 60 * 60 * 1000 - now;
-      }
+      // ⭐ Countdown to next start
+      let diff = startTime - now;
+      if (diff < 0) diff += 24 * 60 * 60 * 1000;
 
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      const hrs = Math.floor(diff / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
 
       timerEl.textContent =
-        `${hours.toString().padStart(2, "0")}:` +
+        `${hrs.toString().padStart(2, "0")}:` +
         `${mins.toString().padStart(2, "0")}:` +
         `${secs.toString().padStart(2, "0")}`;
     });
