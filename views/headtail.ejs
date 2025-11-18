@@ -1,3 +1,7 @@
+
+
+
+This is main front code of Game
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,7 +21,8 @@
     <link rel="stylesheet" href="css/userbody.css">
     <link rel="stylesheet" href="css/slider.css">
     <link rel="stylesheet" href="css/coinGameFooter.css">
-<link rel="stylesheet" href="css/chipAndCoin.css">
+   <link rel="stylesheet" href="css/chipAndCoin.css">
+   <link rel="stylesheet" href="css/footer.css">
     <!-- TAILWIND -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -33,21 +38,22 @@
   }
 </style>
 
-<body class="bg-white text-black flex flex-col min-h-screen">
+<body class="bg-white text-black flex flex-col min-h-screen" style="background-color: black;">
 
 
     <!-- HEADER SECTION -->
 
-    <%- include('partials/header') %>
+    <!-- ==================================================Header======================================= -->
+<%- include('partials/header') %>
 
         <!-- ================= MAIN GAME SECTION ================= -->
 
 
         <!-- MAIN GAME UI -->
-        <div class="flex flex-col items-center justify-center flex-1 space-y-8">
+        <div class="flex flex-col items-center  flex-1 space-y-16" style="background-color: black; height: 100%; justify-content: space-between;">
 
             <!-- COIN -->
-            <div class="relative w-32 h-32" style="perspective: 1000px;">
+            <div class="relative w-32 h-32" style="perspective: 1000px;position: relative; top: 20%;">
                 <div id="coin" class="relative w-full h-full transition-transform duration-1000">
 
                     <div class="absolute inset-0 bg-blue-500 rounded-full shadow-lg border-4 border-blue-700">
@@ -64,48 +70,119 @@
                 </div>
             </div>
 
-            <!-- BET CHIPS -->
-            <div class="flex flex-col items-center space-y-4 w-full">
-                <p class="text-lg font-semibold text-green-600">Select Bet Amount</p>
 
-                <div class="flex flex-wrap gap-4 justify-center">
-                    <button class="chip-button chip-red text-[20px] sm:text-[22px] md:text-[24px]"
-                        data-value="100">₹100</button>
-                    <button class="chip-button chip-blue text-[20px] sm:text-[22px] md:text-[24px]"
-                        data-value="200">₹200</button>
-                    <button class="chip-button chip-green text-[20px] sm:text-[22px] md:text-[24px]"
-                        data-value="500">₹500</button>
-                    <button class="chip-button chip-black text-[20px] sm:text-[22px] md:text-[24px]"
-                        data-value="1000">₹1000</button>
-                </div>
-            </div>
+            <div style="height: 50%; width: 100%; background-color: rgba(255, 0, 0, 0.237); padding-bottom: 16rem;">
 
-            <p class="text-lg font-semibold text-indigo-400 mb-2">Pick Random Side</p>
+            
+                    <!-- Betting Options -->
 
-            <div class="flex flex-wrap gap-6 sm:gap-8 md:gap-10 justify-center">
+            <div class=" betting-options" style="position: relative; top: 15%;">
                 <button id="Heads" degree="180"
-                    class="px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 rounded-lg transition font-semibold shadow text-base sm:text-lg md:text-xl"
                     disabled>
-                    Head 🟠
+                    <img src="images/head-bet.jpg" alt=""><span class="payout"></span>
+                 
                 </button>
 
                 <button id="Tails" degree="0"
-                    class="px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold shadow text-base sm:text-lg md:text-xl"
                     disabled>
-                    Tails 🔵
+                    <img src="images/tails-bet.jpg" alt=""><span class="payout"></span>
                 </button>
             </div>
+
+
+                        <!-- BET CHIPS -->
+            <div class="flex flex-col items-center space-y-2 w-full" style="position: relative; top: 10%;">
+
+                <div style="display: flex; justify-content: space-evenly; align-items: center; gap: 10px;">
+
+                <div class="chip">
+                    <img src="svg/chips1.svg" alt="">
+                    <button class="chip-button chip chip-red" data-value="5">₹5</button> 
+                </div>
+
+                                <div class="chip">
+                    <img src="svg/chips1.svg" alt="">
+                    <button class="chip-button chip chip-blue" data-value="10">₹10</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1.svg" alt="">
+                    <button class="chip-button chip chip-green" data-value="20">₹20</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1.svg" alt="">
+                    <button class="chip-button chip chip-black" data-value="50">₹50</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1.svg" alt="">
+                    <button class="chip-button chip chip-black" data-value="100">₹100</button> 
+
+                    </div>
+                </div>
+            </div>
+
+
+
+             <!-- BET CHIPS -->
+            <div class="flex flex-col items-center space-y-4 w-full" style="position: relative; top: 15%;">
+
+                <div style="display: flex; justify-content: space-evenly; align-items: center; gap: 20px;">
+
+                <div class="chip">
+                    <img src="svg/chips1k.svg" alt="">
+                    <button class="chip-button chip chip-red" data-value="200">₹200</button> 
+                </div>
+
+                                <div class="chip">
+                    <img src="svg/chips1k.svg" alt="">
+                    <button class="chip-button chip chip-blue" data-value="500">₹500</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1k.svg" alt="">
+                    <button class="chip-button chip chip-green" data-value="1000">₹1k</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1k.svg" alt="">
+                    <button class="chip-button chip chip-black" data-value="2000">₹2k</button> 
+                </div>
+                                <div class="chip">
+                    <img src="svg/chips1k.svg" alt="">
+                    <button class="chip-button chip chip-black" data-value="5000">₹5k</button> 
+
+                    </div>
+                </div>
+            </div>
+            </div>
+
 
 
             <!-- <p id="resultText" class="mt-4 text-xl font-semibold text-black h-6 text-center">Flip</p> -->
 
 
             <!-- =================================== Footer Start ============================== -->
-            <%- include('partials/footer') %>
+           
 
 
 </body>
 <!-- JS FILE -->
 <script src="/js/coin.js"></script>
+
+<footer class="fixed bottom-0 left-0 w-full z-[2000] bg-red-600 shadow-lg">
+    <div class="navbar flex justify-around py-2">
+        <a href="/bets" class="nav-item">
+            <i class="fa fa-dice"></i>
+            Live Bets
+        </a>
+
+        <a href="/dashboard" class="nav-item active">
+            <i class="fa fa-home"></i>
+            Home
+        </a>
+
+        <a href="/account" class="nav-item">
+            <i class="fa fa-user"></i>
+            Account
+        </a>
+    </div>
+</footer>
 
 </html>

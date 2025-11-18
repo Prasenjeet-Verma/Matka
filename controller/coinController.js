@@ -101,7 +101,8 @@ exports.postDashboard = async (req, res) => {
 
       if (isWin) {
         const profit = bet;
-        const walletAdd = bet * 2;
+        const walletAdd = bet * 0.9;
+        const multiplieProfit = walletAdd;
         currentUser.wallet += walletAdd;
 
         await BetHistory.create({
@@ -120,13 +121,13 @@ exports.postDashboard = async (req, res) => {
 
         return res.status(200).json({
           rotation: resultSide,
-          totalProfit: profit,
+          totalProfit: multiplieProfit,
           remainingBalance: currentUser.wallet,
         });
       } else {
         // LOSS
-currentUser.wallet -= bet; // use bet
-await currentUser.save();
+        currentUser.wallet -= bet; // use bet
+        await currentUser.save();
 
         await BetHistory.create({
           userId: currentUser._id,
