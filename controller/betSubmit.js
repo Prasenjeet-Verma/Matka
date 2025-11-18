@@ -1,4 +1,5 @@
-const User = require('../model/user'); // adjust path if needed
+const User = require('../model/user');
+const moment = require('moment-timezone');
 
 exports.placeBet = async (req, res, next) => {
   try {
@@ -14,52 +15,57 @@ exports.placeBet = async (req, res, next) => {
     }
 
     const user = await User.findById(userId);
-    if (!user) {cec
+    if (!user) {
       return res.json({ success: false, message: 'User not found' });
     }
 
-    // Check wallet balance
+    // Wallet check
     if (user.wallet < amount) {
       return res.json({ success: false, message: 'Insufficient wallet balance' });
     }
 
-    // 🔹 Determine matkaNo from timestamp
+    // Matka No
     const matkaNo = getMatkaNo(ts);
     if (!matkaNo) {
       return res.json({ success: false, message: 'Invalid time for any Matka slot' });
     }
 
-    // 🔹 Determine gameName based on number
+    // Game Name
     const singleNumbers = ['0','1','2','3','4','5','6','7','8','9'];
     const gameName = singleNumbers.includes(number.toString()) ? "Single patti" : "Patti";
 
-    // Deduct wallet
+    // Deduct Wallet
     user.wallet -= amount;
 
-    // Push bet to history
+    // 🔥 Convert UTC → IST → "HH:mm:ss"
+    const indianTime = moment(ts).tz("Asia/Kolkata").format("HH:mm:ss");
+
+    // Save bet
     user.bets.push({
       number,
       amount,
-      time: ts,
+      time: indianTime,  // <--- INDIA TIME FIXED
       matkaNo,
-      gameName, // ✅ Save gameName based on number
+      gameName,
     });
 
     await user.save();
 
-    res.json({ success: true, message: `Bet placed successfully for ${matkaNo}`, gameName });
+    res.json({
+      success: true,
+      message: `Bet placed successfully for ${matkaNo}`,
+      gameName,
+      time: indianTime  // return back clean time
+    });
+
   } catch (error) {
     console.error('Error placing bet:', error);
     res.json({ success: false, message: 'Server error' });
   }
 };
 
-
-// 🔹 Function to determine matkaNo from time
-const moment = require('moment-timezone');
-
 function getMatkaNo(ts) {
-  const date = moment(ts).tz('Asia/Kolkata'); // always IST
+  const date = moment(ts).tz('Asia/Kolkata');
   const hour = date.hour();
   const minute = date.minute();
 
@@ -78,10 +84,6 @@ function getMatkaNo(ts) {
 
   return null;
 }
-
-
-
-
 
 //getMatkaNo(ts) run hota hai
 
