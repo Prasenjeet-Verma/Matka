@@ -14,7 +14,7 @@ exports.placeBet = async (req, res, next) => {
     }
 
     const user = await User.findById(userId);
-    if (!user) {
+    if (!user) {cec
       return res.json({ success: false, message: 'User not found' });
     }
 
