@@ -56,11 +56,12 @@ exports.placeBet = async (req, res, next) => {
 
 
 // 🔹 Function to determine matkaNo from time
-function getMatkaNo(ts) {
-  const date = new Date(ts); // ISO always works
+const moment = require('moment-timezone');
 
-  const hour = date.getHours();
-  const minute = date.getMinutes();
+function getMatkaNo(ts) {
+  const date = moment(ts).tz('Asia/Kolkata'); // always IST
+  const hour = date.hour();
+  const minute = date.minute();
 
   if (hour === 9 && minute <= 50) return "matka1";
   if (hour === 10 && minute <= 50) return "matka2";
@@ -77,6 +78,7 @@ function getMatkaNo(ts) {
 
   return null;
 }
+
 
 
 
