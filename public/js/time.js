@@ -125,14 +125,12 @@ const matkaSessions = [
   { className: "EightToEightFifthy", start: "20:00", end: "20:50" }
 ];
 
-// ========== Get current IST time ==========
 function getCurrentIST() {
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   return new Date(utc + 5.5 * 60 * 60 * 1000);
 }
 
-// ========== Convert "HH:MM" to IST Date ==========
 function getISTDate(hourMin) {
   const [h, m] = hourMin.split(":").map(Number);
   const now = getCurrentIST();
@@ -141,9 +139,21 @@ function getISTDate(hourMin) {
   return date;
 }
 
-// ========== Update Cards & Timers ==========
 function updateMatka() {
   const now = getCurrentIST();
+
+  // ⭐ 1. Check if ALL sessions are finished (AFTER last card ends)
+  const lastSession = matkaSessions[matkaSessions.length - 1];
+  const lastEnd = getISTDate(lastSession.end);
+
+  if (now > lastEnd) {
+    // ⭐ All sessions complete → show all cards again + reset countdown UI
+    document.querySelectorAll(".matka-card").forEach(card => {
+      card.style.display = "block";
+      const timerEl = card.querySelector(".timer");
+      if (timerEl) timerEl.textContent = "00:00:00";
+    });
+  }
 
   matkaSessions.forEach(session => {
     const cardEls = document.querySelectorAll(`.${session.className}`);
@@ -153,42 +163,47 @@ function updateMatka() {
     let isActive = now >= startTime && now <= endTime;
 
     cardEls.forEach(card => {
-      // Enable / disable buttons
+
+      // ⭐ 2. SESSION END → Hide card
+      if (now > endTime) {
+        card.style.display = "none";
+      } else {
+        card.style.display = "block";
+      }
+
+      // Buttons disable/enable
       card.querySelectorAll("button").forEach(btn => {
-        btn.disabled = isActive; // Disable buttons while session is active
+        btn.disabled = isActive;
         btn.style.opacity = isActive ? "0.5" : "1";
         btn.style.cursor = isActive ? "not-allowed" : "pointer";
       });
 
-      // Timer
       const timerEl = card.querySelector(".timer");
       if (!timerEl) return;
 
       if (isActive) {
-        // Session active → hide timer
         timerEl.textContent = "";
         return;
       }
 
       let diff;
       if (now < startTime) {
-        // Before session → show time left till start
         diff = startTime - now;
       } else {
-        // After session → show time left till next session start
-        diff = startTime.getTime() + 24*60*60*1000 - now; // next day same session
+        diff = startTime.getTime() + 24 * 60 * 60 * 1000 - now;
       }
 
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-      timerEl.textContent = `${hours.toString().padStart(2,"0")}:${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`;
+      timerEl.textContent =
+        `${hours.toString().padStart(2, "0")}:` +
+        `${mins.toString().padStart(2, "0")}:` +
+        `${secs.toString().padStart(2, "0")}`;
     });
   });
 }
 
-// ========== Initial + Auto Update ==========
 updateMatka();
-setInterval(updateMatka, 1000); // update every 1 second
-
+setInterval(updateMatka, 1000);
