@@ -49,6 +49,19 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
 
+role: {
+  type: String,
+  enum: ["admin", "master", "agent", "user"],
+  default: "user",
+},
+
+referredBy: {
+  type: String,
+  default: null,
+},
+
+
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -56,3 +69,4 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
+

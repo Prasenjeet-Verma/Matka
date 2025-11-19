@@ -1,7 +1,6 @@
 const express = require('express');
 const userRouter = express.Router();
 const userRouterController = require('../controller/user');
-const user = require('../model/user');
 
 userRouter.get('/dashboard', userRouterController.getDashboardPage);
 userRouter.get('/livematka', userRouterController.getLiveMatkaPage);

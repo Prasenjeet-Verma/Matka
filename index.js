@@ -12,7 +12,9 @@ const showWhoWinRoute = require("./routes/showWhoWinRoute");
 const loginSignupRoute = require("./routes/loginSignupRoute");
 const betSubmitRoute = require("./routes/betSubmitRoute");
 const coinRoute = require("./routes/coin");
-
+const adminRouter = require("./routes/adminRoute");
+const masterRouter = require("./routes/masterRoute");
+const agentRouter = require("./routes/agentRoute");
 // ---------------- EXPRESS APP ----------------
 const app = express();
 app.set("view engine", "ejs");
@@ -55,7 +57,11 @@ app.use(showWhoWinRoute);
 app.use(loginSignupRoute);
 app.use(betSubmitRoute);
 app.use(coinRoute);
+app.use(adminRouter);
+app.use(masterRouter);
+app.use(agentRouter);
 
+// ---------------- ERROR HANDLING ---------------- <--- isko bhi krna h important
 // 404 Page
 // app.use((req, res, next) => {
 //   res.status(404).render("404", { isLoggedIn: req.session.isLoggedIn });
