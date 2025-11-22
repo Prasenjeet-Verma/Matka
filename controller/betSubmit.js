@@ -26,7 +26,7 @@ exports.placeBet = async (req, res) => {
     // ====================== GAME NAME DETECTION ======================
     const singleNumbers = ["0","1","2","3","4","5","6","7","8","9"];
     const gameName = singleNumbers.includes(number.toString())
-      ? "Single Patti"
+      ? "Single"
       : "Patti";
     // ================================================================
 
