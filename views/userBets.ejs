@@ -98,6 +98,27 @@
               <% }) %>
           </ol>
 
+
+          
+        <!-- Game Name -->
+          <ol class="col" style="flex: 2; text-align:center;">
+            <strong>Game Name</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
+              <li>
+                <%= bet.matkaNo %>
+              </li>
+              <% }) %>
+
+                <% coinBets.slice().reverse().forEach((bet)=> { %>
+                  <li>
+                    <%= bet.coinGame %>
+                  </li>
+                  <% }) %>
+          </ol>
+
+
+
+
           <!-- Event Name -->
           <ol class="col" style="flex: 2; text-align:center;">
             <strong>Event Name</strong>
@@ -108,14 +129,7 @@
               <% }) %>
           </ol>
 
-          <!-- Game Name -->
-          <ol class="col" style="flex: 2; text-align:center;">
-            <strong>Game Name</strong>
-            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
-              <li>
-                <%= bet.matkaNo %>
-              </li>
-              <% }) %>
+
 
 
 
@@ -184,6 +198,26 @@
 
           </ol>
 
+
+          <!-- Game Name -->
+          <ol class="col" style="flex: 2; text-align:center;">
+            <strong>Game Name</strong>
+            <% matkaSettled.slice().reverse().forEach((bet)=> { %>
+              <li>
+                <%= bet.matkaNo %>
+              </li>
+              <% }) %>
+
+                <% coinBets.slice().reverse().forEach((bet)=> { %>
+                  <li>
+                    <%= bet.coinGame %>
+                  </li>
+                  <% }) %>
+          </ol>
+
+
+
+
           <!-- Event Name -->
           <ol class="col" style="flex: 2; text-align:center;">
             <strong>Event Name</strong>
@@ -200,16 +234,6 @@
                   </li>
                   <% }) %>
 
-          </ol>
-
-          <!-- Game Name -->
-          <ol class="col" style="flex: 2; text-align:center;">
-            <strong>Game Name</strong>
-            <% matkaSettled.slice().reverse().forEach((bet)=> { %>
-              <li>
-                <%= bet.matkaNo %>
-              </li>
-              <% }) %>
           </ol>
 
 

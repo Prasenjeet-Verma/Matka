@@ -7,6 +7,7 @@ const coinBetHistorySchema = new mongoose.Schema({
   amount: Number,
   result: String,
   profit: Number,
+  coinGame: "Heads & Tails",
   createdAt: {
     type: Date,
     default: () =>
@@ -17,4 +18,3 @@ const coinBetHistorySchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("coinBetHistory", coinBetHistorySchema);
-
