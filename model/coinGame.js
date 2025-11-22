@@ -7,7 +7,7 @@ const coinBetHistorySchema = new mongoose.Schema({
   amount: Number,
   result: String,
   profit: Number,
-  coinGame: "Heads & Tails",
+ coinGame: { type: String, default: "Heads & Tails" },
   createdAt: {
     type: Date,
     default: () =>
