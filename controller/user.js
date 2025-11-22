@@ -1,5 +1,6 @@
 const User = require("../model/user");
 const CoinBetHistory = require("../model/coinGame"); // <-- coin game model
+const MatkaBetHistory = require("../model/matkaBetHistory");
 const bcrypt = require("bcryptjs");
 
 // ✅ Dashboard Page Controller
@@ -43,11 +44,10 @@ exports.getLiveMatkaPage = async (req, res, next) => {
     // 2️⃣ Fetch fresh user data from DB (in case of updates)
     const user = await User.findById(req.session.user._id);
 
-    if (!user) {  
+    if (!user) {
       req.session.destroy(() => {
         res.redirect("/login");
-      }
-      );
+      });
       return;
     }
     // 3️⃣ Render Live Matka EJS with user data
@@ -66,7 +66,7 @@ exports.getLiveMatkaPage = async (req, res, next) => {
 
 exports.getSingleMatkaPage = async (req, res, next) => {
   try {
-    // 1️⃣ Check login session  
+    // 1️⃣ Check login session
     if (!req.isLoggedIn || !req.session.user) {
       return res.redirect("/");
     }
@@ -76,8 +76,7 @@ exports.getSingleMatkaPage = async (req, res, next) => {
     if (!user) {
       req.session.destroy(() => {
         res.redirect("/login");
-      }
-      );
+      });
       return;
     }
     // 3️⃣ Render Single Matka EJS with user data
@@ -103,11 +102,10 @@ exports.getPattiMatkaPage = async (req, res, next) => {
     // 2️⃣ Fetch fresh user data from DB (in case of updates)
     const user = await User.findById(req.session.user._id);
 
-    if (!user) {  
+    if (!user) {
       req.session.destroy(() => {
         res.redirect("/login");
-      } 
-      );
+      });
       return;
     }
     // 3️⃣ Render Patti Matka EJS with user data
@@ -130,21 +128,31 @@ exports.getAccountPage = async (req, res, next) => {
     if (!req.isLoggedIn || !req.session.user) {
       return res.redirect("/");
     }
-    // 2️⃣ Fetch fresh user data from DB (in case of updates)
+
+    // 2️⃣ Fetch user
     const user = await User.findById(req.session.user._id);
     if (!user) {
-      req.session.destroy(() => {
-        res.redirect("/login");
-      }
-      );
+      req.session.destroy(() => res.redirect("/login"));
       return;
     }
-    // 3️⃣ Render Account EJS with user data
-    res.render("account", {
+
+    // 3️⃣ Decide which page to render based on ROLE
+    if (user.role === "admin") {
+      return res.render("adminAccount", {
+        username: user.username,
+        wallet: user.wallet || 0,
+        referCode: user.referCode,
+        user,
+        isLoggedIn: req.session.isLoggedIn,
+      });
+    }
+
+    // Normal user / agent / master ka account
+    return res.render("account", {
       username: user.username,
       referCode: user.referCode,
       wallet: user.wallet || 0,
-      user: user,
+      user,
       isLoggedIn: req.session.isLoggedIn,
     });
   } catch (err) {
@@ -153,45 +161,50 @@ exports.getAccountPage = async (req, res, next) => {
   }
 };
 
-exports.getBetsPage = async (req, res, next) => {
+exports.getUserBetPage = async (req, res) => {
   try {
-    if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/");
+    if (!req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
     }
 
     const user = await User.findById(req.session.user._id);
 
-    if (!user) {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
-    }
+    // USER ONLY sees own bets
+    const matkaUnsettled = await MatkaBetHistory.find({
+      userId: user._id,
+      status: "unsettled",
+    });
 
-    // 🪙 Fetch COIN GAME settled bet history
-    const coinBets = await CoinBetHistory.find({ userId: user._id })
-      .sort({ createdAt: -1 })
-      .lean();
+    const matkaSettled = await MatkaBetHistory.find({
+      userId: user._id,
+      status: "settled",
+    });
 
-    // 📌 Send both data separately
-    res.render("bets", {
+    const coinBets = await CoinBetHistory.find({
+      userId: user._id,
+    });
+
+    res.render("userBets", {
       username: user.username,
+      wallet: user.wallet,
       referCode: user.referCode,
-      wallet: user.wallet || 0,
-
-      bets: user.bets || [],           // Unsettled old matka bets
-      coinBets: coinBets || [],        // Settled coin game bets
-
       user,
       isLoggedIn: req.session.isLoggedIn,
+
+      // data same as admin
+      matkaUnsettled,
+      matkaSettled,
+      coinBets,
     });
   } catch (err) {
-    console.error("❌ Bets Page Error:", err);
-    res.status(500).send("Server Error");
+    console.log(err);
+    res.redirect("/");
   }
 };
 
 exports.logoutUser = (req, res, next) => {
   req.session.destroy((err) => {
-    if (err) {  
+    if (err) {
       console.error("❌ Logout Error:", err);
       return res.status(500).send("Server Error");
     }
@@ -208,7 +221,10 @@ exports.postResetPassword = async (req, res, next) => {
       return res.json({ success: false, message: "All fields are required." });
     }
     if (newPassword !== confirmNewPassword) {
-      return res.json({ success: false, message: "New passwords do not match." });
+      return res.json({
+        success: false,
+        message: "New passwords do not match.",
+      });
     }
 
     const user = await User.findById(userId);
@@ -218,7 +234,10 @@ exports.postResetPassword = async (req, res, next) => {
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
-      return res.json({ success: false, message: "Old password is incorrect." });
+      return res.json({
+        success: false,
+        message: "Old password is incorrect.",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

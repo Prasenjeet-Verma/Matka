@@ -1,77 +1,66 @@
-const User = require('../model/user');
-const moment = require('moment-timezone');
+const MatkaBetHistory = require("../model/matkaBetHistory");
+const User = require("../model/user");
+const moment = require("moment-timezone");
 
-exports.placeBet = async (req, res, next) => {
+exports.placeBet = async (req, res) => {
   try {
     const { number, amount, ts } = req.body;
 
-    if (!number || !amount || !ts) {
-      return res.json({ success: false, message: 'Invalid bet data' });
-    }
-
-    const userId = req.session.user;
-    if (!userId) {
-      return res.json({ success: false, message: 'User not logged in' });
-    }
-
+    const userId = req.session.user._id;
     const user = await User.findById(userId);
-    if (!user) {
-      return res.json({ success: false, message: 'User not found' });
-    }
 
-    // Wallet check
-    if (user.wallet < amount) {
-      return res.json({ success: false, message: 'Insufficient wallet balance' });
-    }
+    if (!user) return res.json({ success: false, message: "User not found" });
 
-    // Matka slot number
+    if (user.wallet < amount)
+      return res.json({ success: false, message: "Insufficient wallet" });
+
     const matkaNo = getMatkaNo(ts);
-    if (!matkaNo) {
-      return res.json({ success: false, message: 'Invalid time for any Matka slot' });
-    }
+    if (!matkaNo)
+      return res.json({ success: false, message: "Invalid Matka slot" });
 
-    // Game Name Detection
-    const singleNumbers = ['0','1','2','3','4','5','6','7','8','9'];
-    const gameName = singleNumbers.includes(number.toString()) ? "Single patti" : "Patti";
+    // Convert UTC → IST
+    const ist = moment(ts).tz("Asia/Kolkata");
+    const betTime = ist.format("h:mm:ss A");
+    const betDate = ist.format("DD,MM,YYYY");
+
+    // ====================== GAME NAME DETECTION ======================
+    const singleNumbers = ["0","1","2","3","4","5","6","7","8","9"];
+    const gameName = singleNumbers.includes(number.toString())
+      ? "Single Patti"
+      : "Patti";
+    // ================================================================
 
     // Deduct wallet
     user.wallet -= amount;
+    await user.save();
 
-    // 🔥 Convert UTC → IST
-    const ist = moment(ts).tz("Asia/Kolkata");
-
-    // 🔥 Format Time (HH:mm:ss)
-   const betTime = ist.format("h:mm:ss A");
-
-    // 🔥 Format Date (DD,MM,YYYY)
-    const betDate = ist.format("DD,MM,YYYY");
-
-    // Save bet
-    user.bets.push({
+    // Save separate Matka history
+    await MatkaBetHistory.create({
+      userId,
       number,
       amount,
-      time: betTime,      // only time
-      date: betDate,      // only date
-      createdAt: new Date(),
+      time: betTime,
+      date: betDate,
       matkaNo,
-      gameName,
+      status: "unsettled",
+      gameName,   // <---- YOUR GAME NAME SET HERE
     });
-
-    await user.save();
 
     res.json({
       success: true,
-      message: `Bet placed successfully for ${matkaNo}`,
-      gameName,
+      message: "Bet placed",
       time: betTime,
-      date: betDate
+      date: betDate,
+      matkaNo,
+      gameName
     });
 
-  } catch (error) {
-    console.error('Error placing bet:', error);
-    res.json({ success: false, message: 'Server error' });
+  } catch (err) {
+    console.log("Place Bet Error:", err);
+    res.json({ success: false, message: "Server Error" });
   }
 };
+
 
 
 // ================== GET MATKA SLOT ==================
@@ -109,3 +98,30 @@ function getMatkaNo(ts) {
 
 // function ke return ki hui value ko matkaNo me store karta hai.
 
+// exports.declareResult = async (req, res) => {
+//   try {
+//     const { matkaNo, resultNumber } = req.body;
+
+//     // Find all unsettled bets for this matka slot
+//     const unsettledBets = await BetHistory.find({
+//       matkaNo,
+//       status: "unsettled"
+//     });
+
+//     if (!unsettledBets.length) {
+//       return res.json({ success: false, message: "No unsettled bets found" });
+//     }
+
+//     // Update all to SETTLED
+//     await BetHistory.updateMany(
+//       { matkaNo, status: "unsettled" },
+//       { status: "settled", resultNumber }
+//     );
+
+//     res.json({ success: true, message: "Results declared and bets settled" });
+
+//   } catch (error) {
+//     console.log(error);
+//     res.json({ success: false, message: "Server error" });
+//   }
+// };

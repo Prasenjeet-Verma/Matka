@@ -10,6 +10,7 @@ userRouter.post('/resetpassword', userRouterController.postResetPassword);
 userRouter.get('/logout', userRouterController.logoutUser);
 //footer
 userRouter.get('/account', userRouterController.getAccountPage);
-userRouter.get('/bets', userRouterController.getBetsPage);
+
+userRouter.get('/bets', userRouterController.getUserBetPage);
 
 module.exports = userRouter;

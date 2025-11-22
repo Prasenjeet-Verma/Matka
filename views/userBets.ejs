@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matka 69</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="css/headerlogin.css">
+    <link rel="stylesheet" href="css/bets.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/footer.css">
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/rendomsidebar.js"></script>
+    <script src="js/footer.js"></script>
+    <script src="js/betshistry.js"></script>
+</head>
+
+<body>
+
+
+    <!-- ==================================================Header======================================= -->
+
+
+    <%- include('partials/header') %>
+        <div class="header"></div> <!-- ========================= overflow header solve -->
+
+
+        <!-- +++++++++++++++++++++++++++  Slider Banner +++++++++++++++++++++++ -->
+        <div class="mbanner">
+
+
+            <div class=" mx-auto">
+
+                <!-- Banner Wrapper -->
+                <div class="banner-container shadow-3xl">
+
+                    <!-- Slide 1 -->
+                    <div class="banner-slide active" data-index="0">
+                        <img src="images/egaming1.png" class="w-full h-full object-cover"
+                            alt="Placeholder Image 1: Feature A">
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="banner-slide" data-index="1">
+                        <img src="images/egaming2.png" class="w-full h-full object-cover"
+                            alt="Placeholder Image 2: Feature B">
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="banner-slide" data-index="2">
+                        <img src="images/egaming3.png" class="w-full h-full object-cover"
+                            alt="Placeholder Image 3: Feature C">
+                    </div>
+
+
+                    <!-- Navigation Buttons -->
+                    <div class="absolute inset-0 flex items-center justify-between p-4 z-20">
+                        <button id="prevBtn"
+                            class="transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                        </button>
+                        <button id="nextBtn"
+                            class=" transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Pagination Dots -->
+                <div id="pagination" class="flex justify-center space-x-2 mt-4">
+                    <!-- Dots will be generated here by JS -->
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- +++++++++++++++++++++++++++ body start +++++++++++++++++++++++ -->
+
+
+        <div class="tab-container" role="tablist" aria-label="Example tabs">
+            <div class="tab active" id="unsettledTab" role="tab" aria-selected="true">Unsettled</div>
+            <div class="tab" id="settledTab" role="tab" aria-selected="false">Settled</div>
+        </div>
+
+<div id="unsettledSection" class="section active" role="tabpanel" aria-labelledby="unsettledTab">
+  <div class="scroll-wrapper">
+    <div class="scroll-row" style="display: flex; justify-content: space-between; gap: 10px;">
+
+      <!-- S.No -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>S.No</strong>
+        <% matkaUnsettled.slice().reverse().forEach((bet, index) => { %>
+          <li><%= index + 1 %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Event Name -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Event Name</strong>
+        <% matkaUnsettled.slice().reverse().forEach((bet) => { %>
+          <li><%= bet.gameName %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Selection -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Selection</strong>
+        <% matkaUnsettled.slice().reverse().forEach((bet) => { %>
+          <li style="color: skyblue;"><%= bet.number %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Amount -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Amount</strong>
+        <% matkaUnsettled.slice().reverse().forEach((bet) => { %>
+          <li>₹<%= bet.amount %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Date & Time -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Date & Time</strong>
+
+        <% matkaUnsettled.slice().reverse().forEach((bet) => { %>
+          <% 
+            let finalDate = bet.date || "N/A";
+            let originalTime = bet.time || "00:00:00";
+
+            let finalTime;
+            if (originalTime.includes("AM") || originalTime.includes("PM")) {
+              finalTime = originalTime;
+            } else {
+              let [h, m, s] = originalTime.split(":");
+              h = parseInt(h, 10);
+              let ampm = h >= 12 ? "PM" : "AM";
+              h = h % 12 || 12;
+              finalTime = `${h}:${m}:${s} ${ampm}`;
+            }
+          %>
+
+          <li><%= finalDate %> - <%= finalTime %></li>
+        <% }) %>
+      </ol>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="settledSection" class="section" role="tabpanel" aria-labelledby="settledTab">
+
+  <div class="scroll-wrapper">
+    <div class="scroll-row" style="display:flex; justify-content:space-between; gap:10px;">
+
+      <!-- Date & Time -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Date & Time</strong>
+        <% matkaSettled.forEach(bet => { %>
+          <li><%= bet.createdAt.toLocaleString("en-IN") %></li>
+        <% }) %>
+
+        <% coinBets.forEach(bet => { %>
+          <li><%= bet.createdAt.toLocaleString("en-IN") %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Event Name -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Event Name</strong>
+        <% matkaSettled.forEach(bet => { %>
+          <li><%= bet.gameName %></li>
+        <% }) %>
+
+        <% coinBets.forEach(bet => { %>
+          <li><%= bet.gameName %></li>
+        <% }) %>
+      </ol>
+
+      <!-- Selection -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Selection</strong>
+
+        <% matkaSettled.forEach(bet => { %>
+          <li style="color: skyblue;"><%= bet.number %></li>
+        <% }) %>
+
+        <% coinBets.forEach(bet => { %>
+          <li style="color: skyblue;"><%= bet.userPick %></li>
+        <% }) %>
+
+      </ol>
+
+      <!-- Amount -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Amount</strong>
+
+        <% matkaSettled.forEach(bet => { %>
+          <li>₹<%= bet.amount %></li>
+        <% }) %>
+
+        <% coinBets.forEach(bet => { %>
+          <li>₹<%= bet.amount %></li>
+        <% }) %>
+
+      </ol>
+
+<!-- Result -->
+<ol class="col" style="flex: 1; text-align:center;">
+
+  <li><strong>Result</strong></li>
+
+  <% matkaSettled.forEach(bet => { %>
+    <li style="color: <%= bet.win ? 'lightgreen' : 'red' %>">
+      <%= bet.win ? "WIN" : "LOSE" %>
+    </li>
+  <% }) %>
+
+  <% coinBets.forEach(bet => { %>
+    <li style="color: <%= bet.result === 'WIN' ? 'lightgreen' : 'red' %>">
+      <%= bet.result %>
+    </li>
+  <% }) %>
+
+</ol>
+
+
+      <!-- Profit -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Profit</strong>
+
+        <% matkaSettled.forEach(bet => { %>
+          <li><%= bet.profit >= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %></li>
+        <% }) %>
+
+        <% coinBets.forEach(bet => { %>
+          <li><%= bet.profit >= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %></li>
+        <% }) %>
+
+      </ol>
+
+    </div>
+  </div>
+
+</div>
+
+
+        <!-- =================================== Footer Start ============================== -->
+        <%- include('partials/footer') %>
+
+</body>
+
+</html>
