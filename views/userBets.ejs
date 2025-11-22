@@ -157,20 +157,6 @@
   <div class="scroll-wrapper">
     <div class="scroll-row" style="display:flex; justify-content:space-between; gap:10px;">
 
-      <!-- Username -->
-      <ol class="col" style="flex: 1; text-align:center;">
-        <strong>Username</strong>
-
-        <% matkaSettled.slice().reverse().forEach(bet=> { %>
-          <li><%= bet.userId ? bet.userId.username : "N/A" %></li>
-        <% }) %>
-
-        <% coinBets.slice().reverse().forEach(bet=> { %>
-          <li><%= bet.userId ? bet.userId.username : "N/A" %></li>
-        <% }) %>
-
-      </ol>
-
       <!-- Date & Time -->
       <ol class="col" style="flex: 2; text-align:center;">
         <strong>Date & Time</strong>
