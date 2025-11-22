@@ -29,53 +29,6 @@
     <div class="header"></div> <!-- ========================= overflow header solve -->
 
 
-    <!-- +++++++++++++++++++++++++++  Slider Banner +++++++++++++++++++++++ -->
-    <div class="mbanner">
-
-
-      <div class=" mx-auto">
-
-        <!-- Banner Wrapper -->
-        <div class="banner-container shadow-3xl">
-
-          <!-- Slide 1 -->
-          <div class="banner-slide active" data-index="0">
-            <img src="images/egaming1.png" class="w-full h-full object-cover" alt="Placeholder Image 1: Feature A">
-          </div>
-
-          <!-- Slide 2 -->
-          <div class="banner-slide" data-index="1">
-            <img src="images/egaming2.png" class="w-full h-full object-cover" alt="Placeholder Image 2: Feature B">
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="banner-slide" data-index="2">
-            <img src="images/egaming3.png" class="w-full h-full object-cover" alt="Placeholder Image 3: Feature C">
-          </div>
-
-
-          <!-- Navigation Buttons -->
-          <div class="absolute inset-0 flex items-center justify-between p-4 z-20">
-            <button id="prevBtn"
-              class="transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
-            </button>
-            <button id="nextBtn"
-              class=" transition shadow-lg opacity-70 hover:opacity-100 disabled:opacity-30 disabled:cursor-not-allowed">
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Pagination Dots -->
-        <div id="pagination" class="flex justify-center space-x-2 mt-4">
-          <!-- Dots will be generated here by JS -->
-        </div>
-
-      </div>
-
-    </div>
-
-
     <!-- +++++++++++++++++++++++++++ body start +++++++++++++++++++++++ -->
 
 
@@ -162,140 +115,115 @@
     </div>
 
 
-    <div id="settledSection" class="section" role="tabpanel" aria-labelledby="settledTab">
+ <div id="settledSection" class="section" role="tabpanel" aria-labelledby="settledTab">
+  <div class="scroll-wrapper">
+    <div class="scroll-row" style="display:flex; justify-content:space-between; gap:10px;">
 
-      <div class="scroll-wrapper">
-        <div class="scroll-row" style="display:flex; justify-content:space-between; gap:10px;">
+      <!-- Username -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Username</strong>
 
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.userId ? bet.userId.username : "N/A" %></li>
+        <% }) %>
 
-          <!-- Username -->
-          <ol class="col" style="flex: 1; text-align:center;">
-            <strong>Username</strong>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.userId ? bet.userId.username : "N/A" %></li>
+        <% }) %>
 
-            <% matkaSettled.forEach(bet=> { %>
-              <li>
-                <%= bet.userId ? bet.userId.username : "N/A" %>
-              </li>
-              <% }) %>
+      </ol>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li>
-                    <%= bet.userId ? bet.userId.username : "N/A" %>
-                  </li>
-                  <% }) %>
+      <!-- Date & Time -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Date & Time</strong>
 
-          </ol>
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.createdAt.toLocaleString("en-IN") %></li>
+        <% }) %>
 
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.createdAt.toLocaleString("en-IN") %></li>
+        <% }) %>
 
+      </ol>
 
-          <!-- Date & Time -->
-          <ol class="col" style="flex: 2; text-align:center;">
-            <strong>Date & Time</strong>
-            <% matkaSettled.forEach(bet=> { %>
-              <li>
-                <%= bet.createdAt.toLocaleString("en-IN") %>
-              </li>
-              <% }) %>
+      <!-- Event Name -->
+      <ol class="col" style="flex: 2; text-align:center;">
+        <strong>Event Name</strong>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li>
-                    <%= bet.createdAt.toLocaleString("en-IN") %>
-                  </li>
-                  <% }) %>
-          </ol>
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.gameName %></li>
+        <% }) %>
 
-          <!-- Event Name -->
-          <ol class="col" style="flex: 2; text-align:center;">
-            <strong>Event Name</strong>
-            <% matkaSettled.forEach(bet=> { %>
-              <li>
-                <%= bet.gameName %>
-              </li>
-              <% }) %>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.gameName %></li>
+        <% }) %>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li>
-                    <%= bet.gameName %>
-                  </li>
-                  <% }) %>
-          </ol>
+      </ol>
 
-          <!-- Selection -->
-          <ol class="col" style="flex: 1; text-align:center;">
-            <strong>Selection</strong>
+      <!-- Selection -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Selection</strong>
 
-            <% matkaSettled.forEach(bet=> { %>
-              <li style="color: skyblue;">
-                <%= bet.number %>
-              </li>
-              <% }) %>
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li style="color: skyblue;"><%= bet.number %></li>
+        <% }) %>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li style="color: skyblue;">
-                    <%= bet.userPick %>
-                  </li>
-                  <% }) %>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li style="color: skyblue;"><%= bet.userPick %></li>
+        <% }) %>
 
-          </ol>
+      </ol>
 
-          <!-- Amount -->
-          <ol class="col" style="flex: 1; text-align:center;">
-            <strong>Amount</strong>
+      <!-- Amount -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Amount</strong>
 
-            <% matkaSettled.forEach(bet=> { %>
-              <li>₹<%= bet.amount %>
-              </li>
-              <% }) %>
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li>₹<%= bet.amount %></li>
+        <% }) %>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li>₹<%= bet.amount %>
-                  </li>
-                  <% }) %>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li>₹<%= bet.amount %></li>
+        <% }) %>
 
-          </ol>
+      </ol>
 
-          <!-- Result -->
-          <ol class="col" style="flex: 1; text-align:center;">
+      <!-- Result -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Result</strong>
 
-            <li><strong>Result</strong></li>
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li style="color: <%= bet.win ? 'lightgreen' : 'red' %>">
+            <%= bet.win ? "WIN" : "LOSE" %>
+          </li>
+        <% }) %>
 
-            <% matkaSettled.forEach(bet=> { %>
-              <li style="color: <%= bet.win ? 'lightgreen' : 'red' %>">
-                <%= bet.win ? "WIN" : "LOSE" %>
-              </li>
-              <% }) %>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li style="color: <%= bet.result === 'WIN' ? 'lightgreen' : 'red' %>">
+            <%= bet.result %>
+          </li>
+        <% }) %>
 
-                <% coinBets.forEach(bet=> { %>
-                  <li style="color: <%= bet.result === 'WIN' ? 'lightgreen' : 'red' %>">
-                    <%= bet.result %>
-                  </li>
-                  <% }) %>
+      </ol>
 
-          </ol>
+      <!-- Profit -->
+      <ol class="col" style="flex: 1; text-align:center;">
+        <strong>Profit</strong>
 
+        <% matkaSettled.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.profit >= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %></li>
+        <% }) %>
 
-          <!-- Profit -->
-          <ol class="col" style="flex: 1; text-align:center;">
-            <strong>Profit</strong>
+        <% coinBets.slice().reverse().forEach(bet=> { %>
+          <li><%= bet.profit >= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %></li>
+        <% }) %>
 
-            <% matkaSettled.forEach(bet=> { %>
-              <li>
-                <%= bet.profit>= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %>
-              </li>
-              <% }) %>
-
-                <% coinBets.forEach(bet=> { %>
-                  <li>
-                    <%= bet.profit>= 0 ? "₹" + bet.profit : "-₹" + Math.abs(bet.profit) %>
-                  </li>
-                  <% }) %>
-
-          </ol>
-
-        </div>
-      </div>
+      </ol>
 
     </div>
+  </div>
+</div>
 
 
     <!-- =================================== Footer Start ============================== -->
