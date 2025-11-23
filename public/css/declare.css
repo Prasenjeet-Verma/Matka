@@ -1,0 +1,372 @@
+
+
+
+/* 2️⃣ Main body setup */
+.bmain {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, rgb(255, 0, 0), rgb(242, 242, 245));
+  background-size: 1000% 1000%;
+  animation: bgMove 6s ease-in-out infinite alternate;
+  overflow-x: hidden; /* 👈 only hide horizontal scroll */
+  overflow-y: auto;   /* 👈 enable vertical scroll */
+  min-height: 100vh;  /* 👈 fills screen */
+  height: auto;       /* 👈 expands with content */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3️⃣ Animate gradient background */
+@keyframes bgMove {
+  0% {
+    background-position: left center;
+  }
+  100% {
+    background-position: right center;
+  }
+}
+
+/* 4️⃣ Example content */
+.section {
+  padding: 3rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  margin: 2rem auto;
+  width: 80%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+
+.val {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.form-container {
+  background: linear-gradient(to right, rgb(255, 0, 0), rgb(242, 242, 245));
+  padding: 0.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: float 4s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-6px); }
+}
+
+form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.3);
+}
+
+input[type="text"]:focus {
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  transform: scale(1.02);
+}
+
+.btno {
+  background: rgb(255, 0, 0);
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  background: rgb(220, 0, 0);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.4);
+}
+
+
+
+
+
+
+
+
+  :root {
+    --red: rgb(255, 0, 0);
+    --offwhite: rgb(242, 242, 245);
+    --yellow: #f7c94b;
+  }
+
+  .main {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg, var(--red), var(--offwhite));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 7rem;
+  }
+
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    animation: fadeIn 1s ease forwards;
+    margin-top: 10rm;
+  }
+
+  .box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideUp 0.8s ease forwards;
+  }
+
+  .number-box {
+    width: 90px;
+    height: 90px;
+    background: var(--red);
+    color: white;
+    font-size: 40px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .number-box:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 10px 15px rgba(255, 0, 0, 0.5);
+  }
+
+  .price-box {
+    width: 90px;
+    height: 40px;
+    background: var(--yellow);
+    color: green;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 0 10px 10px;
+    transition: background 0.3s ease;
+  }
+
+  .box:hover .price-box {
+    background: #ffdb6e;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger animation delays */
+  .box:nth-child(1) { animation-delay: 0.1s; }
+  .box:nth-child(2) { animation-delay: 0.2s; }
+  .box:nth-child(3) { animation-delay: 0.3s; }
+  .box:nth-child(4) { animation-delay: 0.4s; }
+  .box:nth-child(5) { animation-delay: 0.5s; }
+
+  @media (max-width: 600px) {
+    .row {
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .number-box, .price-box {
+      width: 70px;
+      height: 70px;
+    }
+    .price-box {
+      height: 35px;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+.aa {
+  font-family: Arial, sans-serif;
+  margin-bottom: 0rem;
+  padding: 0;
+  overflow-x: auto; /* 👈 enables manual horizontal scroll */
+  overflow-y: hidden; /* 👈 allows vertical scroll as content grows */
+  background: linear-gradient(to right, rgb(255, 0, 0), rgb(242, 242, 245));
+  background-size: 1000% 1000%;
+  animation: bgMove 6s ease-in-out infinite alternate;
+    min-height: 530vh;  /* 👈 fills screen */
+  height: auto; 
+
+}
+
+
+
+
+  @keyframes bgMove {
+    0% { background-position: left; }
+    100% { background-position: right; }
+  }
+
+  ::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(255, 0, 0);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgb(242, 242, 245);
+  }
+
+  .scroll-wrapper {
+    display: flex;
+    align-items: center;
+    height: 50vh;
+    margin-bottom: 15rem;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+    padding: 30px;
+    min-width: 900px; /* 👈 control width (for horizontal scroll) */
+  }
+
+  .row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 0px;
+    margin-top: 1rem;
+  }
+
+  .number-box {
+    width: 50px;
+    height: 50px;
+    background: red;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: float 3s ease-in-out infinite alternate;
+  }
+
+  .number-box:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+  }
+
+  .price-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .price-box {
+    width: 50px;
+    height: 30px;
+    background: #ffcc4d;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+
+  .patti-bar {
+    width: 90%;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 4px;
+    background: linear-gradient(to right, rgb(255, 0, 0), rgb(242, 242, 245));
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fade 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes fade {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+

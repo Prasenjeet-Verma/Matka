@@ -81,6 +81,31 @@ exports.getAdminBetPage = async (req, res) => {
   }
 };
 
+exports.getDeclareMatkaPage = async (req, res) => {
+  try {
+    if (!req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
+    }
+    const user = await User.findById(req.session.user._id);
+
+    res.render("declareMatka", {  
+      username: user.username,
+      wallet: user.wallet,
+      referCode: user.referCode,
+      user,
+      isLoggedIn: req.session.isLoggedIn,
+    });
+  }
+  catch (err) {
+    console.log(err);
+    res.redirect("/");
+  }
+};
+
+
+
+
+
 
 // exports.settleMatka = async (req, res) => {
 //   try {
