@@ -11,14 +11,15 @@ const matkaBetHistorySchema = new mongoose.Schema({
 
   matkaNo: { type: String, required: true },
   gameName: { type: String, default: "Matka" },
+  underNo: { type: String, default: null },
 
   status: {
     type: String,
     enum: ["unsettled", "settled"],
-    default: "unsettled"
+    default: "unsettled",
   },
 
-  result: { type: String, default: null },   // WIN / LOSS
+  result: { type: String, default: null }, // WIN / LOSS
   profit: { type: Number, default: 0 },
 
   createdAt: {
@@ -26,9 +27,8 @@ const matkaBetHistorySchema = new mongoose.Schema({
     default: () =>
       new Date(
         new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      )
+      ),
   },
 });
 
 module.exports = mongoose.model("MatkaBetHistory", matkaBetHistorySchema);
-
