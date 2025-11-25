@@ -32,7 +32,7 @@ exports.getAdminPanelDashboard = async (req, res, next) => {
         visibleUsers,
       });
     } else {
-      res.status(403).send("Access Denied");
+      req.session.destroy(() => res.redirect("/login"));
       return;
     }
   } catch (err) {
@@ -43,11 +43,9 @@ exports.getAdminPanelDashboard = async (req, res, next) => {
 
 exports.getAdminBetPage = async (req, res) => {
   try {
-    if (
-      !req.session.isLoggedIn ||
-      !req.session.user 
-    ) {
-      return res.redirect("/login");
+    if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
     }
 
     const user = await User.findById(req.session.user._id);
@@ -81,31 +79,100 @@ exports.getAdminBetPage = async (req, res) => {
   }
 };
 
-exports.getDeclareMatkaPage = async (req, res) => {
+// exports.getDeclareMatkaPage = async (req, res) => {
+//   try {
+//     if (!req.session.isLoggedIn || !req.session.user) {
+//       req.session.destroy(() => res.redirect("/login"));
+//       return;
+//     }
+//     const user = await User.findById(req.session.user._id);
+
+//     res.render("declareMatka", {
+//       username: user.username,
+//       wallet: user.wallet,
+//       referCode: user.referCode,
+//       user,
+//       isLoggedIn: req.session.isLoggedIn,
+//     });
+//   }
+//   catch (err) {
+//     console.log(err);
+//     res.redirect("/");
+//   }
+// };
+
+exports.getDeclareData = async (req, res) => {
   try {
     if (!req.session.isLoggedIn || !req.session.user) {
-      return res.redirect("/login");
+      req.session.destroy(() => res.redirect("/login"));
+      return;
     }
-    const user = await User.findById(req.session.user._id);
 
-    res.render("declareMatka", {  
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    const bets = await MatkaHistory.find({ status: "unsettled" });
+
+    let single = {};
+    let patti = {};
+
+    bets.forEach((bet) => {
+      if (bet.gameName === "Single") {
+        const key = bet.number;
+        if (!single[key]) single[key] = { totalAmount: 0, usersCount: 0 };
+        single[key].totalAmount += bet.amount;
+        single[key].usersCount += 1;
+      }
+    });
+
+    bets.forEach(bet => {
+
+  if (bet.gameName === "Patti") {
+
+    const under = bet.underNo; // example: 9
+    const num = bet.number;    // example: 900, 909, 987
+
+    if (!patti[under]) {
+      patti[under] = {
+        numbers: {}  // store numbers inside under
+      };
+    }
+
+    // Check if this number exists inside under
+    if (!patti[under].numbers[num]) {
+      patti[under].numbers[num] = {
+        totalAmount: 0,
+        usersCount: 0
+      };
+    }
+
+    // Add user amount
+    patti[under].numbers[num].totalAmount += bet.amount;
+
+    // Count this user
+    patti[under].numbers[num].usersCount += 1;
+  }
+
+});
+
+
+    res.render("declareMatka", {
       username: user.username,
       wallet: user.wallet,
       referCode: user.referCode,
       user,
       isLoggedIn: req.session.isLoggedIn,
+      single,
+      patti,
     });
-  }
-  catch (err) {
-    console.log(err);
-    res.redirect("/");
+  } catch (err) {
+    console.log("Declare Data Error:", err);
+    res.json({ success: false, message: "Server Error" });
   }
 };
-
-
-
-
-
 
 // exports.settleMatka = async (req, res) => {
 //   try {

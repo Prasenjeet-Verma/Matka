@@ -299,22 +299,37 @@ exports.postLoginPage = [
         });
       }
 
-      // ✅ Login success
-      req.session.isLoggedIn = true;
-      req.session.user = user;
 
       // 🎯 ROLE-BASED REDIRECT
       if (user.role === "admin") {
+           req.session.isLoggedIn = true;
+      req.session.user = user;
+      await new Promise((r) => req.session.save(r));
+
         return res.redirect("/adminpaneldashboard");
       }
 
       if (user.role === "master") {
+           req.session.isLoggedIn = true;
+      req.session.user = user;
+      await new Promise((r) => req.session.save(r));
+
         return res.redirect("/masterpaneldashboard");
       }
 
       if (user.role === "agent") {
+           req.session.isLoggedIn = true;
+      req.session.user = user;
+      await new Promise((r) => req.session.save(r));
+
         return res.redirect("/agentpaneldashboard");
       }
+
+  // ✅ Login success
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      await new Promise((r) => req.session.save(r));
+
 
       // Default → Normal user
       return res.redirect("/dashboard");

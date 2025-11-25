@@ -1,3 +1,93 @@
+/* ================= PATTI FIXED GRID (FINAL CLEAN VERSION) =============== */
+
+.patti-container {
+  width: 100%;
+  padding: 20px;
+}
+
+.patti-under-row {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.patti-under-box {
+  background: red;
+  color: white;
+  padding: 12px 0;
+  font-size: 22px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* MAIN 10-column GRID */
+.patti-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
+}
+
+.patti-col {
+  background: #ffe6e6;
+  padding: 12px;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.patti-item {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #ffbfbf;
+}
+
+.patti-num {
+  background: red;
+  color: white;
+  padding: 8px 0;
+  font-size: 22px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.patti-amt {
+  background: orange;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.patti-users {
+  font-size: 14px;
+}
+
+.patti-empty {
+  text-align: center;
+  padding: 20px;
+  color: gray;
+}
+
+
+.top-under-box {
+  width: 130px;     /* SAME as Patti Column */
+  text-align: center;
+}
+
+.patti-column {
+  width: 130px;     /* SAME width */
+}
+
+
+
+/* ============ REMOVE ALL OLD PATTI CSS BELOW ============ */
+/* DO NOT USE old .row .number-box .price-box for Patti */
+
 
 
 
@@ -123,14 +213,7 @@ button:hover {
     padding-top: 7rem;
   }
 
-  .row {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 40px;
-    animation: fadeIn 1s ease forwards;
-    margin-top: 10rm;
-  }
+
 
   .box {
     display: flex;
@@ -139,40 +222,13 @@ button:hover {
     animation: slideUp 0.8s ease forwards;
   }
 
-  .number-box {
-    width: 90px;
-    height: 90px;
-    background: var(--red);
-    color: white;
-    font-size: 40px;
-    font-weight: 600;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px 10px 0 0;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+
 
   .number-box:hover {
     transform: scale(1.1) rotate(2deg);
     box-shadow: 0 10px 15px rgba(255, 0, 0, 0.5);
   }
 
-  .price-box {
-    width: 90px;
-    height: 40px;
-    background: var(--yellow);
-    color: green;
-    font-size: 16px;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0 0 10px 10px;
-    transition: background 0.3s ease;
-  }
 
   .box:hover .price-box {
     background: #ffdb6e;
@@ -221,31 +277,6 @@ button:hover {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
 .aa {
   font-family: Arial, sans-serif;

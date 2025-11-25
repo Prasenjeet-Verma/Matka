@@ -61,14 +61,14 @@ exports.placeBet = async (req, res) => {
       if (!underNo)
         return res.json({ success: false, message: "Invalid Patti Number" });
 
-      finalNumber = `${underNo} = ${number}`;  // <-- THIS IS WHAT YOU WANT
+      finalNumber = number;  // <-- THIS IS WHAT YOU WANT
     }
 
     // Save
     await MatkaBetHistory.create({
       userId,
-      number: finalNumber,   // "6 = 560"
-      underNo,               // "6"
+      number: finalNumber,   
+      underNo,               
       amount,
       time: betTime,
       date: betDate,
