@@ -1,0 +1,285 @@
+/* ================= PATTI FIXED GRID (FINAL CLEAN VERSION) =============== */
+/* make sizing reliable */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* 1️⃣ CSS Variables for Easy Changes */
+:root {
+  --red: rgb(255, 0, 0);
+  --offwhite: rgb(242, 242, 245);
+  --yellow: #f7c94b;
+  --gap: 12px;
+}
+
+/* 2️⃣ Main Page Setup (bmain/aa) */
+.bmain, .aa {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, var(--red), var(--offwhite));
+  background-size: 1000% 1000%;
+  animation: bgMove 6s ease-in-out infinite alternate;
+  overflow-x: auto; /* Enable horizontal scroll for wide content */
+  overflow-y: auto; 
+  min-height: 100vh;
+  height: auto; 
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animate gradient background */
+@keyframes bgMove {
+  0% { background-position: left center; }
+  100% { background-position: right center; }
+}
+
+/* 3️⃣ Patti Grid Alignment Fix */
+
+/* Unified wrapper for spacing and centering */
+.patti-container {
+  width: 100%;
+  padding: var(--gap);
+  margin: 0 auto;
+  /* Min width to prevent columns from getting too narrow on small screens */
+  min-width: 900px; 
+}
+
+/* Ensure both use the EXACT same grid definition and gap */
+.patti-under-row,
+.patti-grid {
+  display: grid;
+  /* This is the key: 10 equally sized columns */
+  grid-template-columns: repeat(10, 1fr); 
+  gap: var(--gap);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* visual style for top numbers (Headers) */
+.patti-under-box {
+  /* No width declaration needed, it uses 1fr from the grid */
+  background: var(--red);
+  color: white;
+  padding: 12px 0;
+  font-size: 22px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px; /* fixed height for header uniformity */
+}
+
+/* patti columns (The light pink boxes) */
+.patti-col {
+  /* No width declaration needed, it uses 1fr from the grid */
+  background: #ffe6e6; /* light pink */
+  padding: var(--gap);
+  border-radius: 8px;
+  min-height: 200px;
+  /* FIX: Hides any content that slightly pushes outside the column boundary */
+  overflow: hidden; 
+}
+
+/* 4️⃣ Patti Item Styles */
+
+.patti-item {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: var(--gap);
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #ffbfbf;
+  box-sizing: border-box; 
+}
+
+.patti-num {
+  background: var(--red);
+  color: white;
+  padding: 8px 0;
+  font-size: 22px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.patti-amt {
+  background: orange;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.patti-users {
+  font-size: 14px;
+}
+
+.patti-empty {
+  text-align: center;
+  padding: 20px;
+  color: gray;
+}
+
+
+/* 5️⃣ Form and Button Styles (Simplified) */
+
+.val {
+  display: flex;
+  justify-content: center; /* This centers the content */
+  align-items: center;
+  margin-top: 2rem;
+}
+
+/* ADD this new rule to your CSS */
+.aa .val {
+    /* Override center alignment for the Patti input form */
+    justify-content: flex-start;
+    padding-left: 12px; /* Match the padding of the patti-container (var(--gap)) */
+    /* If you want it flush with the left edge, remove the padding-left */
+}
+
+
+.form-container {
+  background: linear-gradient(to right, var(--red), var(--offwhite));
+  padding: 0.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: float 4s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-6px); }
+}
+
+form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.3);
+}
+
+input[type="text"]:focus {
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  transform: scale(1.02);
+}
+
+.btno {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.btno:hover {
+  background: rgb(220, 0, 0);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.4);
+}
+
+  .main {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg, var(--red), var(--offwhite));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 7rem;
+  }
+
+.patti-bar {
+  width: 90%;
+  max-width: 600px;
+  height: 50px;
+  margin: 0 auto 1rem;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--red), var(--offwhite));
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade 2s ease-in-out infinite alternate;
+}
+
+@keyframes fade {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px; /* Give single boxes a reasonable fixed width */
+  transition: transform 0.3s ease;
+}
+
+.number-box {
+  width: 100%;
+  height: 50px;
+  background: var(--red);
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.price-box {
+  width: 100%;
+  height: 30px;
+  background: #ffcc4d; /* yellow */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border-radius: 2px;
+  margin-top: 5px;
+}
+
+.user-box {
+    font-size: 12px;
+    margin-top: 3px;
+    color: #333;
+}
+
+.box:hover {
+  transform: scale(1.05);
+}
+
+/* Cleanup: Removing unused/conflicting classes like top-under-box, patti-column, etc. */
+/* Removing old scrollbar/container definitions that conflict with patti-container/aa */
