@@ -86,8 +86,6 @@ exports.getAdminBetPage = async (req, res, next) => {
   }
 };
 
-
-
 exports.getDeclareData = async (req, res, next) => {
   try {
     if (!req.session.isLoggedIn || !req.session.user) {
@@ -115,37 +113,51 @@ exports.getDeclareData = async (req, res, next) => {
 
     bets.forEach((bet) => {
       if (bet.gameName === "Single") {
-        const key = bet.number;
-        if (!single[key]) single[key] = { totalAmount: 0, usersCount: 0 };
-        single[key].totalAmount += bet.amount;
-        single[key].usersCount += 1;
+        const matka = bet.matkaNo;
+        const num = bet.number;
+
+        if (!single[matka]) {
+          single[matka] = {};
+        }
+
+        if (!single[matka][num]) {
+          single[matka][num] = { totalAmount: 0, usersCount: 0 };
+        }
+
+        single[matka][num].totalAmount += bet.amount;
+        single[matka][num].usersCount += 1;
       }
     });
 
     bets.forEach((bet) => {
       if (bet.gameName === "Patti") {
-        const under = bet.underNo; // example: 9
-        const num = bet.number; // example: 900, 909, 987
+        const matka = bet.matkaNo; // group by matka
+        const under = bet.underNo;
+        const num = bet.number;
 
-        if (!patti[under]) {
-          patti[under] = {
-            numbers: {}, // store numbers inside under
+        // Create group for matkaNo
+        if (!patti[matka]) {
+          patti[matka] = {
+            underNumbers: {},
           };
         }
 
-        // Check if this number exists inside under
-        if (!patti[under].numbers[num]) {
-          patti[under].numbers[num] = {
+        // Create under group inside matka
+        if (!patti[matka].underNumbers[under]) {
+          patti[matka].underNumbers[under] = {};
+        }
+
+        // Create number group inside under
+        if (!patti[matka].underNumbers[under][num]) {
+          patti[matka].underNumbers[under][num] = {
             totalAmount: 0,
             usersCount: 0,
           };
         }
 
-        // Add user amount
-        patti[under].numbers[num].totalAmount += bet.amount;
-
-        // Count this user
-        patti[under].numbers[num].usersCount += 1;
+        // Add amount & count
+        patti[matka].underNumbers[under][num].totalAmount += bet.amount;
+        patti[matka].underNumbers[under][num].usersCount += 1;
       }
     });
 
@@ -164,39 +176,112 @@ exports.getDeclareData = async (req, res, next) => {
   }
 };
 
-// exports.settleMatka = async (req, res) => {
-//   try {
-//     const { matkaNo, winningNumber } = req.body;
+// ---------------- Single Result ----------------
+exports.postDeclareSingleResult = async (req, res) => {
+  try {
 
-//     const bets = await MatkaBetHistory.find({
-//       matkaNo,
-//       status: "unsettled"
-//     });
+    if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
 
-//     for (let bet of bets) {
-//       const isWin = bet.number == winningNumber;
-//       const result = isWin ? "WIN" : "LOSS";
-//       const profit = isWin ? bet.amount * 9 : -bet.amount;
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
 
-//       // Update bet status
-//       await MatkaBetHistory.findByIdAndUpdate(bet._id, {
-//         status: "settled",
-//         result,
-//         profit
-//       });
+    if (!user || user.role !== "admin") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
 
-//       // If win → add money
-//       if (isWin) {
-//         await User.findByIdAndUpdate(bet.userId, {
-//           $inc: { wallet: profit }
-//         });
-//       }
-//     }
 
-//     res.json({ success: true, message: "Matka Settled Successfully" });
+    const { matkaNo, singleResult } = req.body;
 
-//   } catch (err) {
-//     console.log(err);
-//     res.json({ success: false, message: "Server Error" });
-//   }
-// };
+    if (!matkaNo || !singleResult) {
+      return res.status(400).send("MatkaNo or result missing");
+    }
+
+    // Fetch all unsettled single bets for that matkaNo
+    const bets = await MatkaHistory.find({
+      matkaNo,
+      gameName: "Single",
+      status: "unsettled",
+    });
+
+    for (let bet of bets) {
+      if (bet.number === singleResult) {
+        bet.result = "WIN";
+        bet.profit = bet.amount * 9;
+      } else {
+        bet.result = "LOSS";
+        bet.profit = -bet.amount;
+      }
+      bet.status = "settled";
+      await bet.save();
+    }
+
+    res.redirect("/declareMatka"); // ya koi success message
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+// ---------------- Patti Result ----------------
+exports.postDeclarePattiResult = async (req, res) => {
+  try {
+
+    if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    if (!user || user.role !== "admin") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
+
+    const { matkaNo, pattiResult } = req.body;
+
+    if (!matkaNo || !pattiResult) {
+      return res.status(400).send("MatkaNo or result missing");
+    }
+
+    // Fetch all unsettled patti bets for that matkaNo
+    const bets = await MatkaHistory.find({
+      matkaNo,
+      gameName: "Patti",
+      status: "unsettled",
+    });
+
+    for (let bet of bets) {
+      if (bet.number === pattiResult) {
+        bet.result = "WIN";
+        bet.profit = bet.amount * 12;
+      } else {
+        bet.result = "LOSS";
+        bet.profit = -bet.amount;
+      }
+      bet.status = "settled";
+      await bet.save();
+    }
+
+    res.redirect("/declareMatka"); // ya koi success message
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+};
