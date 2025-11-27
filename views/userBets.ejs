@@ -270,8 +270,8 @@
             <strong>Result</strong>
 
             <% matkaSettled.slice().reverse().forEach(bet=> { %>
-              <li style="color: <%= bet.win ? 'lightgreen' : 'red' %>">
-                <%= bet.win ? "WIN" : "LOSE" %>
+            <li style="color: <%= bet.result === 'WIN' ? 'lightgreen' : 'red' %>">
+                 <%= bet.result %>
               </li>
               <% }) %>
 

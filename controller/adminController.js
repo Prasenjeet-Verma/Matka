@@ -179,7 +179,6 @@ exports.getDeclareData = async (req, res, next) => {
 // ---------------- Single Result ----------------
 exports.postDeclareSingleResult = async (req, res) => {
   try {
-
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
@@ -197,7 +196,6 @@ exports.postDeclareSingleResult = async (req, res) => {
       });
       return;
     }
-
 
     const { matkaNo, singleResult } = req.body;
 
@@ -213,13 +211,15 @@ exports.postDeclareSingleResult = async (req, res) => {
     });
 
     for (let bet of bets) {
-      if (bet.number === singleResult) {
+      if (bet.number.toString() === singleResult.toString()) {
         bet.result = "WIN";
         bet.profit = bet.amount * 9;
+          await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
       } else {
         bet.result = "LOSS";
         bet.profit = -bet.amount;
       }
+
       bet.status = "settled";
       await bet.save();
     }
@@ -234,7 +234,6 @@ exports.postDeclareSingleResult = async (req, res) => {
 // ---------------- Patti Result ----------------
 exports.postDeclarePattiResult = async (req, res) => {
   try {
-
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
@@ -253,7 +252,6 @@ exports.postDeclarePattiResult = async (req, res) => {
       return;
     }
 
-
     const { matkaNo, pattiResult } = req.body;
 
     if (!matkaNo || !pattiResult) {
@@ -268,13 +266,15 @@ exports.postDeclarePattiResult = async (req, res) => {
     });
 
     for (let bet of bets) {
-      if (bet.number === pattiResult) {
+      if (bet.number.toString() === pattiResult.toString()) {
         bet.result = "WIN";
         bet.profit = bet.amount * 12;
+          await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
       } else {
         bet.result = "LOSS";
         bet.profit = -bet.amount;
       }
+
       bet.status = "settled";
       await bet.save();
     }

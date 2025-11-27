@@ -89,68 +89,72 @@
 
     <% }) %> 
     
-    <% Object.keys(patti).forEach(matkaNo => { %>
-    <div
-      class="nnn"
-      style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 50px;
-        border: 1px solid white;
-        margin-bottom: 1rem;
-        color: white;
-        background-color: red;
-      "
-    >
-      <div style="color: white; font-size: xx-large; font-weight: bolder">
-        PATTI — <%= matkaNo %>
-      </div>
-    </div>
-
-    <div class="aa">
-      <div class="patti-container">
-        <!-- Top Under Numbers -->
-        <div class="patti-under-row">
-          <% const order = ["1","2","3","4","5","6","7","8","9","0"]; %> <%
-          order.forEach(u => { %>
-          <div class="patti-under-box"><%= u %></div>
-          <% }) %>
-        </div>
-
-        <div class="patti-grid">
-          <% order.forEach(under => { %>
-          <div class="patti-col">
-            <% if (patti[matkaNo].underNumbers[under]) { %> <%
-            Object.keys(patti[matkaNo].underNumbers[under]).forEach(num => { %>
-            <div class="patti-item">
-              <div class="patti-num"><%= num %></div>
-              <div class="patti-amt">
-                <%= patti[matkaNo].underNumbers[under][num].totalAmount %>
-              </div>
-              <div class="patti-users">
-                U: <%= patti[matkaNo].underNumbers[under][num].usersCount %>
-              </div>
-            </div>
-            <% }) %> <% } else { %>
-            <div class="patti-empty">No Bet</div>
-            <% } %>
-          </div>
-          <% }) %>
-        </div>
-
-        <!-- Patti Input -->
-<div class="val">
-  <div class="form-container">
-    <form action="/declarePatti" method="POST">
-      <input type="hidden" name="matkaNo" value="<%= matkaNo %>" />
-      <input type="text" name="pattiResult" placeholder="Patti" required />
-      <button type="submit" class="btno">Submit</button>
-    </form>
+<% Object.keys(patti).forEach(matkaNo => { %>
+<div
+  class="nnn"
+  style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border: 1px solid white;
+    margin-bottom: 1rem;
+    color: white;
+    background-color: red;
+  "
+>
+  <div style="color: white; font-size: xx-large; font-weight: bolder">
+    PATTI — <%= matkaNo %>
   </div>
 </div>
 
-    <% }) %>
+<div class="aa">
+  <div class="patti-container">
+    <!-- Top Under Numbers -->
+    <div class="patti-under-row">
+      <% const order = ["1","2","3","4","5","6","7","8","9","0"]; %>
+      <% order.forEach(u => { %>
+      <div class="patti-under-box"><%= u %></div>
+      <% }) %>
+    </div>
+
+    <div class="patti-grid">
+      <% order.forEach(under => { %>
+      <div class="patti-col">
+        <% if (patti[matkaNo].underNumbers[under]) { %>
+        <% Object.keys(patti[matkaNo].underNumbers[under]).forEach(num => { %>
+        <div class="patti-item">
+          <div class="patti-num"><%= num %></div>
+          <div class="patti-amt">
+            <%= patti[matkaNo].underNumbers[under][num].totalAmount %>
+          </div>
+          <div class="patti-users">
+            U: <%= patti[matkaNo].underNumbers[under][num].usersCount %>
+          </div>
+        </div>
+        <% }) %>
+        <% } else { %>
+        <div class="patti-empty">No Bet</div>
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+
+    <!-- Patti Input -->
+    <div class="val">
+      <div class="form-container">
+        <form action="/declarePatti" method="POST">
+          <input type="hidden" name="matkaNo" value="<%= matkaNo %>" />
+          <input type="text" name="pattiResult" placeholder="Patti" required />
+          <button type="submit" class="btno">Submit</button>
+        </form>
+      </div>
+    </div>
+
+  </div> <!-- CLOSE patti-container -->
+</div>   <!-- CLOSE aa -->
+
+<% }) %>   <!-- NOW CLOSE LOOP CORRECTLY -->
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/adminFooter') %>
