@@ -22,6 +22,7 @@
     <!-- ==================================================Header======================================= -->
 
     <%- include('partials/header') %>
+<div class="header"></div>  <!-- ========================= overflow header solve -->
     <!-- ======================================================= Body is here ============================================== -->
 
     <!-- SINGLE GAME -->
@@ -80,7 +81,7 @@
   <div class="form-container">
     <form action="/declareSingle" method="POST">
       <input type="hidden" name="matkaNo" value="<%= matkaNo %>" />
-      <input type="text" name="singleResult" placeholder="Single Patti..." required />
+      <input type="number" name="singleResult" placeholder="Single Patti..." required />
       <button type="submit" class="btno">Submit</button>
     </form>
   </div>
@@ -89,6 +90,12 @@
 
     <% }) %> 
     
+
+
+
+
+
+    <!-- Patti -->
 <% Object.keys(patti).forEach(matkaNo => { %>
 <div
   class="nnn"
@@ -145,7 +152,7 @@
       <div class="form-container">
         <form action="/declarePatti" method="POST">
           <input type="hidden" name="matkaNo" value="<%= matkaNo %>" />
-          <input type="text" name="pattiResult" placeholder="Patti" required />
+          <input type="number" name="pattiResult" placeholder="Patti" required />
           <button type="submit" class="btno">Submit</button>
         </form>
       </div>
