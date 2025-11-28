@@ -216,33 +216,41 @@ exports.getUserBetPage = async (req, res) => {
       return;
     }
 
-    // USER ONLY sees own bets
-    const matkaUnsettled = await MatkaBetHistory.find({
-      userId: user._id,
-      status: "unsettled",
-    });
+// ... earlier code unchanged ...
 
-    const matkaSettled = await MatkaBetHistory.find({
-      userId: user._id,
-      status: "settled",
-    });
+// USER ONLY sees own bets
+const matkaUnsettled = await MatkaBetHistory.find({
+  userId: user._id,
+  status: "unsettled",
+});
 
-    const coinBets = await CoinBetHistory.find({
-      userId: user._id,
-    });
+const matkaSettled = await MatkaBetHistory.find({
+  userId: user._id,
+  status: "settled",
+});
 
-    res.render("userBets", {
-      username: user.username,
-      wallet: user.wallet,
-      referCode: user.referCode,
-      user,
-      isLoggedIn: req.session.isLoggedIn,
+// keep coinBets for anywhere else you use them (unsettled view)
+// but also fetch coinSettled explicitly for combining into settled list
+const coinBets = await CoinBetHistory.find({
+  userId: user._id,
+});
 
-      // data same as admin
-      matkaUnsettled,
-      matkaSettled,
-      coinBets,
-    });
+// Merge Matka settled and Coin settled into one array and sort by createdAt (newest first)
+const allSettledBets = [...matkaSettled, ...coinBets].sort((a, b) => {
+  return new Date(b.createdAt) - new Date(a.createdAt); // newest first
+});
+
+res.render("userBets", {
+  username: user.username,
+  wallet: user.wallet,
+  referCode: user.referCode,
+  user,
+  isLoggedIn: req.session.isLoggedIn,
+
+  matkaUnsettled,
+  allSettledBets, // use this in EJS
+});
+
   } catch (err) {
     console.log(err);
     res.redirect("/login");

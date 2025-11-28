@@ -57,7 +57,7 @@ exports.getAdminBetPage = async (req, res, next) => {
       return;
     }
 
-    // ADMIN sees ALL bets of all users
+    // ADMIN sees ALL users bets
     const matkaUnsettled = await MatkaHistory.find({
       status: "unsettled",
     }).populate("userId");
@@ -68,6 +68,11 @@ exports.getAdminBetPage = async (req, res, next) => {
 
     const coinBets = await CoinBetHistory.find().populate("userId");
 
+    // merge matka settled + coin bets
+    const allSettledBets = [...matkaSettled, ...coinBets].sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
     res.render("adminBet", {
       username: user.username,
       wallet: user.wallet,
@@ -75,16 +80,20 @@ exports.getAdminBetPage = async (req, res, next) => {
       user,
       isLoggedIn: req.session.isLoggedIn,
 
-      // SAME variable names for EJS
+      // keep original variables
       matkaUnsettled,
       matkaSettled,
       coinBets,
+
+      // merged for EJS
+      allSettledBets,
     });
   } catch (err) {
     console.log(err);
     res.redirect("/");
   }
 };
+
 
 exports.getDeclareData = async (req, res, next) => {
   try {
