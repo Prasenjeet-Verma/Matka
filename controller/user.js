@@ -7,27 +7,40 @@ const bcrypt = require("bcryptjs");
 exports.getDashboardPage = async (req, res, next) => {
   try {
     // 1️⃣ Check login session
-    if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/login");
+    if (!req.session.isLoggedIn || !req.session.user) {
+      // Not logged in → show dashboard without user details
+      return res.render("user", {
+        isLoggedIn: false,
+        username: null,
+        wallet: 0,
+        user: null,
+        referCode: null,
+      });
     }
 
-    // 2️⃣ Fetch fresh user data from DB (in case of updates)
+    // 2️⃣ Fetch fresh user data from DB (security check: updated info)
     const user = await User.findById(req.session.user._id);
 
     if (!user) {
+      // If user deleted or invalid session, destroy session
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    if (!user || user.role !== "user") {
       req.session.destroy(() => {
         res.redirect("/login");
       });
       return;
     }
 
-    // 3️⃣ Render dashboard EJS with user data
+    // 3️⃣ Render dashboard with full data
     res.render("user", {
+      isLoggedIn: true,
       username: user.username,
       referCode: user.referCode,
       wallet: user.wallet || 0,
       user: user,
-      isLoggedIn: req.session.isLoggedIn,
     });
   } catch (err) {
     console.error("❌ Dashboard Error:", err);
@@ -39,7 +52,7 @@ exports.getLiveMatkaPage = async (req, res, next) => {
   try {
     // 1️⃣ Check login session
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/");
+      return res.redirect("/login");
     }
     // 2️⃣ Fetch fresh user data from DB (in case of updates)
     const user = await User.findById(req.session.user._id);
@@ -50,6 +63,14 @@ exports.getLiveMatkaPage = async (req, res, next) => {
       });
       return;
     }
+
+    if (!user || user.role !== "user") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
     // 3️⃣ Render Live Matka EJS with user data
     res.render("livematka", {
       username: user.username,
@@ -68,7 +89,7 @@ exports.getSingleMatkaPage = async (req, res, next) => {
   try {
     // 1️⃣ Check login session
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/");
+      return res.redirect("/login");
     }
     // 2️⃣ Fetch fresh user data from DB (in case of updates)
     const user = await User.findById(req.session.user._id);
@@ -79,6 +100,14 @@ exports.getSingleMatkaPage = async (req, res, next) => {
       });
       return;
     }
+
+    if (!user || user.role !== "user") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
     // 3️⃣ Render Single Matka EJS with user data
     res.render("singlematka", {
       username: user.username,
@@ -97,7 +126,7 @@ exports.getPattiMatkaPage = async (req, res, next) => {
   try {
     // 1️⃣ Check login session
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/");
+      return res.redirect("/login");
     }
     // 2️⃣ Fetch fresh user data from DB (in case of updates)
     const user = await User.findById(req.session.user._id);
@@ -108,6 +137,14 @@ exports.getPattiMatkaPage = async (req, res, next) => {
       });
       return;
     }
+
+    if (!user || user.role !== "user") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
     // 3️⃣ Render Patti Matka EJS with user data
     res.render("pattimatka", {
       username: user.username,
@@ -126,7 +163,7 @@ exports.getAccountPage = async (req, res, next) => {
   try {
     // 1️⃣ Check login session
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/");
+      return res.redirect("/login");
     }
 
     // 2️⃣ Fetch user
@@ -168,6 +205,16 @@ exports.getUserBetPage = async (req, res) => {
     }
 
     const user = await User.findById(req.session.user._id);
+    if (!user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+    if (!user || user.role !== "user") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
 
     // USER ONLY sees own bets
     const matkaUnsettled = await MatkaBetHistory.find({
@@ -198,7 +245,7 @@ exports.getUserBetPage = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.redirect("/");
+    res.redirect("/login");
   }
 };
 
@@ -208,7 +255,7 @@ exports.logoutUser = (req, res, next) => {
       console.error("❌ Logout Error:", err);
       return res.status(500).send("Server Error");
     }
-    res.redirect("/login");
+    res.redirect("/");
   });
 };
 

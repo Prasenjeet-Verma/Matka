@@ -20,23 +20,6 @@
 
 
 
-    <header class="header">
-
-        <div class="logo"></div>
-       
-
-        <div class="nav-buttons">
-            <a href="/login">
-                <button class="animated-btn">
-                    <div class="btn-text">Login</div>
-                    <div><i class="fa-solid fa-right-to-bracket"></i></div>
-                </button>
-            </a>
-            <a href="/register" class="btn btn-register">
-                <button class="animated-btn"><i class="fa-solid fa-user-plus"></i><span class="btn-text">Register</span></button>
-            </a>
-        </div>
-    </header>
 
 
     <!-- ===================================================Body Start================================================= -->
@@ -53,338 +36,77 @@
     <div class="in1contaner" id="tracker-card" style="width: 95%; border: 2px solid white; border-radius: 20px;">
         
         <!-- Header Section -->
-        <div class="bg-white/90 p-6 text-center rounded-t-xl shadow-lg">
-            <h1 class="text-3xl font-extrabold text-red-600 tracking-wider">Today</h1>
+   <!-- =================== Today Section =================== -->
+<div class="bg-white/90 p-6 text-center rounded-t-xl shadow-lg">
+  <h1 class="text-3xl font-extrabold text-red-600 tracking-wider">Today</h1>
+</div>
+<div class="p-8 sm:p-10">
+  <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
+    <% todayResults.forEach(result => { %>
+      <div class="flex flex-col items-center">
+        <p class="text-lg font-medium text-white mb-4">
+          <%= new Date(result.declaredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+        </p>
+        <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
+          <%= result.winningNumber %>
         </div>
-
-        <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
+        <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
+          <%= result.matkaNo %> - <%= result.gameName %>
         </div>
- <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
 
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
+<!-- =================== Yesterday Section =================== -->
+<div class="bg-white/90 p-6 text-center rounded-t-xl shadow-lg">
+  <h1 class="text-3xl font-extrabold text-red-600 tracking-wider">Yesterday</h1>
+  <% if (yesterdayResults.length) { %>
+    <p class="text-sm text-gray-300">
+      <%= new Date(yesterdayResults[0].declaredAt).toLocaleDateString('en-GB') %>
+    </p>
+  <% } %>
+</div>
+<div class="p-8 sm:p-10">
+  <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
+    <% yesterdayResults.forEach(result => { %>
+      <div class="flex flex-col items-center">
+        <p class="text-lg font-medium text-white mb-4">
+          <%= new Date(result.declaredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+        </p>
+        <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
+          <%= result.winningNumber %>
         </div>
-
-
-
-         <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
+        <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
+          <%= result.matkaNo %> - <%= result.gameName %>
         </div>
-    </div>
-    </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
 
-
-
-
-
-    
-
-<div class="contaner" style="display: flex; justify-content: center; position: relative; top: 1rem;">
-
-    <!-- Main Card Container -->
-    <!-- Removed max-w-sm to allow it to grow. Set w-full for fluid width. -->
-    <div class="in1contaner" id="tracker-card" style="width: 95%; border: 2px solid white; border-radius: 20px;">
-        
-        <!-- Header Section -->
-        <div class="bg-white/90 p-6 text-center rounded-t-xl shadow-lg">
-            <h1 class="text-3xl font-extrabold text-red-600 tracking-wider">Yesterday</h1>
+<!-- =================== History / Older Results =================== -->
+<div class="bg-white/90 p-6 text-center rounded-t-xl shadow-lg mt-8">
+  <h1 class="text-3xl font-extrabold text-red-600 tracking-wider">History</h1>
+</div>
+<div class="p-8 sm:p-10">
+  <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
+    <% historyResults.forEach(result => { %>
+      <div class="flex flex-col items-center">
+        <p class="text-lg text-gray-300 mb-4">
+          <%= new Date(result.declaredAt).toLocaleDateString('en-GB') %>
+        </p>
+        <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
+          <%= result.winningNumber %>
         </div>
-
-        <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
+        <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
+          <%= result.matkaNo %> - <%= result.gameName %>
         </div>
- <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
 
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-
-
-         <!-- Content Grid Section -->
-        <div class="p-8 sm:p-10">
-            <div class="grid grid-cols-4 gap-6 sm:gap-8 text-center">
-                
-                <!-- Column 1 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        6
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        9
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="flex flex-col items-center">
-                    <p class="text-lg font-medium text-white mb-4">9:40 am</p>
-                    <div class="score-circle w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-4xl font-extrabold text-red-600 mb-5 cursor-pointer border-4 border-red-200">
-                        7
-                    </div>
-                    <div class="bg-white/90 w-full rounded-lg py-2 text-base font-semibold text-gray-800 shadow-xl transition hover:shadow-2xl hover:scale-[1.02] duration-300">
-                        123
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    </div>
 
 </body>
 </html>

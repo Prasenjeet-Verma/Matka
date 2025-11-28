@@ -24,6 +24,26 @@ function detectUnderNumber(patti) {
 
 exports.placeBet = async (req, res) => {
   try {
+
+   if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    const userCheck = await User.findById(req.session.user._id);
+    if (!userCheck) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    if (!userCheck || userCheck.role !== "user") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
+
     const { number, amount, ts } = req.body;
 
     const userId = req.session.user._id;

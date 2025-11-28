@@ -26,11 +26,30 @@ exports.getDashboardPage = async (req, res) => {
 
 exports.postDashboard = async (req, res) => {
   try {
-    if (!req.session.user || !req.isLoggedIn)
-      return res.status(401).json({ error: "Unauthorized" });
+
+     if (!req.session.isLoggedIn || !req.session.user) {
+        req.session.destroy(() => res.redirect("/login"));
+        return;
+      }
+  
+      const userCheck = await User.findById(req.session.user._id);
+      if (!userCheck) {
+        req.session.destroy(() => res.redirect("/login"));
+        return;
+      }
+  
+      if (!userCheck || userCheck.role !== "user") {
+        req.session.destroy(() => {
+          res.redirect("/login");
+        });
+        return;
+      }
 
     const currentUser = await User.findById(req.session.user._id);
-    if (!currentUser) return res.status(401).json({ error: "Invalid user" });
+    if (!currentUser) {
+       req.session.destroy(() => res.redirect("/login"));
+        return;
+    } 
 
     const { fixBetAmount, userChoice, timeOut } = req.body;
 

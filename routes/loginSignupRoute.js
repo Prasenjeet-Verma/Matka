@@ -2,7 +2,7 @@ const express = require('express');
 const loginSignupRouter = express.Router();
 const loginsignupController = require('../controller/loginsignup');
 
-loginSignupRouter.get('/', loginsignupController.getFirstPage);
+//loginSignupRouter.get('/', loginsignupController.getFirstPage);
 loginSignupRouter.get('/login', loginsignupController.getloginPage);
 loginSignupRouter.post('/login', loginsignupController.postLoginPage);
 loginSignupRouter.get('/register', loginsignupController.getregisterPage);

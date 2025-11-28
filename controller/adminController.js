@@ -1,12 +1,12 @@
 const User = require("../model/user");
 const MatkaHistory = require("../model/matkaBetHistory");
 const CoinBetHistory = require("../model/coinGame");
-
+const MatkaResult = require("../model/MatkaResult"); // import at top
 exports.getAdminPanelDashboard = async (req, res, next) => {
   try {
     // 1️⃣ Check admin login session
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/adminlogin");
+      return res.redirect("/login");
     }
     const user = await User.findById(req.session.user._id);
 
@@ -177,8 +177,11 @@ exports.getDeclareData = async (req, res, next) => {
 };
 
 // ---------------- Single Result ----------------
+
+
 exports.postDeclareSingleResult = async (req, res) => {
   try {
+    // ... your existing checks
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
@@ -203,7 +206,14 @@ exports.postDeclareSingleResult = async (req, res) => {
       return res.status(400).send("MatkaNo or result missing");
     }
 
-    // Fetch all unsettled single bets for that matkaNo
+    // Save the declared result to MatkaResult
+    await MatkaResult.create({
+      matkaNo,
+      gameName: "Single",
+      winningNumber: singleResult.toString(),
+    });
+
+    // Process unsettled bets
     const bets = await MatkaHistory.find({
       matkaNo,
       gameName: "Single",
@@ -214,7 +224,7 @@ exports.postDeclareSingleResult = async (req, res) => {
       if (bet.number.toString() === singleResult.toString()) {
         bet.result = "WIN";
         bet.profit = bet.amount * 9;
-          await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
+        await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
       } else {
         bet.result = "LOSS";
         bet.profit = -bet.amount;
@@ -224,16 +234,18 @@ exports.postDeclareSingleResult = async (req, res) => {
       await bet.save();
     }
 
-    res.redirect("/declareMatka"); // ya koi success message
+    res.redirect("/declareMatka");
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");
   }
 };
 
+
 // ---------------- Patti Result ----------------
 exports.postDeclarePattiResult = async (req, res) => {
   try {
+    // ... your existing checks
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
@@ -252,13 +264,21 @@ exports.postDeclarePattiResult = async (req, res) => {
       return;
     }
 
+    
     const { matkaNo, pattiResult } = req.body;
 
     if (!matkaNo || !pattiResult) {
       return res.status(400).send("MatkaNo or result missing");
     }
 
-    // Fetch all unsettled patti bets for that matkaNo
+    // Save the declared result to MatkaResult
+    await MatkaResult.create({
+      matkaNo,
+      gameName: "Patti",
+      winningNumber: pattiResult.toString(),
+    });
+
+    // Process unsettled bets
     const bets = await MatkaHistory.find({
       matkaNo,
       gameName: "Patti",
@@ -269,7 +289,7 @@ exports.postDeclarePattiResult = async (req, res) => {
       if (bet.number.toString() === pattiResult.toString()) {
         bet.result = "WIN";
         bet.profit = bet.amount * 12;
-          await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
+        await User.findByIdAndUpdate(bet.userId, { $inc: { wallet: bet.profit } });
       } else {
         bet.result = "LOSS";
         bet.profit = -bet.amount;
@@ -279,7 +299,7 @@ exports.postDeclarePattiResult = async (req, res) => {
       await bet.save();
     }
 
-    res.redirect("/declareMatka"); // ya koi success message
+    res.redirect("/declareMatka");
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");

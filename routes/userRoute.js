@@ -2,7 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const userRouterController = require('../controller/user');
 
-userRouter.get('/dashboard', userRouterController.getDashboardPage);
+userRouter.get('/', userRouterController.getDashboardPage);
 userRouter.get('/livematka', userRouterController.getLiveMatkaPage);
 userRouter.get('/singlematka', userRouterController.getSingleMatkaPage);
 userRouter.get('/pattimatka', userRouterController.getPattiMatkaPage);
