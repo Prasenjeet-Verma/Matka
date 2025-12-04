@@ -7,4 +7,7 @@ adminRouter.get('/adminBet', adminRouterController.getAdminBetPage);
 adminRouter.get('/declareMatka', adminRouterController.getDeclareData);
 adminRouter.post('/declareSingle', adminRouterController.postDeclareSingleResult);
 adminRouter.post('/declarePatti', adminRouterController.postDeclarePattiResult);
+adminRouter.get('/userDownLine', adminRouterController.getUserDownLine);
+adminRouter.post('/admincreateuser', adminRouterController.postAdmincreateuser);
+
 module.exports = adminRouter;

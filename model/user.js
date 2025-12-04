@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
     default: 0,
   },
 
+  creditRef: {
+    type: Number,
+    default: 0,
+  },
+
   playCount: {
     type: Number,
     default: 0,
@@ -33,18 +38,22 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
 
-role: {
-  type: String,
-  enum: ["admin", "master", "agent", "user"],
-  default: "user",
-},
+  role: {
+    type: String,
+    enum: ["admin", "master", "agent", "user"],
+    default: "user",
+  },
 
-referredBy: {
-  type: String,
-  default: null,
-},
+  referredBy: {
+    type: String,
+    default: null,
+  },
 
-
+  userStatus: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
 
   createdAt: {
     type: Date,
@@ -53,4 +62,3 @@ referredBy: {
 });
 
 module.exports = mongoose.model("User", userSchema);
-

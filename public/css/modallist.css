@@ -1,0 +1,1190 @@
+/* ================================================ Add User Modal =====================================================
+
+
+
+*/
+        /* --- 1. Keyframes for Background Gradient Animation (Kept Subtle) --- */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- 2. Keyframes for Input Focus Animation (Kept Blue Glow) --- */
+        @keyframes inputGlow {
+            from { box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+            to { box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+        }
+
+        :root {
+            --primary-color: #fab62e; /* Blue Accent (Unchanged) */
+            --secondary-color: #facc15; /* Yellow Accent (For hover effects) */
+            
+            /* --- Light Theme Colors --- */
+            --text-color: #1a202c; /* Dark text */
+            --bg-color: #f7f7f7; /* Very Light Grey Background */
+            --card-bg: #ffffff; /* White Card Background */
+            --header-bg: #e2e8f0; /* Light Header Background */
+            --input-bg: #ffffff; /* White Input Background */
+            --border-color: #cbd5e1; /* Light Border */
+        }
+
+        .modal-card {
+            max-width: 450px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Lighter shadow for white theme */
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: absolute;
+            top: 2rem;
+            z-index: 100000;
+        }
+
+        /* --- Header Styling (Top Section of the Modal) --- */
+        .modal-header {
+            background-color: var(--header-bg);
+            color: var(--text-color); /* Dark text on light background */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-color); /* Dark color for the X button */
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .close-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Step Indicator Styling --- */
+        .step-indicator {
+            background-color: var(--header-bg);
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: var(--text-color); /* Dark text on light background */
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            border-top: 1px solid var(--border-color); /* Separator */
+            border-bottom: 1px solid var(--border-color); 
+        }
+
+        .step-indicator span {
+            display: inline-block;
+            background-color: var(--primary-color); /* Blue background */
+            color: white; /* White text on blue background */
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-right: 10px;
+        }
+
+        /* --- Form Layout and Fields --- */
+        .form-content {
+            padding: 0 20px 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        
+        .form-row label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .required-star {
+            
+            font-weight: bold;
+        }
+        
+        /* New style for input container to position the eye icon */
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .form-row input, .form-row select {
+            width: 100%;
+            padding: 10px;
+           
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none; 
+            -moz-appearance: none; 
+            appearance: none; 
+        }
+        
+        /* Specific adjustment for inputs within the input-group to make room for the icon */
+        .input-group input {
+            padding-right: 40px; 
+        }
+
+        /* New rule to center text for number inputs (like Exposure and Commission) */
+        .form-content input[type="number"] {
+            text-align: center;
+        }
+        
+        /* Icon styling */
+        .toggle-password {
+            position: absolute;
+            right: 10px; /* Position from the right edge of the input group */
+            top: 70%;
+            transform: translateY(-50%);
+            color: #94a3b8; /* Subtle gray color */
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-color); /* Blue on hover */
+        }
+
+        .form-row select {
+            /* Change SVG fill to dark color for contrast on white background */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%231a202c%22%20d%3D%22M287%20197.8L158.4%2069.2c-4.6-4.6-12-4.6-16.6%200L5.4%20197.8c-7.8%207.8-1.2%2020.4%2010.6%2020.4h255.4C288.2%20218.2%20294.8%20205.6%20287%20197.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 0.6em auto;
+            padding-right: 30px;
+        }
+
+
+        .form-row input:focus, .form-row select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            /* Apply animation on focus (Blue Glow) */
+            animation: inputGlow 0.5s forwards;
+        }
+        
+        /* --- Footer and Button --- */
+        .modal-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .create-btn {
+            width: 100%;
+            max-width: 250px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            
+            /* Button Gradient (Kept Blue Gradient) */
+            background-image: linear-gradient(135deg, var(--primary-color), #ef1717);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(232, 26, 26, 0.5);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 500px) {
+            .modal-card {
+                margin: 10px;
+            }
+            .modal-header h2 {
+                font-size: 1rem;
+            }
+        }
+
+
+
+
+/* ================================================ Add Deposite Modal =========================== */
+
+
+
+        /* --- CSS Variables --- */
+        :root {
+            --header-bg: #555;
+            --header-text: #fff;
+            --card-bg: #f7f7f7;
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --deposit-btn-color: #5cb85c; /* Green */
+            --close-btn-color: #fff;
+            --text-color: #333;
+            --focus-color: #3b82f6; /* Blue for focus glow */
+        }
+
+        /* --- Global & Layout --- */
+      
+
+        .deposit-card-wrapper { /* Renamed from .modal-container */
+            width: 100%;
+            max-width: 400px;
+            margin-top: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background-color: var(--card-bg);
+            position: absolute;
+            top: 70px;
+        }
+
+        /* --- Header Styling --- */
+        .deposit-header-bar { /* Renamed from .modal-header */
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-form-btn { /* Renamed from .close-btn */
+            background: none;
+            border: none;
+            color: var(--close-btn-color);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            line-height: 1;
+        }
+
+        /* Animation for the Close Button */
+        .close-form-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        /* --- Form Content --- */
+        .deposit-form-body { /* Renamed from .form-content */
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-input-field { /* Renamed from .form-field */
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- Input Styling & Animation --- */
+        .form-input-field input {
+            width: 100%;
+            padding: 15px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            color: var(--text-color);
+            background-color: var(--input-bg);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* Adjustment for inputs that share a container with an icon */
+        .deposit-input-group input { /* Renamed from .input-group input */
+            padding-right: 40px; /* Make space for the eye icon */
+        }
+        
+        /* New styles for the password visibility toggle icon */
+        .pwd-toggle-btn { /* Renamed from .toggle-password */
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .pwd-toggle-btn:hover {
+            color: var(--focus-color);
+        }
+
+        /* Input Focus Animation */
+        @keyframes inputGlow {
+            from { box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+            to { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        }
+
+        .form-input-field input:focus {
+            outline: none;
+            border-color: var(--focus-color);
+            animation: inputGlow 0.5s forwards;
+        }
+
+        /* --- Deposit Button --- */
+        .submit-btn-wrapper { /* Renamed from .deposit-btn-container */
+            align-self: flex-end;
+        }
+
+        .submit-deposit-btn { /* Renamed from .deposit-btn */
+            padding: 12px 30px;
+            background-color: var(--deposit-btn-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Button Hover/Active Animation */
+        .submit-deposit-btn:hover {
+            background-color: #4CAF50; /* Slightly darker green */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .submit-deposit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 450px) {
+            .deposit-card-wrapper {
+                margin-top: 20px;
+                max-width: 90%;
+            }
+        }
+  
+
+
+
+
+
+        /* 22222222222222222222222222222222222222222 */
+
+
+  
+  /* Deposit Buttons */
+  .btn {
+   
+    border-radius: 6px;
+    height: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s;
+    width: 4rem;
+  }
+
+  .btn:hover {
+    transform: scale(1.1);
+  }
+  .btn img {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Modal Overlay */
+  .deposit-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* hidden initially */
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+
+  .deposit-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Modal Card */
+  .deposit-card-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    width: 320px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .deposit-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 1rem;
+  }
+
+  .close-form-btn {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    
+    transition: color 0.2s;
+  }
+
+  .close-form-btn:hover {
+    color: #000;
+  }
+
+  .deposit-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .form-input-field input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .form-input-field input:focus {
+    border-color: #007bff;
+  }
+
+  /* Password field */
+  .deposit-input-group {
+    position: relative;
+  }
+  .deposit-input-group input {
+    width: 100%;
+    padding-right: 35px;
+  }
+  .pwd-toggle-btn {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    color: #666;
+    font-size: 18px;
+  }
+  .pwd-toggle-btn:hover {
+    color: #000;
+  }
+
+  /* Submit Button */
+  .submit-btn-wrapper {
+    text-align: center;
+  }
+
+  .submit-deposit-btn {
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .submit-deposit-btn:hover {
+    background: yellowgreen;
+    transform: scale(1.05);
+  }
+
+
+
+
+
+
+
+  /* ============================================================== withdrowl Modal ================================================= */
+
+
+
+
+
+    :root {
+      --header-bg: #555;
+      --header-text: #fff;
+      --card-bg: #f7f7f7;
+      --input-bg: #fff;
+      --input-border: #ccc;
+      --withdraw-btn-color: #d9534f;
+      --text-color: #333;
+      --focus-color: #3b82f6;
+    }
+
+
+    /* Withdraw Buttons */
+    .btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Modal Overlay */
+    .withdraw-modal {
+      display: none;
+      position: absolute;
+      top: 5rem;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: start;
+      z-index: 1000;
+    }
+
+    .withdraw-card-wrapper {
+      max-width: 400px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background-color: var(--card-bg);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .withdraw-header-bar {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .close-form-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .close-form-btn:hover {
+      transform: rotate(90deg);
+    }
+
+    .withdraw-form-body {
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-input-field {
+      width: 100%;
+      position: relative;
+    }
+
+    .form-input-field input {
+      width: 100%;
+      padding: 15px 10px;
+      
+      border-radius: 4px;
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      color: var(--text-color);
+      background-color: var(--input-bg);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .withdraw-input-group input {
+      padding-right: 40px;
+    }
+
+    .pwd-toggle-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+    }
+
+    .pwd-toggle-btn:hover {
+      color: var(--focus-color);
+    }
+
+    .submit-btn-wrapper {
+      align-self: flex-end;
+    }
+
+    .submit-withdraw-btn {
+      padding: 12px 30px;
+      background-color: var(--withdraw-btn-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.3rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .submit-withdraw-btn:hover {
+      background-color: #c9302c;
+      transform: translateY(-2px);
+    }
+
+    .submit-withdraw-btn:active {
+      transform: translateY(0);
+    }
+
+
+  /* ============================================================== withdrowl Modal ================================================= */
+
+
+
+        /* --- CSS Variables --- */
+        :root {
+            --header-bg: #555;
+            --header-text: #fff;
+            --card-bg: #f7f7f7;
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --cr-btn-color: #d9534f; /* Red/Action color */
+            --close-btn-color: #fff;
+            --text-color: #333;
+            --focus-color: #3b82f6; /* Blue for input focus glow */
+        }
+
+        /* --- Global & Layout --- */
+
+        .cr-card-wrapper { /* Renamed from .withdraw-card-wrapper */
+            width: 100%;
+            max-width: 400px;
+            margin-top: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background-color: var(--card-bg);
+        }
+
+        /* --- Header Styling --- */
+        .cr-header-bar { /* Renamed from .withdraw-header-bar */
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .cr-close-btn { /* Renamed from .close-form-btn */
+            background: none;
+            border: none;
+            color: var(--close-btn-color);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            line-height: 1;
+        }
+
+        /* Animation for the Close Button */
+        .cr-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        /* --- Form Content --- */
+        .cr-form-body { /* Renamed from .withdraw-form-body */
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cr-input-field { /* Renamed from .form-input-field */
+            width: 100%;
+            position: relative;
+        }
+        
+        /* Input Red Border Styling (Mimicking the uploaded image's focus/highlight style) */
+        .cr-input-field input {
+            width: 100%;
+            padding: 15px 10px;
+            border: 2px solid var(--cr-btn-color); /* Initial red border */
+            border-radius: 4px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            color: var(--text-color);
+            background-color: var(--input-bg);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Adjustment for inputs that share a container with an icon */
+        .cr-input-group input { /* Renamed from .withdraw-input-group input */
+            padding-right: 40px; /* Make space for the eye icon */
+        }
+        
+        /* New styles for the password visibility toggle icon */
+        .cr-pwd-toggle-btn { /* Renamed from .pwd-toggle-btn */
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .cr-pwd-toggle-btn:hover {
+            color: var(--focus-color);
+        }
+
+        /* Input Focus Animation (Blue Glow is subtle) */
+        @keyframes inputGlow {
+            from { box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+            to { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        }
+
+        .cr-input-field input:focus {
+            outline: none;
+            border-color: var(--cr-btn-color); /* Keep border red */
+            animation: inputGlow 0.5s forwards;
+        }
+
+        /* --- Submit Button (Red) --- */
+        .cr-submit-wrapper { /* Renamed from .submit-btn-wrapper */
+            align-self: flex-end;
+        }
+
+        .cr-submit-btn { /* Renamed from .submit-withdraw-btn */
+            padding: 12px 30px;
+            background-color: var(--cr-btn-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Button Hover/Active Animation */
+        .cr-submit-btn:hover {
+            background-color: #c9302c; /* Slightly darker red */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .cr-submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 450px) {
+            .cr-card-wrapper {
+                margin-top: 20px;
+                max-width: 90%;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================== Cradit Ref Modal ================================================= */
+
+    /* Overlay */
+    #creditReferralFormWrapper {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      padding: 1.25rem;
+    }
+
+    /* Modal box */
+    #creditReferralForm {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      transform-origin: center;
+    }
+
+    /* Header */
+    .header-box {
+      background-color: #000;
+      color: white;
+      padding: 1.25rem 1rem;
+      font-weight: 900;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 0.08em;
+      position: relative;
+    }
+
+.close-button {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    border-radius: 8px;
+
+    /* Animation */
+    transition: 
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        color 0.25s ease;
+}
+
+/* Hover animation */
+.close-button:hover {
+    transform: translateY(-50%) scale(1.12) rotate(8deg);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* Click animation */
+.close-button:active {
+    transform: translateY(-50%) scale(0.92);
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+
+    .content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .input-box {
+      border: 1px solid #000;
+      width: 90%;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 6px;
+    }
+
+    .input-field {
+      padding: 1rem;
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+.update-button {
+    background: #000;
+    color: #fff;
+    padding: 1rem 1.25rem;
+    width: 90%;
+    max-width: 360px;
+    border-radius: 6px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+
+    /* Animation */
+    transition: 
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+/* Hover animation */
+.update-button:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+    background: #111;
+}
+
+/* Click animation */
+.update-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+    /* Animations */
+    @keyframes slideUpFade {
+      from { transform: translateY(24px) scale(.98); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    @keyframes slideDownFade {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to   { transform: translateY(24px) scale(.98); opacity: 0; }
+    }
+
+    .anim-enter {
+      animation: slideUpFade 260ms ease forwards;
+    }
+    .anim-exit {
+      animation: slideDownFade 260ms ease forwards;
+    }
+
+
+
+
+
+/* ============================================================== Status Modal ================================================= */
+
+
+    .status-container {
+        width: 99%;
+        max-width: 450px;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+
+            position: relative;
+            top: 5rem;
+    }
+
+    .header-box {
+        background-color: #000;
+        color: white;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        font-size: 2rem;           /* Responsive */
+        letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 480px) {
+        .header-box {
+            font-size: 1.6rem;     /* Smaller on mobile */
+        }
+    }
+
+    .close-button {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 2.5rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .close-button:hover {
+        transform: scale(1.2) rotate(10deg);
+        color: #ccc;
+    }
+
+    .status-button {
+    color: white;
+    padding: 1.2rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    width: 50%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+    }
+
+    .active-button { background-color: #4CAF50; }
+    .suspended-button { background-color: #F44336; }
+
+    .submit-button {
+        background-color: #000;
+        color: white;
+        padding: 1.2rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        width: 100%;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .submit-button:hover {
+        background-color: #333;
+    }
+
+    .selected {
+        border: 4px solid #000;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+/* =============================== */
+/* Modal Container (with animation) */
+/* =============================== */
+.status-container {
+    width: 99%;
+    max-width: 450px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+
+    position: relative;
+    top: 5rem;
+
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Show animation (add using JS) */
+.status-container.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* =============================== */
+/* Header */
+/* =============================== */
+.header-box {
+    background-color: #000;
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 480px) {
+    .header-box {
+        font-size: 1.6rem;
+    }
+}
+
+/* =============================== */
+/* Close Button Animation */
+/* =============================== */
+.close-button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: transform 0.25s ease, color 0.2s ease;
+}
+
+.close-button:hover {
+    transform: scale(1.3) rotate(12deg);
+    color: #ccc;
+}
+
+/* =============================== */
+/* Status Buttons */
+/* =============================== */
+.status-button {
+    color: white;
+    padding: 1.2rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    width: 50%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.status-button:active {
+    transform: scale(0.93);
+}
+
+.active-button { background-color: #4CAF50; }
+.suspended-button { background-color: #F44336; }
+
+/* Selected animation glow */
+.selected {
+    border: 4px solid #000;
+    box-shadow: 0 0 18px rgba(0,0,0,0.4);
+    transform: scale(1.03);
+}

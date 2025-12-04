@@ -2,6 +2,9 @@ const User = require("../model/user");
 const MatkaHistory = require("../model/matkaBetHistory");
 const CoinBetHistory = require("../model/coinGame");
 const MatkaResult = require("../model/MatkaResult"); // import at top
+const { check, validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+
 exports.getAdminPanelDashboard = async (req, res, next) => {
   try {
     // 1️⃣ Check admin login session
@@ -314,3 +317,128 @@ exports.postDeclarePattiResult = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+
+exports.getUserDownLine = async (req,res, next) => {
+  try {
+       if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    if (!user || user.role !== "admin") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
+    res.render("userdownline", {
+      username: user.username,
+      wallet: user.wallet,
+      referCode: user.referCode,
+      user,
+      isLoggedIn: req.session.isLoggedIn,
+     
+    });
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+exports.postAdmincreateuser = [
+  check("username")
+    .trim()
+    .notEmpty().withMessage("Username is required")
+    .isLength({ min: 3 }).withMessage("Username must be at least 3 characters long")
+    .custom(async (value) => {
+      const existingUser = await User.findOne({ username: value });
+      if (existingUser) throw new Error("Username already in use");
+      return true;
+    }),
+
+  check("password")
+    .notEmpty().withMessage("Password is required")
+    .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+
+  check("confirmPassword")
+    .notEmpty().withMessage("Confirm Password is required")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) throw new Error("Passwords do not match");
+      return true;
+    }),
+
+  check("referCode").trim().notEmpty().withMessage("Referral code is required"),
+
+  // MAIN CONTROLLER
+  async (req, res) => {
+    const errors = validationResult(req);
+    const { username, password, referCode } = req.body;
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("register", {
+        isLoggedIn: false,
+        errors: errors.array().map((e) => e.msg),
+        oldInput: { username, password, referCode },
+      });
+    }
+
+    try {
+      // 1️⃣ Check valid referrer (ONLY admin, master, agent)
+      const referrer = await User.findOne({
+        referCode: referCode,
+        role: { $in: ["admin", "master", "agent"] },
+      });
+
+      if (!referrer) {
+        return res.status(400).render("register", {
+          errors: ["Invalid referral code"],
+          oldInput: { username, password, referCode },
+        });
+      }
+
+      // 2️⃣ Check username again for safety
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).render("register", {
+          errors: ["Username already in use"],
+          oldInput: { username, password, referCode },
+        });
+      }
+
+      // 3️⃣ Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // 4️⃣ GENERATE UNIQUE REFER CODE FOR NEW USER
+      const newUserReferCode =
+        Math.random().toString(36).substring(2, 10).toUpperCase();
+
+      // 5️⃣ CREATE NEW USER (role ALWAYS user)
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        referCode: newUserReferCode, // auto generated
+        referredBy: referCode,       // who referred new user
+        role: "user",                // ALWAYS user
+      });
+
+      await newUser.save();
+
+      res.redirect("/userDownLine");
+
+    } catch (err) {
+      console.error("Registration Error:", err);
+      res.status(500).send("Server Error");
+    }
+  }
+];
+
