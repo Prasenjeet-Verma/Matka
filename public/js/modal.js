@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-
   /* ============================================================
       2) ADD USER MODAL
   ============================================================ */
@@ -63,22 +62,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-createBtn.addEventListener('click', (e) => {
-  e.preventDefault(); // stop default behavior temporarily
+    createBtn.addEventListener('click', (e) => {
+      e.preventDefault();
 
-  const user = document.getElementById('username').value.trim();
-  const pass = document.getElementById('password').value;
-  const confirm = document.getElementById('confirm-password').value;
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm-password').value;
 
-  if (!user) return alert('Please enter username');
-  if (!pass) return alert('Please enter password');
-  if (pass !== confirm) return alert('Passwords do not match');
+      if (!user) return alert('Please enter username');
+      if (!pass) return alert('Please enter password');
+      if (pass !== confirm) return alert('Passwords do not match');
 
-  document.getElementById("registerForm").submit();  // now submit safely
-});
-
+      document.getElementById("registerForm").submit();
+    });
   }
-
 
 
   /* ============================================================
@@ -91,7 +88,6 @@ createBtn.addEventListener('click', (e) => {
   const depositPwdToggle = document.querySelector('.pwd-toggle-btn');
 
   if (depositModal && closeDepositBtn) {
-
     depositButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         depositModal.classList.add('active');
@@ -118,7 +114,6 @@ createBtn.addEventListener('click', (e) => {
       });
     }
   }
-
 
 
   /* ============================================================
@@ -165,7 +160,6 @@ createBtn.addEventListener('click', (e) => {
       });
     }
   }
-
 
 
   /* ============================================================
@@ -220,17 +214,13 @@ createBtn.addEventListener('click', (e) => {
     });
   }
 
-});
 
+  /* ============================================================
+      6) STATUS MODAL
+  ============================================================ */
+  let currentStatus = null;
 
-
-
-// <!---------------------------------------------------------- Status Modal ---------------------------------------------->
-
-
-let currentStatus = null;
-
-function selectStatus(status) {
+  function selectStatus(status) {
     currentStatus = status;
     const btnActive = document.getElementById('btn-active');
     const btnSuspended = document.getElementById('btn-suspended');
@@ -243,51 +233,49 @@ function selectStatus(status) {
     if (status === 'Suspended') btnSuspended.classList.add('selected');
 
     messageBox.classList.add('hidden');
-}
+  }
 
-function handleSubmit() {
+  function handleSubmit() {
     const messageBox = document.getElementById('messageBox');
 
     if (currentStatus) {
-        messageBox.textContent = `Status submitted: ${currentStatus}`;
-        messageBox.className = "mt-6 text-center text-lg font-bold text-green-600";
+      messageBox.textContent = `Status submitted: ${currentStatus}`;
+      messageBox.className = "mt-6 text-center text-lg font-bold text-green-600";
     } else {
-        messageBox.textContent = "Please select a status first.";
-        messageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
+      messageBox.textContent = "Please select a status first.";
+      messageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
     }
 
     messageBox.classList.remove('hidden');
-}
+  }
 
-// MODAL OPEN/CLOSE
-document.addEventListener("DOMContentLoaded", () => {
-    const modalWrapper = document.getElementById("statusModalWrapper");
-    const modal = document.getElementById("statusModal");
-    const settingsButtons = document.querySelectorAll(".settingsBtn");
-    const closeBtn = document.getElementById("closeStatusModal");
+  const modalWrapper = document.getElementById("statusModalWrapper");
+  const modal = document.getElementById("statusModal");
+  const settingsButtons = document.querySelectorAll(".settingsBtn");
+  const closeStatusBtn = document.getElementById("closeStatusModal");
 
-    settingsButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            modalWrapper.classList.remove("hidden");
-            modal.classList.remove("opacity-0", "scale-90");
-            modal.classList.add("opacity-100", "scale-100");
-        });
+  settingsButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      modalWrapper.classList.remove("hidden");
+      modal.classList.remove("opacity-0", "scale-90");
+      modal.classList.add("opacity-100", "scale-100");
     });
+  });
 
-    closeBtn.addEventListener("click", () => closeModal());
+  closeStatusBtn.addEventListener("click", () => closeModal());
+  modalWrapper.addEventListener("click", (e) => {
+    if (e.target === modalWrapper) closeModal();
+  });
 
-    modalWrapper.addEventListener("click", (e) => {
-        if (e.target === modalWrapper) closeModal();
-    });
+  function closeModal() {
+    modal.classList.add("opacity-0", "scale-90");
+    modal.classList.remove("opacity-100", "scale-100");
 
-    function closeModal() {
-        modal.classList.add("opacity-0", "scale-90");
-        modal.classList.remove("opacity-100", "scale-100");
+    setTimeout(() => {
+      modalWrapper.classList.add("hidden");
+    }, 250);
+  }
 
-        setTimeout(() => {
-            modalWrapper.classList.add("hidden");
-        }, 250);
-    }
+  // default status
+  selectStatus("Active");
 });
-
-window.onload = () => selectStatus('Active');
