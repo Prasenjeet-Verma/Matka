@@ -1203,3 +1203,26 @@
     box-shadow: 0 0 18px rgba(0,0,0,0.4);
     transform: scale(1.03);
 }
+
+
+
+
+
+.msg-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%); /* start slightly above center */
+  background: #e74c3c;
+  color: white;
+  padding: 16px 26px;
+  border-radius: 10px;
+  font-weight: 700;
+  z-index: 9999;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none; /* click pass through */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.msg-box.success { background: #2ecc71; }
+

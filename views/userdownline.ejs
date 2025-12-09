@@ -39,14 +39,17 @@
         <button class="btn" style="border: 1px solid gray">Search</button>
       </div>
 
-      <select>
-        <option>ACTIVE</option>
-        <option>INACTIVE</option>
-      </select>
+  <select id="statusFilter" onchange="filterStatus(this.value)">
+  <option value="ACTIVE" <%= selectedStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+  <option value="INACTIVE" <%= selectedStatus === 'INACTIVE' ? 'selected' : '' %>>INACTIVE</option>
+</select>
+
 
       <div class="referral">
         <button class="btn-outline btn-icon" id="openModalBtn">Add User</button>
-        <button class="btn-outline">Referral</button>
+        <a href="/userDownLine">
+          <button class="btn-outline">Refresh</button></a
+        >
       </div>
     </div>
 
@@ -71,7 +74,7 @@
             <% users.forEach((u, index) => { %>
             <tr>
               <td><%= index + 1 %></td>
-              <td><%= u.username %></td>
+              <td style="font-weight: 600"><%= u.username %></td>
 
               <!-- Credit Ref -->
               <td>
@@ -90,7 +93,9 @@
               <td><%= u.wallet.toLocaleString() %></td>
 
               <!-- Ref P/L -->
-              <td class="<%= u.refPl < 0 ? 'red' : 'green' %>">
+              <td
+                class="<%= u.refPl < 0 ? 'text-red-600' : 'text-green-600' %>"
+              >
                 <%= u.refPl.toLocaleString() %>
               </td>
 
@@ -116,7 +121,10 @@
                     <img src="svg/withdrowl.svg" />
                   </button>
 
-                  <button class="btn settingsBtn" data-userid="<%= u._id %>">
+                  <button class="btn settingsBtn" 
+        data-userid="<%= u._id %>" 
+        data-status="<%= u.userStatus %>">
+
                     <img src="svg/setting.svg" />
                   </button>
 
@@ -188,35 +196,27 @@
               <label for="password"
                 >Password <span class="required-star">*</span></label
               >
+              <input type="password" id="password"   value="<%= oldInput?.password || '' %>" name="password" required />
               <i class="fas fa-eye toggle-password" data-target="password"></i>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value="<%= oldInput?.password || '' %>"
-                autocomplete="new-password"
-                required
-              />
             </div>
 
             <div class="form-row input-group">
               <label for="confirm-password"
                 >Confirm Password <span class="required-star">*</span></label
               >
-              <i
-                class="fas fa-eye toggle-password"
-                data-target="confirm-password"
-              ></i>
               <input
                 type="password"
                 id="confirm-password"
                 name="confirmPassword"
-                autocomplete="new-password"
                 required
               />
-              <small id="matchMsg" class="text-sm mt-1 block"></small>
+              <i
+                class="fas fa-eye toggle-password"
+                data-target="confirm-password"
+              ></i>
+             
             </div>
-
+ <small id="matchMsg" class="text-sm mt-1 block"></small>
             <input
               type="hidden"
               name="referCode"
@@ -419,7 +419,9 @@
                     }
                   });
 
-
+  function filterStatus(status) {
+    window.location.href = `/userDownLine?status=${status}`;
+  }
 
       <% if (typeof openModal !== 'undefined' && openModal) { %>
         document.addEventListener("DOMContentLoaded", function () {

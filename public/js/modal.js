@@ -184,57 +184,153 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCredit(); });
   }
 
-  /* ============================================================
-      6) STATUS MODAL
-  ============================================================ */
-  let currentStatus = null;
-  const btnActive = document.getElementById('btn-active');
-  const btnSuspended = document.getElementById('btn-suspended');
-  const statusMessageBox = document.getElementById('statusMessageBox');
-  const modalWrapperStatus = document.getElementById("statusModalWrapper");
-  const modalStatus = document.getElementById("statusModal");
-  const settingsButtons = document.querySelectorAll(".settingsBtn");
-  const closeStatusBtn = document.getElementById("closeStatusModal");
-  const submitStatusBtn = document.getElementById("submitStatusBtn");
+/* ============================================================
+   6) STATUS MODAL (Updated with backend AJAX)
+============================================================ */
+let currentStatus = null;
+const btnActive = document.getElementById('btn-active');
+const btnSuspended = document.getElementById('btn-suspended');
+const statusMessageBox = document.getElementById('statusMessageBox');
+const modalWrapperStatus = document.getElementById("statusModalWrapper");
+const modalStatus = document.getElementById("statusModal");
+const settingsButtons = document.querySelectorAll(".settingsBtn");
+const closeStatusBtn = document.getElementById("closeStatusModal");
+const submitStatusBtn = document.getElementById("submitStatusBtn");
 
-  const selectStatus = (status) => {
-    currentStatus = status;
-    btnActive.classList.remove('selected');
-    btnSuspended.classList.remove('selected');
-    if (status === 'Active') btnActive.classList.add('selected');
-    if (status === 'Suspended') btnSuspended.classList.add('selected');
-    statusMessageBox.classList.add('hidden');
-  };
+// ===== select status visually =====
+const selectStatus = (status) => {
+  currentStatus = status;
+  btnActive.classList.remove('selected');
+  btnSuspended.classList.remove('selected');
+  if (status.toLowerCase() === 'active') btnActive.classList.add('selected');
+  if (status.toLowerCase() === 'suspended' || status.toLowerCase() === 'inactive') btnSuspended.classList.add('selected');
+  statusMessageBox.classList.add('hidden');
+};
 
-  const closeStatus = () => {
-    modalStatus.classList.add("opacity-0", "scale-90");
-    modalStatus.classList.remove("opacity-100", "scale-100");
-    setTimeout(() => { modalWrapperStatus.classList.add("hidden"); }, 250);
-  };
+// ===== close modal =====
+const closeStatus = () => {
+  modalStatus.classList.add("opacity-0", "scale-90");
+  modalStatus.classList.remove("opacity-100", "scale-100");
+  setTimeout(() => { modalWrapperStatus.classList.add("hidden"); }, 250);
+};
 
-  settingsButtons.forEach(btn => btn.addEventListener("click", () => {
-    modalWrapperStatus.classList.remove("hidden");
-    modalStatus.classList.remove("opacity-0", "scale-90");
-    modalStatus.classList.add("opacity-100", "scale-100");
-  }));
+// ===== open modal on Settings button click =====
+settingsButtons.forEach(btn => btn.addEventListener("click", () => {
+  modalWrapperStatus.dataset.userid = btn.dataset.userid; // store current user ID
 
-  closeStatusBtn.addEventListener("click", closeStatus);
-  modalWrapperStatus.addEventListener("click", e => { if (e.target === modalWrapperStatus) closeStatus(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatus(); });
+  // ✅ show modal
+  modalWrapperStatus.classList.remove("hidden");
+  modalStatus.classList.remove("opacity-0", "scale-90");
+  modalStatus.classList.add("opacity-100", "scale-100");
 
-  btnActive.addEventListener('click', () => selectStatus('Active'));
-  btnSuspended.addEventListener('click', () => selectStatus('Suspended'));
-  submitStatusBtn.addEventListener('click', () => {
-    if (currentStatus) {
-      statusMessageBox.textContent = `Status submitted: ${currentStatus}`;
-      statusMessageBox.className = "mt-6 text-center text-lg font-bold text-green-600";
-    } else {
-      statusMessageBox.textContent = "Please select a status first.";
-      statusMessageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
-    }
+  // ✅ get status directly from the table row
+  const row = btn.closest("tr");
+  const statusText = row.querySelector(".status").innerText.trim(); // Active or Suspended
+  selectStatus(statusText);
+}));
+
+// ===== close modal events =====
+closeStatusBtn.addEventListener("click", closeStatus);
+modalWrapperStatus.addEventListener("click", e => { if (e.target === modalWrapperStatus) closeStatus(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatus(); });
+
+// ===== status buttons =====
+btnActive.addEventListener('click', () => selectStatus('Active'));
+btnSuspended.addEventListener('click', () => selectStatus('Suspended'));
+
+// ===== submit status to backend =====
+submitStatusBtn.addEventListener('click', async () => {
+  if (!currentStatus) {
+    statusMessageBox.textContent = "Please select a status first.";
+    statusMessageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
     statusMessageBox.classList.remove('hidden');
+    return;
+  }
+
+  const userId = modalWrapperStatus.dataset.userid;
+  if (!userId) return;
+
+  // ✅ map modal button text to backend userStatus
+  const statusMap = { 'Active': 'active', 'Suspended': 'inactive' };
+
+  try {
+    const res = await fetch("/postTransaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, userStatus: statusMap[currentStatus] })
+    });
+
+    const data = await res.json();
+    statusMessageBox.textContent = data.message;
+    statusMessageBox.className = `mt-6 text-center text-lg font-bold ${data.success ? 'text-green-600' : 'text-red-600'}`;
+    statusMessageBox.classList.remove('hidden');
+
+    if (data.success) setTimeout(() => window.location.reload(), 1200);
+  } catch (err) {
+    statusMessageBox.textContent = "Server error. Try again!";
+    statusMessageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
+    statusMessageBox.classList.remove('hidden');
+  }
+});
+
+
+
+
+
+/* ============================================================
+   7) AJAX form submit (Deposit / Withdraw / Credit Ref)
+============================================================ */
+document.querySelectorAll("form[action='/postTransaction']").forEach(form => {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // stop normal submit
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    const response = await fetch("/postTransaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    showMessage(result.message, result.success);
+
+    // Close modal only on success
+    if (result.success) {
+      setTimeout(() => {
+        if (depositModal) depositModal.style.display = "none";
+        if (withdrawModal) withdrawModal.style.display = "none";
+        if (wrapper) wrapper.style.display = "none";
+        window.location.reload(); // refresh data on screen
+      }, 1200);
+    }
+  });
+});
+
+/* ===========================
+   Message popup UI
+=========================== */
+function showMessage(msg, success) {
+  const box = document.createElement("div");
+  box.className = `msg-box ${success ? 'success' : 'error'}`;
+  box.innerText = msg;
+  document.body.appendChild(box);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    box.style.opacity = "1";
+    box.style.transform = "translate(-50%, -50%)"; // slide to center
   });
 
-  selectStatus('Active'); // default
+  // Auto remove after 3 seconds with fade-out
+  setTimeout(() => {
+    box.style.opacity = "0";
+    box.style.transform = "translate(-50%, -60%)"; // slide up slightly
+    box.addEventListener('transitionend', () => box.remove());
+  }, 3000);
+}
+
+
 
 });

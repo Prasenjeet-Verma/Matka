@@ -332,21 +332,28 @@ exports.getUserDownLine = async (req, res, next) => {
       return;
     }
 
-    // 🟢 fetch all users except admin
-    const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+    // 🟢 Get filter from query, default = "ACTIVE"
+    const statusFilter = req.query.status || "ACTIVE";
+
+    // 🟢 fetch users based on filter
+    const allUsers = await User.find({ 
+      role: "user",
+      userStatus: statusFilter.toLowerCase() // active or inactive
+    }).sort({ createdAt: -1 });
 
     res.render("userdownline", {
       username: loggedUser.username,
       wallet: loggedUser.wallet,
       referCode: loggedUser.referCode,
       user: loggedUser,
-      users: allUsers,  // send all users
+      users: allUsers,  // filtered users
       errors: [],
       isLoggedIn: req.session.isLoggedIn,
       oldInput: {
         username: "",
         password: "",
       },
+      selectedStatus: statusFilter // frontend me dropdown selected show
     });
 
   } catch (err) {
@@ -483,30 +490,26 @@ if (existingUser) {
 
 exports.postTransaction = async (req, res, next) => {
   try {
-    const { userId, wallet, creditRef, deposit, withdraw, adminPassword } = req.body;
+    const { userId, wallet, creditRef, deposit, withdraw, adminPassword, userStatus } = req.body;
 
     const user = await User.findById(userId);
-    if (!user) {
-      return res.redirect('/userDownLine');
-    }
+    if (!user) return res.json({ success: false, message: "User not found!" });
 
     const admin = await User.findById(req.session.user._id);
-    if (!admin || admin.role !== 'admin') {
-      return res.redirect('/userDownLine');
-    }
+    if (!admin || admin.role !== "admin")
+      return res.json({ success: false, message: "Unauthorized access!" });
 
-    // Only check admin password if deposit or withdraw
+    // admin password check only for deposit/withdraw
     if ((deposit || withdraw) && (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))) {
-      return res.redirect('/userDownLine');
+      return res.json({ success: false, message: "Incorrect admin password!" });
     }
 
-   // Credit Referral (overwrite old value)
-if (creditRef) {
-  const creditAmount = Number(creditRef);
-  user.creditRef = creditAmount;  
-  user.refPl = (user.wallet || 0) - user.creditRef;
-}
-
+    // Credit Referral
+    if (creditRef) {
+      const creditAmount = Number(creditRef);
+      user.creditRef = creditAmount;
+      user.refPl = (user.wallet || 0) - user.creditRef;
+    }
 
     // Deposit
     if (deposit) {
@@ -518,19 +521,22 @@ if (creditRef) {
     if (withdraw) {
       const withdrawAmount = Number(withdraw);
       if (withdrawAmount > user.wallet) {
-        return res.redirect('/userDownLine');
+        return res.json({ success: false, message: "Insufficient balance!" });
       }
       user.wallet -= withdrawAmount;
       if (user.creditRef) user.refPl = user.wallet - user.creditRef;
     }
 
-    await user.save();
+    // ✅ User Status Update
+    if (userStatus && ["active", "inactive"].includes(userStatus.toLowerCase())) {
+      user.userStatus = userStatus.toLowerCase();
+    }
 
-    // 🚀 Direct Redirect (no render, no flash)
-    return res.redirect('/userDownLine');
+    await user.save();
+    return res.json({ success: true, message: "Successful Submit " });
 
   } catch (err) {
     console.log(err);
-    return res.redirect('/userDownLine');
+    return res.json({ success: false, message: "Server Error!" });
   }
 };
