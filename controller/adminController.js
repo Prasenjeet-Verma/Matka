@@ -392,17 +392,21 @@ exports.postAdmincreateuser = [
     const { username, password, referCode } = req.body;
 
 if (!errors.isEmpty()) {
+  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+
   return res.status(400).render("userdownline", {
     username: req.session.user.username,
     wallet: req.session.user.wallet,
     referCode: req.session.user.referCode,
-    user: req.session.user,                 // 🟢 important
+    user: req.session.user,
+    users: allUsers,
     isLoggedIn: req.session.isLoggedIn,
     errors: errors.array().map((e) => e.msg),
     oldInput: { username, password },
     openModal: true
   });
 }
+
 
 
     try {
@@ -413,13 +417,16 @@ if (!errors.isEmpty()) {
       });
 
 if (!referrer) {
+  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+
   return res.status(400).render("userdownline", {
     username: req.session.user.username,
     wallet: req.session.user.wallet,
     referCode: req.session.user.referCode,
     user: req.session.user,
+    users: allUsers,
     isLoggedIn: req.session.isLoggedIn,
-    errors: ["Invalid referral code"],
+    errors: errors.array().map((e) => e.msg),
     oldInput: { username, password },
     openModal: true
   });
@@ -429,13 +436,16 @@ if (!referrer) {
       // 2️⃣ Check username again for safety
 const existingUser = await User.findOne({ username });
 if (existingUser) {
+  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+
   return res.status(400).render("userdownline", {
     username: req.session.user.username,
     wallet: req.session.user.wallet,
     referCode: req.session.user.referCode,
     user: req.session.user,
+    users: allUsers,
     isLoggedIn: req.session.isLoggedIn,
-    errors: ["Username already in use"],
+    errors: errors.array().map((e) => e.msg),
     oldInput: { username, password },
     openModal: true
   });
