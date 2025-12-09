@@ -645,10 +645,27 @@
       transition: box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
-    .withdraw-input-group input {
-      padding-right: 40px;
-    }
 
+    /* new code to fix only eye icon   */
+ .withdraw-input-group {
+  position: relative;
+}
+
+.withdraw-input-group input {
+  padding-right: 40px; /* 👈 Add this */
+}
+
+.withdraw-input-group .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+    /* end */
     .pwd-toggle-btn {
       position: absolute;
       right: 10px;
