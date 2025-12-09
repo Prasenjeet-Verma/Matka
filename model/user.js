@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
     default: 0,
   },
 
+    // 🟢 refPl added
+  refPl: {
+    type: Number,
+    default: 0,
+  },
+
   playCount: {
     type: Number,
     default: 0,

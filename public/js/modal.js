@@ -1,29 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ============================================================
-      1) PASSWORD TOGGLE (COMMON)
+      1) PASSWORD TOGGLE (UNIVERSAL)
   ============================================================ */
-  function togglePasswordVisibility(iconElement) {
-    const targetId = iconElement.getAttribute('data-target');
-    const passwordInput = document.getElementById(targetId);
-
-    if (!passwordInput) return;
-
-    if (passwordInput.type === 'password') {
-      passwordInput.type = 'text';
-      iconElement.classList.remove('fa-eye');
-      iconElement.classList.add('fa-eye-slash');
-    } else {
-      passwordInput.type = 'password';
-      iconElement.classList.remove('fa-eye-slash');
-      iconElement.classList.add('fa-eye');
-    }
-  }
-
-  document.querySelectorAll('.toggle-password').forEach(button => {
-    button.addEventListener('click', () => togglePasswordVisibility(button));
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+      const targetId = icon.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
   });
-
 
   /* ============================================================
       2) ADD USER MODAL
@@ -32,51 +27,55 @@ document.addEventListener("DOMContentLoaded", () => {
   const userModal = document.getElementById('userModal');
   const closeBtn = document.getElementById('closeModalBtn');
   const createBtn = document.getElementById('createBtn');
+  const registerForm = document.getElementById("registerForm");
 
   if (openBtn && userModal && closeBtn && createBtn) {
-
-    function openUserModal() {
+    const openUserModal = () => {
       userModal.classList.add('open');
       userModal.setAttribute('aria-hidden', 'false');
-
+      userModal.style.display = "flex";
       const firstInput = userModal.querySelector('input');
       if (firstInput) firstInput.focus();
-    }
-
-    function closeUserModal() {
+    };
+    const closeUserModal = () => {
       userModal.classList.remove('open');
       userModal.setAttribute('aria-hidden', 'true');
+      userModal.style.display = "none";
       openBtn.focus();
-    }
+    };
 
     openBtn.addEventListener('click', openUserModal);
     closeBtn.addEventListener('click', closeUserModal);
-
-    userModal.addEventListener('click', (e) => {
-      if (e.target === userModal) closeUserModal();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && userModal.classList.contains('open')) {
-        closeUserModal();
-      }
-    });
+    userModal.addEventListener('click', (e) => { if (e.target === userModal) closeUserModal(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && userModal.classList.contains('open')) closeUserModal(); });
 
     createBtn.addEventListener('click', (e) => {
       e.preventDefault();
-
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value;
       const confirm = document.getElementById('confirm-password').value;
-
       if (!user) return alert('Please enter username');
       if (!pass) return alert('Please enter password');
       if (pass !== confirm) return alert('Passwords do not match');
+      registerForm.submit();
+    });
 
-      document.getElementById("registerForm").submit();
+    // Password match message
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirm-password");
+    const matchMsg = document.getElementById("matchMsg");
+
+    confirmPassword.addEventListener("input", () => {
+      if (confirmPassword.value === "") matchMsg.textContent = "";
+      else if (password.value === confirmPassword.value) {
+        matchMsg.textContent = "✅ Passwords match";
+        matchMsg.style.color = "green";
+      } else {
+        matchMsg.textContent = "❌ Passwords do not match";
+        matchMsg.style.color = "red";
+      }
     });
   }
-
 
   /* ============================================================
       3) DEPOSIT MODAL
@@ -84,37 +83,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const depositButtons = document.querySelectorAll('.deposit-btn');
   const depositModal = document.getElementById('depositModal');
   const closeDepositBtn = document.getElementById('closeDeposit');
+  const depositAmountInput = document.getElementById('deposit-amount-input');
   const depositPwdInput = document.getElementById('deposit-credential');
-  const depositPwdToggle = document.querySelector('.pwd-toggle-btn');
+  const depositUserIdInput = document.getElementById('depositUserId');
+  const depositWalletInput = document.getElementById('depositWallet');
 
-  if (depositModal && closeDepositBtn) {
+  if (depositModal) {
+    const closeDeposit = () => {
+      depositModal.classList.remove('active');
+      depositModal.style.display = "none";
+    };
     depositButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         depositModal.classList.add('active');
+        depositModal.style.display = 'flex';
+        depositAmountInput.value = '';
+        depositPwdInput.value = '';
+        depositUserIdInput.value = btn.dataset.userid;
+        depositWalletInput.value = btn.dataset.wallet;
+        depositAmountInput.focus();
       });
     });
-
-    closeDepositBtn.addEventListener('click', () => {
-      depositModal.classList.remove('active');
-    });
-
-    depositModal.addEventListener('click', (e) => {
-      if (e.target === depositModal) depositModal.classList.remove('active');
-    });
-
-    if (depositPwdToggle && depositPwdInput) {
-      depositPwdToggle.addEventListener('click', () => {
-        if (depositPwdInput.type === 'password') {
-          depositPwdInput.type = 'text';
-          depositPwdToggle.textContent = '🙈';
-        } else {
-          depositPwdInput.type = 'password';
-          depositPwdToggle.textContent = '👁️';
-        }
-      });
-    }
+    closeDepositBtn.addEventListener('click', closeDeposit);
+    depositModal.addEventListener('click', e => { if (e.target === depositModal) closeDeposit(); });
   }
-
 
   /* ============================================================
       4) WITHDRAW MODAL
@@ -122,45 +114,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const withdrawButtons = document.querySelectorAll(".withdraw-btn");
   const withdrawModal = document.getElementById("withdrawModal");
   const closeWithdrawBtn = document.getElementById("closeWithdraw");
+  const withdrawAmountInput = document.getElementById('withdraw-amount-input');
   const withdrawPwdInput = document.getElementById("withdraw-credential");
-  const withdrawEyeIcon = document.querySelector(".withdraw-input-group .pwd-toggle-btn");
+  const withdrawUserIdInput = document.getElementById('withdrawUserId');
+  const withdrawWalletInput = document.getElementById('withdrawWallet');
 
-  if (withdrawModal && closeWithdrawBtn) {
-
+  if (withdrawModal) {
+    const closeWithdraw = () => {
+      withdrawModal.classList.remove("active");
+      withdrawModal.style.display = "none";
+    };
     withdrawButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         withdrawModal.classList.add("active");
         withdrawModal.style.display = "flex";
+        withdrawAmountInput.value = '';
+        withdrawPwdInput.value = '';
+        withdrawUserIdInput.value = btn.dataset.userid;
+        withdrawWalletInput.value = btn.dataset.wallet;
+        withdrawAmountInput.focus();
       });
     });
-
-    closeWithdrawBtn.addEventListener("click", () => {
-      withdrawModal.classList.remove("active");
-      withdrawModal.style.display = "none";
-    });
-
-    withdrawModal.addEventListener("click", (e) => {
-      if (e.target === withdrawModal) {
-        withdrawModal.classList.remove("active");
-        withdrawModal.style.display = "none";
-      }
-    });
-
-    if (withdrawEyeIcon && withdrawPwdInput) {
-      withdrawEyeIcon.addEventListener("click", () => {
-        if (withdrawPwdInput.type === "password") {
-          withdrawPwdInput.type = "text";
-          withdrawEyeIcon.classList.remove("fa-eye");
-          withdrawEyeIcon.classList.add("fa-eye-slash");
-        } else {
-          withdrawPwdInput.type = "password";
-          withdrawEyeIcon.classList.remove("fa-eye-slash");
-          withdrawEyeIcon.classList.add("fa-eye");
-        }
-      });
-    }
+    closeWithdrawBtn.addEventListener("click", closeWithdraw);
+    withdrawModal.addEventListener("click", e => { if (e.target === withdrawModal) closeWithdraw(); });
   }
-
 
   /* ============================================================
       5) CREDIT REFERRAL MODAL
@@ -169,113 +146,95 @@ document.addEventListener("DOMContentLoaded", () => {
   const creditModal = document.getElementById('creditReferralForm');
   const editButtons = document.querySelectorAll('.editBtn');
   const creditCloseBtn = document.getElementById('closeBtn');
-  const messageBox = document.getElementById('messageBox');
   const referralInput = document.getElementById('referralNumber');
+  const creditUserIdInput = document.getElementById('creditUserId');
+  const creditWalletInput = document.getElementById('creditWallet');
+  const creditMessageBox = document.getElementById('creditMessageBox');
 
-  if (wrapper && creditModal && creditCloseBtn) {
-
-    function openCreditModal() {
-      wrapper.style.display = 'flex';
-
-      creditModal.classList.remove('anim-exit');
-      void creditModal.offsetWidth;
-      creditModal.classList.add('anim-enter');
-
-      document.body.style.overflow = 'hidden';
-      messageBox.textContent = '';
-      referralInput.value = '';
-    }
-
-    function closeCreditModal() {
+  if (wrapper && creditModal) {
+    const closeCredit = () => {
       creditModal.classList.remove('anim-enter');
       void creditModal.offsetWidth;
       creditModal.classList.add('anim-exit');
-
       creditModal.addEventListener('animationend', function end() {
         wrapper.style.display = 'none';
         creditModal.classList.remove('anim-exit');
         document.body.style.overflow = '';
         creditModal.removeEventListener('animationend', end);
       });
-    }
+    };
 
     editButtons.forEach(btn => {
-      btn.addEventListener('click', openCreditModal);
+      btn.addEventListener('click', () => {
+        wrapper.style.display = 'flex';
+        creditModal.classList.remove('anim-exit');
+        void creditModal.offsetWidth;
+        creditModal.classList.add('anim-enter');
+        document.body.style.overflow = 'hidden';
+        referralInput.value = '';
+        creditMessageBox.textContent = '';
+        creditUserIdInput.value = btn.dataset.userid;
+        creditWalletInput.value = btn.dataset.wallet;
+        referralInput.focus();
+      });
     });
 
-    creditCloseBtn.addEventListener('click', closeCreditModal);
-
-    wrapper.addEventListener('click', e => {
-      if (e.target === wrapper) closeCreditModal();
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeCreditModal();
-    });
+    creditCloseBtn.addEventListener('click', closeCredit);
+    wrapper.addEventListener('click', e => { if (e.target === wrapper) closeCredit(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCredit(); });
   }
-
 
   /* ============================================================
       6) STATUS MODAL
   ============================================================ */
   let currentStatus = null;
-
-  function selectStatus(status) {
-    currentStatus = status;
-    const btnActive = document.getElementById('btn-active');
-    const btnSuspended = document.getElementById('btn-suspended');
-    const messageBox = document.getElementById('messageBox');
-
-    btnActive.classList.remove('selected');
-    btnSuspended.classList.remove('selected');
-
-    if (status === 'Active') btnActive.classList.add('selected');
-    if (status === 'Suspended') btnSuspended.classList.add('selected');
-
-    messageBox.classList.add('hidden');
-  }
-
-  function handleSubmit() {
-    const messageBox = document.getElementById('messageBox');
-
-    if (currentStatus) {
-      messageBox.textContent = `Status submitted: ${currentStatus}`;
-      messageBox.className = "mt-6 text-center text-lg font-bold text-green-600";
-    } else {
-      messageBox.textContent = "Please select a status first.";
-      messageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
-    }
-
-    messageBox.classList.remove('hidden');
-  }
-
-  const modalWrapper = document.getElementById("statusModalWrapper");
-  const modal = document.getElementById("statusModal");
+  const btnActive = document.getElementById('btn-active');
+  const btnSuspended = document.getElementById('btn-suspended');
+  const statusMessageBox = document.getElementById('statusMessageBox');
+  const modalWrapperStatus = document.getElementById("statusModalWrapper");
+  const modalStatus = document.getElementById("statusModal");
   const settingsButtons = document.querySelectorAll(".settingsBtn");
   const closeStatusBtn = document.getElementById("closeStatusModal");
+  const submitStatusBtn = document.getElementById("submitStatusBtn");
 
-  settingsButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      modalWrapper.classList.remove("hidden");
-      modal.classList.remove("opacity-0", "scale-90");
-      modal.classList.add("opacity-100", "scale-100");
-    });
+  const selectStatus = (status) => {
+    currentStatus = status;
+    btnActive.classList.remove('selected');
+    btnSuspended.classList.remove('selected');
+    if (status === 'Active') btnActive.classList.add('selected');
+    if (status === 'Suspended') btnSuspended.classList.add('selected');
+    statusMessageBox.classList.add('hidden');
+  };
+
+  const closeStatus = () => {
+    modalStatus.classList.add("opacity-0", "scale-90");
+    modalStatus.classList.remove("opacity-100", "scale-100");
+    setTimeout(() => { modalWrapperStatus.classList.add("hidden"); }, 250);
+  };
+
+  settingsButtons.forEach(btn => btn.addEventListener("click", () => {
+    modalWrapperStatus.classList.remove("hidden");
+    modalStatus.classList.remove("opacity-0", "scale-90");
+    modalStatus.classList.add("opacity-100", "scale-100");
+  }));
+
+  closeStatusBtn.addEventListener("click", closeStatus);
+  modalWrapperStatus.addEventListener("click", e => { if (e.target === modalWrapperStatus) closeStatus(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatus(); });
+
+  btnActive.addEventListener('click', () => selectStatus('Active'));
+  btnSuspended.addEventListener('click', () => selectStatus('Suspended'));
+  submitStatusBtn.addEventListener('click', () => {
+    if (currentStatus) {
+      statusMessageBox.textContent = `Status submitted: ${currentStatus}`;
+      statusMessageBox.className = "mt-6 text-center text-lg font-bold text-green-600";
+    } else {
+      statusMessageBox.textContent = "Please select a status first.";
+      statusMessageBox.className = "mt-6 text-center text-lg font-bold text-red-600";
+    }
+    statusMessageBox.classList.remove('hidden');
   });
 
-  closeStatusBtn.addEventListener("click", () => closeModal());
-  modalWrapper.addEventListener("click", (e) => {
-    if (e.target === modalWrapper) closeModal();
-  });
+  selectStatus('Active'); // default
 
-  function closeModal() {
-    modal.classList.add("opacity-0", "scale-90");
-    modal.classList.remove("opacity-100", "scale-100");
-
-    setTimeout(() => {
-      modalWrapper.classList.add("hidden");
-    }, 250);
-  }
-
-  // default status
-  selectStatus("Active");
 });

@@ -9,5 +9,5 @@ adminRouter.post('/declareSingle', adminRouterController.postDeclareSingleResult
 adminRouter.post('/declarePatti', adminRouterController.postDeclarePattiResult);
 adminRouter.get('/userDownLine', adminRouterController.getUserDownLine);
 adminRouter.post('/admincreateuser', adminRouterController.postAdmincreateuser);
-
+adminRouter.post('/postTransaction', adminRouterController.postTransaction);
 module.exports = adminRouter;
