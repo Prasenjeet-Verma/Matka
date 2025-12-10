@@ -10,4 +10,8 @@ adminRouter.post('/declarePatti', adminRouterController.postDeclarePattiResult);
 adminRouter.get('/userDownLine', adminRouterController.getUserDownLine);
 adminRouter.post('/admincreateuser', adminRouterController.postAdmincreateuser);
 adminRouter.post('/postTransaction', adminRouterController.postTransaction);
+adminRouter.get('/userProfile/:userId', adminRouterController.getUserProfieByAdmin);
+adminRouter.post('/resetpasswordnotcheckoldpassword', adminRouterController.adminChangePasswordofUser);
+adminRouter.get("/adminseepersonallyuserbethistory/:userId", adminRouterController.adminSeeUserPersonallyBetHistory);
+
 module.exports = adminRouter;

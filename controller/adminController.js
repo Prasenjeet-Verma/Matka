@@ -3,7 +3,7 @@ const MatkaHistory = require("../model/matkaBetHistory");
 const CoinBetHistory = require("../model/coinGame");
 const MatkaResult = require("../model/MatkaResult"); // import at top
 const { check, validationResult } = require("express-validator");
-const bcrypt = require('bcrypt');        // to verify admin password
+const bcrypt = require("bcrypt"); // to verify admin password
 
 exports.getAdminPanelDashboard = async (req, res, next) => {
   try {
@@ -338,7 +338,7 @@ exports.getUserDownLine = async (req, res, next) => {
     // 🟢 Fetch users based on filter
     const allUsers = await User.find({
       role: "user",
-      userStatus: statusValue
+      userStatus: statusValue,
     }).sort({ createdAt: -1 });
 
     // 🟢 Render page
@@ -351,9 +351,8 @@ exports.getUserDownLine = async (req, res, next) => {
       errors: [],
       isLoggedIn: req.session.isLoggedIn,
       oldInput: { username: "", password: "" },
-      selectedStatus: statusFilter
+      selectedStatus: statusFilter,
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");
@@ -390,29 +389,28 @@ exports.postAdmincreateuser = [
 
   check("referCode").trim().notEmpty().withMessage("Referral code is required"),
 
-
   // MAIN CONTROLLER
   async (req, res) => {
     const errors = validationResult(req);
     const { username, password, referCode } = req.body;
 
-if (!errors.isEmpty()) {
-  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+    if (!errors.isEmpty()) {
+      const allUsers = await User.find({ role: "user" }).sort({
+        createdAt: -1,
+      });
 
-  return res.status(400).render("userdownline", {
-    username: req.session.user.username,
-    wallet: req.session.user.wallet,
-    referCode: req.session.user.referCode,
-    user: req.session.user,
-    users: allUsers,
-    isLoggedIn: req.session.isLoggedIn,
-    errors: errors.array().map((e) => e.msg),
-    oldInput: { username, password },
-    openModal: true
-  });
-}
-
-
+      return res.status(400).render("userdownline", {
+        username: req.session.user.username,
+        wallet: req.session.user.wallet,
+        referCode: req.session.user.referCode,
+        user: req.session.user,
+        users: allUsers,
+        isLoggedIn: req.session.isLoggedIn,
+        errors: errors.array().map((e) => e.msg),
+        oldInput: { username, password },
+        openModal: true,
+      });
+    }
 
     try {
       // 1️⃣ Check valid referrer (ONLY admin, master, agent)
@@ -421,41 +419,43 @@ if (!errors.isEmpty()) {
         role: { $in: ["admin", "master", "agent"] },
       });
 
-if (!referrer) {
-  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+      if (!referrer) {
+        const allUsers = await User.find({ role: "user" }).sort({
+          createdAt: -1,
+        });
 
-  return res.status(400).render("userdownline", {
-    username: req.session.user.username,
-    wallet: req.session.user.wallet,
-    referCode: req.session.user.referCode,
-    user: req.session.user,
-    users: allUsers,
-    isLoggedIn: req.session.isLoggedIn,
-    errors: errors.array().map((e) => e.msg),
-    oldInput: { username, password },
-    openModal: true
-  });
-}
-
+        return res.status(400).render("userdownline", {
+          username: req.session.user.username,
+          wallet: req.session.user.wallet,
+          referCode: req.session.user.referCode,
+          user: req.session.user,
+          users: allUsers,
+          isLoggedIn: req.session.isLoggedIn,
+          errors: errors.array().map((e) => e.msg),
+          oldInput: { username, password },
+          openModal: true,
+        });
+      }
 
       // 2️⃣ Check username again for safety
-const existingUser = await User.findOne({ username });
-if (existingUser) {
-  const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        const allUsers = await User.find({ role: "user" }).sort({
+          createdAt: -1,
+        });
 
-  return res.status(400).render("userdownline", {
-    username: req.session.user.username,
-    wallet: req.session.user.wallet,
-    referCode: req.session.user.referCode,
-    user: req.session.user,
-    users: allUsers,
-    isLoggedIn: req.session.isLoggedIn,
-    errors: errors.array().map((e) => e.msg),
-    oldInput: { username, password },
-    openModal: true
-  });
-}
-
+        return res.status(400).render("userdownline", {
+          username: req.session.user.username,
+          wallet: req.session.user.wallet,
+          referCode: req.session.user.referCode,
+          user: req.session.user,
+          users: allUsers,
+          isLoggedIn: req.session.isLoggedIn,
+          errors: errors.array().map((e) => e.msg),
+          oldInput: { username, password },
+          openModal: true,
+        });
+      }
 
       // 3️⃣ Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -485,23 +485,32 @@ if (existingUser) {
   },
 ];
 
-
 exports.postTransaction = async (req, res, next) => {
   try {
-    const { userId, wallet, creditRef, deposit, withdraw, adminPassword, userStatus } = req.body;
+    const {
+      userId,
+      wallet,
+      creditRef,
+      deposit,
+      withdraw,
+      adminPassword,
+      userStatus,
+    } = req.body;
 
     const user = await User.findById(userId);
     if (!user) return res.json({ success: false, message: "User not found!" });
 
     const admin = await User.findById(req.session.user._id);
     if (!admin || admin.role !== "admin") {
-       req.session.destroy(() => res.redirect("/login"));
+      req.session.destroy(() => res.redirect("/login"));
       return;
     }
-      
 
     // admin password check only for deposit/withdraw
-    if ((deposit || withdraw) && (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))) {
+    if (
+      (deposit || withdraw) &&
+      (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))
+    ) {
       return res.json({ success: false, message: "Incorrect admin password!" });
     }
 
@@ -512,56 +521,237 @@ exports.postTransaction = async (req, res, next) => {
       user.refPl = (user.wallet || 0) - user.creditRef;
     }
 
-  // Deposit
-if (deposit) {
-  const amount = Number(deposit);
+    // Deposit
+    if (deposit) {
+      const amount = Number(deposit);
 
-  // ❌ Admin ke wallet me paise kam hai
-  if (amount > admin.wallet) {
-    return res.json({ success: false, message: "Admin has insufficient balance!" });
-  }
+      // ❌ Admin ke wallet me paise kam hai
+      if (amount > admin.wallet) {
+        return res.json({
+          success: false,
+          message: "Admin has insufficient balance!",
+        });
+      }
 
-  // User ko credit
-  user.wallet += amount;
+      // User ko credit
+      user.wallet += amount;
 
-  // Admin se balance cut
-  admin.wallet -= amount;
+      // Admin se balance cut
+      admin.wallet -= amount;
 
-  if (user.creditRef) user.refPl = user.wallet - user.creditRef;
-}
+      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+    }
 
+    // Withdraw
+    if (withdraw) {
+      const amount = Number(withdraw);
 
-// Withdraw
-if (withdraw) {
-  const amount = Number(withdraw);
+      // ❌ User ke wallet me paise kam hai
+      if (amount > user.wallet) {
+        return res.json({
+          success: false,
+          message: "User has insufficient balance!",
+        });
+      }
 
-  // ❌ User ke wallet me paise kam hai
-  if (amount > user.wallet) {
-    return res.json({ success: false, message: "User has insufficient balance!" });
-  }
+      // User se cut
+      user.wallet -= amount;
 
-  // User se cut
-  user.wallet -= amount;
+      // Admin me add
+      admin.wallet += amount;
 
-  // Admin me add
-  admin.wallet += amount;
-
-  if (user.creditRef) user.refPl = user.wallet - user.creditRef;
-}
-
+      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+    }
 
     // ✅ User Status Update
-   if (userStatus && ["active", "suspended"].includes(userStatus.toLowerCase())) {
-  user.userStatus = userStatus.toLowerCase();
-}
-
+    if (
+      userStatus &&
+      ["active", "suspended"].includes(userStatus.toLowerCase())
+    ) {
+      user.userStatus = userStatus.toLowerCase();
+    }
 
     await user.save();
-    await admin.save();   // IMPORTANT: Save admin wallet update too
+    await admin.save(); // IMPORTANT: Save admin wallet update too
     return res.json({ success: true, message: "Successful Submit " });
-
   } catch (err) {
     console.log(err);
     return res.json({ success: false, message: "Server Error!" });
+  }
+};
+
+const mongoose = require("mongoose");
+
+exports.getUserProfieByAdmin = async (req, res, next) => {
+  try {
+    // 1️⃣ Check admin login session (use session flag consistently)
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return req.session
+        ? req.session.destroy(() => res.redirect("/login"))
+        : res.redirect("/login");
+    }
+
+    const Adminuser = await User.findById(req.session.user._id);
+    if (!Adminuser || Adminuser.role !== "admin") {
+      return req.session.destroy(() => res.redirect("/login"));
+    }
+
+    // 2️⃣ Validate userId param
+    const userId = req.params.userId;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send("User ID not provided or invalid");
+    }
+
+    // 3️⃣ Fetch user details using ID
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    // 4️⃣ Render with both admin + user data
+    res.render("adminSeeUserProfile", {
+      user,
+      username: Adminuser.username,
+      wallet: Adminuser.wallet,
+      referCode: Adminuser.referCode,
+      isLoggedIn: req.session.isLoggedIn,
+    });
+  } catch (err) {
+    console.error("getUserProfieByAdmin error:", err);
+    res.status(500).send("Server error");
+  }
+};
+
+const SALT_ROUNDS = 10;
+
+exports.adminChangePasswordofUser = async (req, res) => {
+  try {
+    // 1) Check admin session and role
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
+    }
+    const admin = await User.findById(req.session.user._id);
+    if (!admin || admin.role !== "admin") {
+      req.session.destroy(() => {
+        res.redirect("/login");
+      });
+      return;
+    }
+
+    // 2) Validate input
+    const { userId, newPassword, confirmNewPassword } = req.body;
+    if (!userId)
+      return res.json({ success: false, message: "No user ID provided" });
+    if (!newPassword || !confirmNewPassword)
+      return res.json({ success: false, message: "All fields are required" });
+    if (newPassword !== confirmNewPassword)
+      return res.json({ success: false, message: "Passwords do not match" });
+    if (typeof newPassword !== "string" || newPassword.length < 6) {
+      return res.json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+
+    // 3) Validate userId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.json({ success: false, message: "Invalid user ID" });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser)
+      return res.json({ success: false, message: "User not found" });
+
+    // 4) Hash new password
+    const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    // 5) Update user password
+    await User.findByIdAndUpdate(userId, { password: hashed });
+
+    // Optional: log the change (to DB or console) for audit
+    console.log(
+      `Admin ${admin.username} (${admin._id}) changed password for user ${
+        targetUser.username
+      } (${userId}) at ${new Date().toISOString()}`
+    );
+
+    // Optional: Invalidate user's sessions if using server-stored sessions (implementation depends on your session store)
+
+    return res.json({
+      success: true,
+      message: "Password changed successfully!",
+    });
+  } catch (err) {
+    console.error("adminChangePasswordofUser error:", err);
+    return res.json({ success: false, message: "Server error" });
+  }
+};
+
+exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
+  try {
+    // 1) Check admin session
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const admin = await User.findById(req.session.user._id);
+    if (!admin || admin.role !== "admin") {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    // 2) Get userId from params
+    const userId = req.params.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send("Invalid user ID");
+    }
+
+    // 3) Get target user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    // 4) Fetch this user's MATKA bets
+    const matkaUnsettled = await MatkaHistory.find({
+      userId,
+      status: "unsettled",
+    })
+      .populate("userId", "username")
+      .sort({ createdAt: -1 });
+
+    const matkaSettled = await MatkaHistory.find({
+      userId,
+      status: "settled",
+    })
+      .populate("userId", "username")
+      .sort({ createdAt: -1 });
+
+    const coinBets = await CoinBetHistory.find({
+      userId,
+    })
+      .populate("userId", "username")
+      .sort({ createdAt: -1 });
+
+    // 6) Merge settled bets (matka + coin)
+    const allSettledBets = [...matkaSettled, ...coinBets].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    // 7) Render with same EJS variables as main admin bet page
+    res.render("adminOneUserBet", {
+      username: admin.username,
+      wallet: admin.wallet,
+      referCode: admin.referCode,
+      isLoggedIn: req.session.isLoggedIn,
+
+      user, // selected user
+      admin: req.session.user,
+
+      matkaUnsettled,
+      allSettledBets,
+    });
+  } catch (error) {
+    console.error("Error fetching specific user bet history:", error);
+    res.status(500).send("Server error");
   }
 };

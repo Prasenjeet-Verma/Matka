@@ -97,9 +97,9 @@
 
                 <!-- Status -->
                 <td>
-                 <span class="status <%= u.userStatus === 'suspended' ? 'status-suspended' : 'status-active' %>">
-  <%= u.userStatus === 'suspended' ? 'Suspended' : 'Active' %>
-</span>
+                  <span class="status <%= u.userStatus === 'suspended' ? 'status-suspended' : 'status-active' %>">
+                    <%= u.userStatus==='suspended' ? 'Suspended' : 'Active' %>
+                  </span>
 
 
                 </td>
@@ -120,12 +120,17 @@
                       <img src="svg/setting.svg" />
                     </button>
 
-                    <button class="btn">
-                      <img src="svg/graph.svg" />
-                    </button>
-                    <button class="btn">
-                      <img src="svg/profile.svg" />
-                    </button>
+                    <a href="/adminseepersonallyuserbethistory/<%= u._id %>">
+                      <button class="btn">
+                        <img src="svg/graph.svg" />
+                      </button>
+                    </a>
+                    <a href="/userProfile/<%= u._id %>">
+                      <button class="btn">
+                        <img src="svg/profile.svg" />
+                      </button>
+                    </a>
+
                   </div>
                 </td>
               </tr>
