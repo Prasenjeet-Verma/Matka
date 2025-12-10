@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 /* ============================================================
-   6) STATUS MODAL (Updated with backend AJAX)
+   6) STATUS MODAL (Updated with backend AJAX & Suspended logic)
 ============================================================ */
 let currentStatus = null;
 const btnActive = document.getElementById('btn-active');
@@ -202,9 +202,19 @@ const selectStatus = (status) => {
   currentStatus = status;
   btnActive.classList.remove('selected');
   btnSuspended.classList.remove('selected');
-  if (status.toLowerCase() === 'active') btnActive.classList.add('selected');
-  if (status.toLowerCase() === 'suspended' || status.toLowerCase() === 'inactive') btnSuspended.classList.add('selected');
   statusMessageBox.classList.add('hidden');
+
+  // Enable/disable buttons based on current status
+  if (status.toLowerCase() === 'active') {
+    btnActive.classList.add('selected');
+    btnActive.disabled = true;       // disable active if already active
+    btnSuspended.disabled = false;
+  }
+  if (status.toLowerCase() === 'suspended') {
+    btnSuspended.classList.add('selected');
+    btnSuspended.disabled = true;    // disable suspended if already suspended
+    btnActive.disabled = false;
+  }
 };
 
 // ===== close modal =====
@@ -251,7 +261,7 @@ submitStatusBtn.addEventListener('click', async () => {
   if (!userId) return;
 
   // ✅ map modal button text to backend userStatus
-  const statusMap = { 'Active': 'active', 'Suspended': 'inactive' };
+  const statusMap = { 'Active': 'active', 'Suspended': 'suspended' };
 
   try {
     const res = await fetch("/postTransaction", {
@@ -272,7 +282,6 @@ submitStatusBtn.addEventListener('click', async () => {
     statusMessageBox.classList.remove('hidden');
   }
 });
-
 
 
 

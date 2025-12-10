@@ -96,9 +96,13 @@
                 </td>
 
                 <!-- Status -->
-                <td><span class="status">
-                    <%= u.userStatus %>
-                  </span></td>
+                <td>
+                 <span class="status <%= u.userStatus === 'suspended' ? 'status-suspended' : 'status-active' %>">
+  <%= u.userStatus === 'suspended' ? 'Suspended' : 'Active' %>
+</span>
+
+
+                </td>
 
                 <!-- Action Buttons -->
                 <td>
@@ -346,7 +350,7 @@
 
 
 
-     
+
       </script>
 </body>
 

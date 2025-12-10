@@ -1204,8 +1204,30 @@
     transform: scale(1.03);
 }
 
+.status-active {
+  background-color: #4CAF50 !important; /* Green */
+  color: white !important;
+  padding: 6px 16px;
+  border-radius: 30px;
+  display: inline-block;
+  font-weight: 700;
+}
+
+.status-suspended {
+  background-color: #F44336 !important; /* Red */
+  color: white !important;
+  padding: 6px 16px;
+  border-radius: 30px;
+  display: inline-block;
+  font-weight: 700;
+}
 
 
+.status-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 
 .msg-box {

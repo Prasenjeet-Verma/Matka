@@ -320,44 +320,42 @@ exports.postDeclarePattiResult = async (req, res) => {
 
 exports.getUserDownLine = async (req, res, next) => {
   try {
+    // ✅ Check if admin is logged in
     if (!req.session.isLoggedIn || !req.session.user) {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
+      return req.session.destroy(() => res.redirect("/login"));
     }
 
     const loggedUser = await User.findById(req.session.user._id);
-
     if (!loggedUser || loggedUser.role !== "admin") {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
+      return req.session.destroy(() => res.redirect("/login"));
     }
 
-    // 🟢 Get filter from query, default = "ACTIVE"
-    const statusFilter = req.query.status || "ACTIVE";
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
 
-    // 🟢 fetch users based on filter
-    const allUsers = await User.find({ 
+    // 🟢 Fetch users based on filter
+    const allUsers = await User.find({
       role: "user",
-      userStatus: statusFilter.toLowerCase() // active or inactive
+      userStatus: statusValue
     }).sort({ createdAt: -1 });
 
+    // 🟢 Render page
     res.render("userdownline", {
       username: loggedUser.username,
       wallet: loggedUser.wallet,
       referCode: loggedUser.referCode,
       user: loggedUser,
-      users: allUsers,  // filtered users
+      users: allUsers,
       errors: [],
       isLoggedIn: req.session.isLoggedIn,
-      oldInput: {
-        username: "",
-        password: "",
-      },
-      selectedStatus: statusFilter // frontend me dropdown selected show
+      oldInput: { username: "", password: "" },
+      selectedStatus: statusFilter
     });
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).send("Server Error");
   }
 };
@@ -553,9 +551,10 @@ if (withdraw) {
 
 
     // ✅ User Status Update
-    if (userStatus && ["active", "inactive"].includes(userStatus.toLowerCase())) {
-      user.userStatus = userStatus.toLowerCase();
-    }
+   if (userStatus && ["active", "suspended"].includes(userStatus.toLowerCase())) {
+  user.userStatus = userStatus.toLowerCase();
+}
+
 
     await user.save();
     await admin.save();   // IMPORTANT: Save admin wallet update too
