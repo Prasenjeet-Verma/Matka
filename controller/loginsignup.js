@@ -42,7 +42,6 @@ const User = require("../model/user");
 //   }
 // };
 
-
 exports.getloginPage = (req, res, next) => {
   res.render("login", {
     pageTitle: "Login",
@@ -68,12 +67,13 @@ exports.getregisterPage = (req, res, next) => {
   });
 };
 
-
 exports.postRegisterPage = [
   check("username")
     .trim()
-    .notEmpty().withMessage("Username is required")
-    .isLength({ min: 3 }).withMessage("Username must be at least 3 characters long")
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters long")
     .custom(async (value) => {
       const existingUser = await User.findOne({ username: value });
       if (existingUser) throw new Error("Username already in use");
@@ -81,13 +81,17 @@ exports.postRegisterPage = [
     }),
 
   check("password")
-    .notEmpty().withMessage("Password is required")
-    .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
 
   check("confirmPassword")
-    .notEmpty().withMessage("Confirm Password is required")
+    .notEmpty()
+    .withMessage("Confirm Password is required")
     .custom((value, { req }) => {
-      if (value !== req.body.password) throw new Error("Passwords do not match");
+      if (value !== req.body.password)
+        throw new Error("Passwords do not match");
       return true;
     }),
 
@@ -133,16 +137,18 @@ exports.postRegisterPage = [
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // 4️⃣ GENERATE UNIQUE REFER CODE FOR NEW USER
-      const newUserReferCode =
-        Math.random().toString(36).substring(2, 10).toUpperCase();
+      const newUserReferCode = Math.random()
+        .toString(36)
+        .substring(2, 10)
+        .toUpperCase();
 
       // 5️⃣ CREATE NEW USER (role ALWAYS user)
       const newUser = new User({
         username,
         password: hashedPassword,
         referCode: newUserReferCode, // auto generated
-        referredBy: referCode,       // who referred new user
-        role: "user",                // ALWAYS user
+        referredBy: referCode, // who referred new user
+        role: "user", // ALWAYS user
       });
 
       await newUser.save();
@@ -152,17 +158,12 @@ exports.postRegisterPage = [
       req.session.user = newUser;
 
       res.redirect("/");
-
     } catch (err) {
       console.error("Registration Error:", err);
       res.status(500).send("Server Error");
     }
-  }
+  },
 ];
-
-
-
-
 
 // ✅ Login Validation Rules
 exports.postLoginPage = [
@@ -184,6 +185,14 @@ exports.postLoginPage = [
     try {
       const user = await User.findOne({ username });
 
+      // ❌ If user is inactive (Suspended)
+      if (user.userStatus === "inactive") {
+        return res.status(200).render("login", {
+          errors: [], // no error message
+          oldInput: { username, password },
+        });
+      }
+
       // ❌ User not found
       if (!user) {
         return res.status(400).render("login", {
@@ -202,41 +211,38 @@ exports.postLoginPage = [
         });
       }
 
-
       // 🎯 ROLE-BASED REDIRECT
       if (user.role === "admin") {
-           req.session.isLoggedIn = true;
-      req.session.user = user;
-      await new Promise((r) => req.session.save(r));
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        await new Promise((r) => req.session.save(r));
 
         return res.redirect("/adminpaneldashboard");
       }
 
       if (user.role === "master") {
-           req.session.isLoggedIn = true;
-      req.session.user = user;
-      await new Promise((r) => req.session.save(r));
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        await new Promise((r) => req.session.save(r));
 
         return res.redirect("/masterpaneldashboard");
       }
 
       if (user.role === "agent") {
-           req.session.isLoggedIn = true;
-      req.session.user = user;
-      await new Promise((r) => req.session.save(r));
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        await new Promise((r) => req.session.save(r));
 
         return res.redirect("/agentpaneldashboard");
       }
 
-  // ✅ Login success
+      // ✅ Login success
       req.session.isLoggedIn = true;
       req.session.user = user;
       await new Promise((r) => req.session.save(r));
 
-
       // Default → Normal user
       return res.redirect("/");
-
     } catch (err) {
       console.error("❌ Login error:", err);
       res.status(500).send("Server Error");

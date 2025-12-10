@@ -1,55 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matka 69</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
 
-    <link rel="stylesheet" href="css/headerlogin.css" />
-    <link rel="stylesheet" href="css/footer.css" />
-    <link rel="stylesheet" href="css/adminDasebord.css" />
-    <link rel="stylesheet" href="css/userlistpage.css" />
-    <link rel="stylesheet" href="css/modallist.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matka 69</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/modal.js"></script>
-    <script src="js/depositmodal.js"></script>
-    <script src="js/footer.js"></script>
-  </head>
+  <link rel="stylesheet" href="css/headerlogin.css" />
+  <link rel="stylesheet" href="css/footer.css" />
+  <link rel="stylesheet" href="css/adminDasebord.css" />
+  <link rel="stylesheet" href="css/userlistpage.css" />
+  <link rel="stylesheet" href="css/modallist.css" />
 
-  <body>
-    <!-- ==================================================Header======================================= -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/depositmodal.js"></script>
+  <script src="js/footer.js"></script>
+</head>
 
-    <%- include('partials/header') %>
+<body>
+  <!-- ==================================================Header======================================= -->
+
+  <%- include('partials/header') %>
 
     <div class="header"></div>
     <!-- ========================= overflow header solve -->
 
     <div class="panel">
       <div class="row">
-        <input type="text" placeholder="Find member..." />
+        <input type="text" id="searchInput" placeholder="Find member..." />
         <button class="btn" style="border: 1px solid gray">Search</button>
       </div>
 
-  <select id="statusFilter" onchange="filterStatus(this.value)">
-  <option value="ACTIVE" <%= selectedStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
-  <option value="INACTIVE" <%= selectedStatus === 'INACTIVE' ? 'selected' : '' %>>INACTIVE</option>
-</select>
+      <select id="statusFilter" onchange="filterStatus(this.value)">
+        <option value="ACTIVE" <%=selectedStatus==='ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+        <option value="INACTIVE" <%=selectedStatus==='INACTIVE' ? 'selected' : '' %>>INACTIVE</option>
+      </select>
 
 
       <div class="referral">
         <button class="btn-outline btn-icon" id="openModalBtn">Add User</button>
         <a href="/userDownLine">
-          <button class="btn-outline">Refresh</button></a
-        >
+          <button class="btn-outline">Refresh</button></a>
       </div>
     </div>
 
@@ -71,73 +65,67 @@
             </tr>
           </thead>
           <tbody>
-            <% users.forEach((u, index) => { %>
-            <tr>
-              <td><%= index + 1 %></td>
-              <td style="font-weight: 600"><%= u.username %></td>
+            <% users.forEach((u, index)=> { %>
+              <tr>
+                <td>
+                  <%= index + 1 %>
+                </td>
+                <td style="font-weight: 600">
+                  <%= u.username %>
+                </td>
 
-              <!-- Credit Ref -->
-              <td>
-                <%= u.creditRef.toLocaleString() %>
-                <button
-                  class="btn editBtn"
-                  data-userid="<%= u._id %>"
-                  data-wallet="<%= u.wallet %>"
-                >
-                  <img src="svg/edit.svg" />
-                </button>
-              </td>
+                <!-- Credit Ref -->
+                <td>
+                  <%= u.creditRef.toLocaleString() %>
+                    <button class="btn editBtn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/edit.svg" />
+                    </button>
+                </td>
 
-              <!-- Balance -->
-              <td><%= u.wallet.toLocaleString() %></td>
-              <td><%= u.wallet.toLocaleString() %></td>
+                <!-- Balance -->
+                <td>
+                  <%= u.wallet.toLocaleString() %>
+                </td>
+                <td>
+                  <%= u.wallet.toLocaleString() %>
+                </td>
 
-              <!-- Ref P/L -->
-              <td
-                class="<%= u.refPl < 0 ? 'text-red-600' : 'text-green-600' %>"
-              >
-                <%= u.refPl.toLocaleString() %>
-              </td>
+                <!-- Ref P/L -->
+                <td class="<%= u.refPl < 0 ? 'text-red-600' : 'text-green-600' %>">
+                  <%= u.refPl.toLocaleString() %>
+                </td>
 
-              <!-- Status -->
-              <td><span class="status"><%= u.userStatus %></span></td>
+                <!-- Status -->
+                <td><span class="status">
+                    <%= u.userStatus %>
+                  </span></td>
 
-              <!-- Action Buttons -->
-              <td>
-                <div class="action-buttons">
-                  <button
-                    class="btn deposit-btn"
-                    data-userid="<%= u._id %>"
-                    data-wallet="<%= u.wallet %>"
-                  >
-                    <img src="svg/deposit.svg" />
-                  </button>
+                <!-- Action Buttons -->
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn deposit-btn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/deposit.svg" />
+                    </button>
 
-                  <button
-                    class="btn withdraw-btn"
-                    data-userid="<%= u._id %>"
-                    data-wallet="<%= u.wallet %>"
-                  >
-                    <img src="svg/withdrowl.svg" />
-                  </button>
+                    <button class="btn withdraw-btn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/withdrowl.svg" />
+                    </button>
 
-                  <button class="btn settingsBtn" 
-        data-userid="<%= u._id %>" 
-        data-status="<%= u.userStatus %>">
+                    <button class="btn settingsBtn" data-userid="<%= u._id %>" data-status="<%= u.userStatus %>">
 
-                    <img src="svg/setting.svg" />
-                  </button>
+                      <img src="svg/setting.svg" />
+                    </button>
 
-                  <button class="btn">
-                    <img src="svg/graph.svg" />
-                  </button>
-                  <button class="btn">
-                    <img src="svg/profile.svg" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <% }) %>
+                    <button class="btn">
+                      <img src="svg/graph.svg" />
+                    </button>
+                    <button class="btn">
+                      <img src="svg/profile.svg" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
           </tbody>
         </table>
       </div>
@@ -151,285 +139,255 @@
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/adminFooter') %>
-    <!-- ============================================================================ Add user Modal ========================================== -->
+      <!-- ============================================================================ Add user Modal ========================================== -->
 
-    <!-- Modal Overlay -->
-    <form action="/admincreateuser" id="registerForm" method="POST">
-      <div class="modal-overlay" id="userModal" aria-hidden="true">
-        <div
-          class="modal-card"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modalTitle"
-        >
-          <!-- Header -->
-          <div class="modal-header" style="background-color: white">
-            <h2 id="modalTitle">Add Users</h2>
-            <button
-              type="button"
-              class="close-btn"
-              id="closeModalBtn"
-              aria-label="Close modal"
-            >
-              &times;
-            </button>
-          </div>
-
-          <!-- Form Content -->
-          <div class="form-content">
-            <%- include('partials/errors') %>
-            <div class="form-row">
-              <label for="username"
-                >Username <span class="required-star">*</span></label
-              >
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value="<%= oldInput?.username || '' %>"
-                autocomplete="username"
-                required
-              />
+      <!-- Modal Overlay -->
+      <form action="/admincreateuser" id="registerForm" method="POST">
+        <div class="modal-overlay" id="userModal" aria-hidden="true">
+          <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <!-- Header -->
+            <div class="modal-header" style="background-color: white">
+              <h2 id="modalTitle">Add Users</h2>
+              <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close modal">
+                &times;
+              </button>
             </div>
 
-            <div class="form-row input-group">
-              <label for="password"
-                >Password <span class="required-star">*</span></label
-              >
-              <input type="password" id="password"   value="<%= oldInput?.password || '' %>" name="password" required />
-              <i class="fas fa-eye toggle-password" data-target="password"></i>
+            <!-- Form Content -->
+            <div class="form-content">
+              <%- include('partials/errors') %>
+                <div class="form-row">
+                  <label for="username">Username <span class="required-star">*</span></label>
+                  <input type="text" id="username" name="username" value="<%= oldInput?.username || '' %>"
+                    autocomplete="username" required />
+                </div>
+
+                <div class="form-row input-group">
+                  <label for="password">Password <span class="required-star">*</span></label>
+                  <input type="password" id="password" value="<%= oldInput?.password || '' %>" name="password"
+                    required />
+                  <i class="fas fa-eye toggle-password" data-target="password"></i>
+                </div>
+
+                <div class="form-row input-group">
+                  <label for="confirm-password">Confirm Password <span class="required-star">*</span></label>
+                  <input type="password" id="confirm-password" name="confirmPassword" required />
+                  <i class="fas fa-eye toggle-password" data-target="confirm-password"></i>
+
+                </div>
+                <small id="matchMsg" class="text-sm mt-1 block"></small>
+                <input type="hidden" name="referCode" value="<%= user.referCode %>" />
             </div>
 
-            <div class="form-row input-group">
-              <label for="confirm-password"
-                >Confirm Password <span class="required-star">*</span></label
-              >
-              <input
-                type="password"
-                id="confirm-password"
-                name="confirmPassword"
-                required
-              />
-              <i
-                class="fas fa-eye toggle-password"
-                data-target="confirm-password"
-              ></i>
-             
-            </div>
- <small id="matchMsg" class="text-sm mt-1 block"></small>
-            <input
-              type="hidden"
-              name="referCode"
-              value="<%= user.referCode %>"
-            />
-          </div>
-
-          <!-- Footer -->
-          <div class="modal-footer">
-            <button type="submit" class="create-btn" id="createBtn">
-              Create
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-
-    <!-- ========================== Deposit Modal ========================== -->
-    <form action="/postTransaction" method="POST">
-      <div class="deposit-overlay" id="depositModal" aria-hidden="true">
-        <div class="deposit-card-wrapper">
-          <div class="deposit-header-bar">
-            Deposit
-            <button type="button" class="close-form-btn" id="closeDeposit">
-              &times;
-            </button>
-          </div>
-
-          <div class="deposit-form-body">
-            <div class="form-input-field">
-              <input
-                type="number"
-                name="deposit"
-                id="deposit-amount-input"
-                placeholder="Enter amount..."
-                min="0"
-                required
-              />
-              <input type="hidden" id="depositUserId" name="userId" />
-              <input type="hidden" id="depositWallet" name="wallet" />
-            </div>
-
-            <div class="form-input-field">
-              <div class="deposit-input-group">
-                <input
-                  type="password"
-                  name="adminPassword"
-                  id="deposit-credential"
-                  placeholder="Admin password..."
-                  required
-                />
-                <span
-                  class="pwd-toggle-btn toggle-password fa fa-eye"
-                  data-target="deposit-credential"
-                ></span>
-              </div>
-            </div>
-
-            <div class="submit-btn-wrapper">
-              <button
-                type="submit"
-                class="submit-deposit-btn"
-                id="submitDeposit"
-              >
-                Deposit
+            <!-- Footer -->
+            <div class="modal-footer">
+              <button type="submit" class="create-btn" id="createBtn">
+                Create
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
 
-    <!-- ========================== Withdraw Modal ========================== -->
-    <form action="/postTransaction" method="POST">
-      <div class="withdraw-modal" id="withdrawModal" aria-hidden="true">
-        <div class="withdraw-card-wrapper">
-          <div class="withdraw-header-bar">
-            Withdraw
-            <button type="button" class="close-form-btn" id="closeWithdraw">
-              &times;
-            </button>
-          </div>
-
-          <div class="withdraw-form-body">
-            <div class="form-input-field">
-              <input
-                type="number"
-                name="withdraw"
-                id="withdraw-amount-input"
-                placeholder="Enter amount..."
-                min="0"
-                required
-              />
-              <input type="hidden" id="withdrawUserId" name="userId" />
-              <input type="hidden" id="withdrawWallet" name="wallet" />
-            </div>
-
-            <div class="form-input-field">
-              <div class="withdraw-input-group">
-                <input
-                  type="password"
-                  name="adminPassword"
-                  id="withdraw-credential"
-                  placeholder="Admin password..."
-                  required
-                />
-                <i
-                  class="fas fa-eye toggle-password"
-                  data-target="withdraw-credential"
-                ></i>
-              </div>
-            </div>
-
-            <div class="submit-btn-wrapper">
-              <button type="submit" class="submit-withdraw-btn">
-                Withdraw
+      <!-- ========================== Deposit Modal ========================== -->
+      <form action="/postTransaction" method="POST">
+        <div class="deposit-overlay" id="depositModal" aria-hidden="true">
+          <div class="deposit-card-wrapper">
+            <div class="deposit-header-bar">
+              Deposit
+              <button type="button" class="close-form-btn" id="closeDeposit">
+                &times;
               </button>
+            </div>
+
+            <div class="deposit-form-body">
+              <div class="form-input-field">
+                <input type="number" name="deposit" id="deposit-amount-input" placeholder="Enter amount..." min="0"
+                  required />
+                <input type="hidden" id="depositUserId" name="userId" />
+                <input type="hidden" id="depositWallet" name="wallet" />
+              </div>
+
+              <div class="form-input-field">
+                <div class="deposit-input-group">
+                  <input type="password" name="adminPassword" id="deposit-credential" placeholder="Admin password..."
+                    required />
+                  <span class="pwd-toggle-btn toggle-password fa fa-eye" data-target="deposit-credential"></span>
+                </div>
+              </div>
+
+              <div class="submit-btn-wrapper">
+                <button type="submit" class="submit-deposit-btn" id="submitDeposit">
+                  Deposit
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </form>
-    <!-- ========================== Credit Referral Modal ========================== -->
-    <form action="/postTransaction" method="POST">
-      <div id="creditReferralFormWrapper" aria-hidden="true">
-        <div id="creditReferralForm">
+      </form>
+
+      <!-- ========================== Withdraw Modal ========================== -->
+      <form action="/postTransaction" method="POST">
+        <div class="withdraw-modal" id="withdrawModal" aria-hidden="true">
+          <div class="withdraw-card-wrapper">
+            <div class="withdraw-header-bar">
+              Withdraw
+              <button type="button" class="close-form-btn" id="closeWithdraw">
+                &times;
+              </button>
+            </div>
+
+            <div class="withdraw-form-body">
+              <div class="form-input-field">
+                <input type="number" name="withdraw" id="withdraw-amount-input" placeholder="Enter amount..." min="0"
+                  required />
+                <input type="hidden" id="withdrawUserId" name="userId" />
+                <input type="hidden" id="withdrawWallet" name="wallet" />
+              </div>
+
+              <div class="form-input-field">
+                <div class="withdraw-input-group">
+                  <input type="password" name="adminPassword" id="withdraw-credential" placeholder="Admin password..."
+                    required />
+                  <i class="fas fa-eye toggle-password" data-target="withdraw-credential"></i>
+                </div>
+              </div>
+
+              <div class="submit-btn-wrapper">
+                <button type="submit" class="submit-withdraw-btn">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <!-- ========================== Credit Referral Modal ========================== -->
+      <form action="/postTransaction" method="POST">
+        <div id="creditReferralFormWrapper" aria-hidden="true">
+          <div id="creditReferralForm">
+            <header class="header-box">
+              CREDIT REF
+              <button type="button" class="close-button" id="closeBtn">✕</button>
+            </header>
+
+            <div class="content">
+              <div class="input-box">
+                <input id="referralNumber" name="creditRef" class="input-field" type="text" placeholder="number here"
+                  oninput="this.value = this.value.replace(/[^0-9]/g,'');" />
+                <input type="hidden" id="creditUserId" name="userId" />
+                <input type="hidden" id="creditWallet" name="wallet" />
+              </div>
+
+              <button type="submit" id="updateBtn" class="update-button">
+                Update <span class="arrow-icon-update">↑</span>
+              </button>
+              <div id="creditMessageBox" class="text-sm font-semibold"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ========================== Status Modal ========================== -->
+      <div id="statusModalWrapper" class="fixed inset-0 bg-black/40 hidden flex justify-center items-start z-50 p-4"
+        aria-hidden="true">
+        <div id="statusModal" class="status-container">
           <header class="header-box">
-            CREDIT REF
-            <button type="button" class="close-button" id="closeBtn">✕</button>
+            Status
+            <button type="button" class="close-button" id="closeStatusModal">
+              ✕
+            </button>
           </header>
 
-          <div class="content">
-            <div class="input-box">
-              <input
-                id="referralNumber"
-                name="creditRef"
-                class="input-field"
-                type="text"
-                placeholder="number here"
-                oninput="this.value = this.value.replace(/[^0-9]/g,'');"
-              />
-              <input type="hidden" id="creditUserId" name="userId" />
-              <input type="hidden" id="creditWallet" name="wallet" />
+          <main class="p-6">
+            <div class="flex sm:flex-row justify-between gap-4 mb-10">
+              <button id="btn-active" class="status-button active-button">
+                Active
+              </button>
+              <button id="btn-suspended" class="status-button suspended-button">
+                Suspended
+              </button>
             </div>
 
-            <button type="submit" id="updateBtn" class="update-button">
-              Update <span class="arrow-icon-update">↑</span>
+            <button type="button" class="submit-button" id="submitStatusBtn">
+              Submit
             </button>
-            <div id="creditMessageBox" class="text-sm font-semibold"></div>
-          </div>
+            <div id="statusMessageBox" class="mt-6 text-center text-lg font-bold text-gray-700 hidden"></div>
+          </main>
         </div>
       </div>
-    </form>
 
-    <!-- ========================== Status Modal ========================== -->
-    <div
-      id="statusModalWrapper"
-      class="fixed inset-0 bg-black/40 hidden flex justify-center items-start z-50 p-4"
-      aria-hidden="true"
-    >
-      <div id="statusModal" class="status-container">
-        <header class="header-box">
-          Status
-          <button type="button" class="close-button" id="closeStatusModal">
-            ✕
-          </button>
-        </header>
+      <script>
+        const form = document.getElementById("registerForm"); const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const matchMsg = document.getElementById("matchMsg");
+        confirmPassword.addEventListener("input", () => {
+          if (confirmPassword.value === "") { matchMsg.textContent = ""; }
+          else if (password.value === confirmPassword.value) { matchMsg.textContent = "✅ Passwords match"; matchMsg.style.color = "green"; }
+          else {
+            matchMsg.textContent = "❌ Passwords do not match";
+            matchMsg.style.color = "red";
+          }
+        });
 
-        <main class="p-6">
-          <div class="flex sm:flex-row justify-between gap-4 mb-10">
-            <button id="btn-active" class="status-button active-button">
-              Active
-            </button>
-            <button id="btn-suspended" class="status-button suspended-button">
-              Suspended
-            </button>
-          </div>
-
-          <button type="button" class="submit-button" id="submitStatusBtn">
-            Submit
-          </button>
-          <div
-            id="statusMessageBox"
-            class="mt-6 text-center text-lg font-bold text-gray-700 hidden"
-          ></div>
-        </main>
-      </div>
-    </div>
-
-    <script>
-                  const form = document.getElementById("registerForm"); const password = document.getElementById("password");
-                  const confirmPassword = document.getElementById("confirm-password");
-                  const matchMsg = document.getElementById("matchMsg");
-                  confirmPassword.addEventListener("input", () => {
-                    if (confirmPassword.value === "") { matchMsg.textContent = ""; }
-                    else if (password.value === confirmPassword.value) { matchMsg.textContent = "✅ Passwords match"; matchMsg.style.color = "green"; }
-                    else {
-                      matchMsg.textContent = "❌ Passwords do not match";
-                      matchMsg.style.color = "red";
-                    }
-                  });
-
-  function filterStatus(status) {
-    window.location.href = `/userDownLine?status=${status}`;
-  }
+        function filterStatus(status) {
+          window.location.href = `/userDownLine?status=${status}`;
+        }
 
       <% if (typeof openModal !== 'undefined' && openModal) { %>
-        document.addEventListener("DOMContentLoaded", function () {
-          const modal = document.getElementById("userModal");
-          modal.classList.add("open");     // <-- ADD THIS
-          modal.style.display = "flex";    // <-- KEEP THIS
-        });
+          document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("userModal");
+            modal.classList.add("open");     // <-- ADD THIS
+            modal.style.display = "flex";    // <-- KEEP THIS
+          });
       <% } %>
-    </script>
-  </body>
+
+
+
+
+
+      const searchInput = document.getElementById("searchInput");
+        const tbody = document.querySelector("tbody");
+
+        searchInput.addEventListener("input", function () {
+          const text = this.value.toLowerCase();
+          const rows = [...document.querySelectorAll("tbody tr")];
+
+          // If search empty → show full table back
+          if (text.trim() === "") {
+            rows.forEach(r => r.style.display = "");
+            return;
+          }
+
+          let matched = [];
+          let notMatched = [];
+
+          rows.forEach(row => {
+            const username = row.children[1].innerText.toLowerCase();
+
+            if (username.includes(text)) {
+              matched.push(row);
+            } else {
+              notMatched.push(row);
+            }
+          });
+
+          // Clear old rows
+          tbody.innerHTML = "";
+
+          // Matching users go FIRST
+          matched.forEach(r => {
+            r.style.display = "";
+            tbody.appendChild(r);
+          });
+
+          // Non-matching hide
+          notMatched.forEach(r => {
+            r.style.display = "none";
+            tbody.appendChild(r);
+          });
+        });
+      </script>
+</body>
+
 </html>

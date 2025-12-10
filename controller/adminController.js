@@ -496,8 +496,11 @@ exports.postTransaction = async (req, res, next) => {
     if (!user) return res.json({ success: false, message: "User not found!" });
 
     const admin = await User.findById(req.session.user._id);
-    if (!admin || admin.role !== "admin")
-      return res.json({ success: false, message: "Unauthorized access!" });
+    if (!admin || admin.role !== "admin") {
+       req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+      
 
     // admin password check only for deposit/withdraw
     if ((deposit || withdraw) && (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))) {
@@ -511,21 +514,43 @@ exports.postTransaction = async (req, res, next) => {
       user.refPl = (user.wallet || 0) - user.creditRef;
     }
 
-    // Deposit
-    if (deposit) {
-      user.wallet += Number(deposit);
-      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
-    }
+  // Deposit
+if (deposit) {
+  const amount = Number(deposit);
 
-    // Withdraw
-    if (withdraw) {
-      const withdrawAmount = Number(withdraw);
-      if (withdrawAmount > user.wallet) {
-        return res.json({ success: false, message: "Insufficient balance!" });
-      }
-      user.wallet -= withdrawAmount;
-      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
-    }
+  // ❌ Admin ke wallet me paise kam hai
+  if (amount > admin.wallet) {
+    return res.json({ success: false, message: "Admin has insufficient balance!" });
+  }
+
+  // User ko credit
+  user.wallet += amount;
+
+  // Admin se balance cut
+  admin.wallet -= amount;
+
+  if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+}
+
+
+// Withdraw
+if (withdraw) {
+  const amount = Number(withdraw);
+
+  // ❌ User ke wallet me paise kam hai
+  if (amount > user.wallet) {
+    return res.json({ success: false, message: "User has insufficient balance!" });
+  }
+
+  // User se cut
+  user.wallet -= amount;
+
+  // Admin me add
+  admin.wallet += amount;
+
+  if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+}
+
 
     // ✅ User Status Update
     if (userStatus && ["active", "inactive"].includes(userStatus.toLowerCase())) {
@@ -533,6 +558,7 @@ exports.postTransaction = async (req, res, next) => {
     }
 
     await user.save();
+    await admin.save();   // IMPORTANT: Save admin wallet update too
     return res.json({ success: true, message: "Successful Submit " });
 
   } catch (err) {
