@@ -346,47 +346,7 @@
 
 
 
-      const searchInput = document.getElementById("searchInput");
-        const tbody = document.querySelector("tbody");
-
-        searchInput.addEventListener("input", function () {
-          const text = this.value.toLowerCase();
-          const rows = [...document.querySelectorAll("tbody tr")];
-
-          // If search empty → show full table back
-          if (text.trim() === "") {
-            rows.forEach(r => r.style.display = "");
-            return;
-          }
-
-          let matched = [];
-          let notMatched = [];
-
-          rows.forEach(row => {
-            const username = row.children[1].innerText.toLowerCase();
-
-            if (username.includes(text)) {
-              matched.push(row);
-            } else {
-              notMatched.push(row);
-            }
-          });
-
-          // Clear old rows
-          tbody.innerHTML = "";
-
-          // Matching users go FIRST
-          matched.forEach(r => {
-            r.style.display = "";
-            tbody.appendChild(r);
-          });
-
-          // Non-matching hide
-          notMatched.forEach(r => {
-            r.style.display = "none";
-            tbody.appendChild(r);
-          });
-        });
+     
       </script>
 </body>
 

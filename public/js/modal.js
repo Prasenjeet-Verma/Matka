@@ -331,6 +331,68 @@ function showMessage(msg, success) {
   }, 3000);
 }
 
+/* ============================================================
+   8) SEARCH + PAGINATION (Fixed + Page Number Update)
+============================================================ */
+const rows = [...document.querySelectorAll("tbody tr")];
+const rowsPerPage = 10;
+let currentPage = 1;
 
+const searchInput = document.getElementById("searchInput");
+const pageNumberBtn = document.querySelector('.pagination button:nth-child(2)'); // middle button
+
+const renderPage = (page) => {
+  const text = searchInput.value.toLowerCase();
+
+  // Filter rows first
+  const filteredRows = rows.filter(row =>
+    row.children[1].innerText.toLowerCase().includes(text)
+  );
+
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+  if (page > totalPages) page = totalPages || 1; // prevent overflow
+  currentPage = page;
+
+  const start = (page - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+
+  // Hide all rows
+  rows.forEach(row => row.style.display = "none");
+
+  // Show only the filtered rows for current page
+  filteredRows.slice(start, end).forEach(row => row.style.display = "");
+
+  // Update pagination buttons
+  const prevBtn = document.querySelector('.pagination button:nth-child(1)');
+  const nextBtn = document.querySelector('.pagination button:nth-child(3)');
+
+  prevBtn.disabled = page === 1;
+  nextBtn.disabled = page >= totalPages || totalPages === 0;
+
+  // ✅ Update middle page number
+  pageNumberBtn.innerText = page;
+};
+
+// Pagination buttons
+document.querySelector('.pagination button:nth-child(1)').addEventListener('click', () => {
+  if (currentPage > 1) renderPage(currentPage - 1);
+});
+
+document.querySelector('.pagination button:nth-child(3)').addEventListener('click', () => {
+  const text = searchInput.value.toLowerCase();
+  const filteredRows = rows.filter(row =>
+    row.children[1].innerText.toLowerCase().includes(text)
+  );
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+  if (currentPage < totalPages) renderPage(currentPage + 1);
+});
+
+// Search input event
+searchInput.addEventListener("input", () => {
+  renderPage(1); // reset page on search
+});
+
+// Initial render
+renderPage(currentPage);
 
 });
