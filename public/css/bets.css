@@ -147,3 +147,18 @@
   border-right: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+
+
+
+input[type="date"]:not(.has-value)::before {
+  content: attr(data-placeholder);
+  color: #999;
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+}
+
+input[type="date"] {
+  position: relative;
+  color: #111;
+}

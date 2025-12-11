@@ -94,11 +94,14 @@
     <option value="old"    <%= source === "old" ? "selected" : "" %>>Old Data (30 Days)</option>
   </select>
 
-  <!-- Start Date -->
-  <input type="date" class="custom-input" id="startDate" value="<%= start || '' %>">
+<input type="date" class="custom-input" id="startDate"
+  data-placeholder="Start Date"
+  value="<%= start || '' %>">
 
-  <!-- End Date -->
-  <input type="date" class="custom-input" id="endDate" value="<%= end || '' %>">
+<input type="date" class="custom-input" id="endDate"
+  data-placeholder="End Date"
+  value="<%= end || '' %>">
+
 
   <!-- Button -->
   <button class="btn-history" onclick="getHistory()">
@@ -285,6 +288,16 @@ function getHistory() {
 
   window.location.href = `/bets?${params.toString()}`;
 }
+</script>
+<script>
+document.querySelectorAll('input[type="date"]').forEach(input => {
+    function update() {
+        if (input.value) input.classList.add('has-value');
+        else input.classList.remove('has-value');
+    }
+    update();
+    input.addEventListener('change', update);
+});
 </script>
 
   </body>
