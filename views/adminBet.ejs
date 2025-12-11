@@ -7,16 +7,16 @@
   <title>Matka 69</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="css/headerlogin.css">
-  <link rel="stylesheet" href="css/bets.css">
-  <link rel="stylesheet" href="css/slider.css">
-  <link rel="stylesheet" href="css/footer.css">
-
+  <link rel="stylesheet" href="/css/headerlogin.css">
+  <link rel="stylesheet" href="/css/bets.css">
+  <link rel="stylesheet" href="/css/slider.css">
+  <link rel="stylesheet" href="/css/footer.css">
+<link rel="stylesheet" href="/css/dateTimemodal.css">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="js/rendomsidebar.js"></script>
-  <script src="js/footer.js"></script>
-  <script src="js/betshistry.js"></script>
+  <script src="/js/rendomsidebar.js"></script>
+  <script src="/js/footer.js"></script>
+  <script src="/js/betshistry.js"></script>
 </head>
 
 <body>
@@ -30,6 +30,31 @@
 
 
     <!-- +++++++++++++++++++++++++++ body start +++++++++++++++++++++++ -->
+
+    <div class="form-container">
+
+  <!-- Data Source Dropdown -->
+  <select class="custom-input text-gray-600" id="dataSource">
+    <option value="" disabled <%= !source ? "selected" : "" %>>Data Source</option>
+    <option value="live"   <%= source === "live" ? "selected" : "" %>>Live Data (24H)</option>
+    <option value="backup" <%= source === "backup" ? "selected" : "" %>>Backup Data (7 Days)</option>
+    <option value="old"    <%= source === "old" ? "selected" : "" %>>Old Data (30 Days)</option>
+  </select>
+
+<input type="date" class="custom-input" id="startDate"
+  data-placeholder="Start Date"
+  value="<%= start || '' %>">
+
+<input type="date" class="custom-input" id="endDate"
+  data-placeholder="End Date"
+  value="<%= end || '' %>">
+
+
+  <!-- Button -->
+  <button class="btn-history" onclick="getHistory()">
+    Get History
+  </button>
+</div>
 
 
     <div class="tab-container" role="tablist" aria-label="Example tabs">
@@ -213,7 +238,34 @@
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/adminFooter') %>
+    <script>
+function getHistory() {
+  const dataSource = document.getElementById('dataSource')?.value || '';
+  const start = document.getElementById('startDate')?.value || '';
+  const end = document.getElementById('endDate')?.value || '';
 
+  if (!dataSource && !start && !end) {
+    return;
+  }
+
+  const params = new URLSearchParams();
+  if (dataSource) params.set('source', dataSource);
+  if (start) params.set('start', start);
+  if (end) params.set('end', end);
+
+  window.location.href = `/adminBet?${params.toString()}`;
+}
+</script>
+<script>
+document.querySelectorAll('input[type="date"]').forEach(input => {
+    function update() {
+        if (input.value) input.classList.add('has-value');
+        else input.classList.remove('has-value');
+    }
+    update();
+    input.addEventListener('change', update);
+});
+</script>
 </body>
 
 </html>

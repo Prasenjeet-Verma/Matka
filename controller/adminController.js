@@ -51,51 +51,87 @@ exports.getAdminBetPage = async (req, res, next) => {
       return;
     }
 
-    const user = await User.findById(req.session.user._id);
+    const admin = await User.findById(req.session.user._id);
 
-    if (!user || user.role !== "admin") {
-      req.session.destroy(() => {
-        res.redirect("/login");
-      });
+    if (!admin || admin.role !== "admin") {
+      req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
-    // ADMIN sees ALL users bets
+    // -----------------------------
+    // FILTER HANDLING (same as others)
+    // -----------------------------
+    let { source, start, end } = req.query;
+    let startDate, endDate;
+
+    if (source === "live") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    } else if (source === "backup") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    } else if (source === "old") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    } else if (start && end) {
+      startDate = new Date(start);
+      endDate = new Date(end);
+      endDate.setHours(23, 59, 59);
+
+    } else {
+      // default: show all (admin purpose)
+      startDate = new Date("2000-01-01");
+      endDate = new Date();
+    }
+
+    // ---------------------------------------------
+    // FILTER APPLIED TO ALL ADMIN BET HISTORY
+    // ---------------------------------------------
     const matkaUnsettled = await MatkaHistory.find({
       status: "unsettled",
+      createdAt: { $gte: startDate, $lte: endDate }
     }).populate("userId");
 
     const matkaSettled = await MatkaHistory.find({
       status: "settled",
+      createdAt: { $gte: startDate, $lte: endDate }
     }).populate("userId");
 
-    const coinBets = await CoinBetHistory.find().populate("userId");
+    const coinBets = await CoinBetHistory.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).populate("userId");
 
-    // merge matka settled + coin bets
-    const allSettledBets = [...matkaSettled, ...coinBets].sort((a, b) => {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
+    // merge for table
+    const allSettledBets = [...matkaSettled, ...coinBets].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
     res.render("adminBet", {
-      username: user.username,
-      wallet: user.wallet,
-      referCode: user.referCode,
-      user,
+      username: admin.username,
+      wallet: admin.wallet,
+      referCode: admin.referCode,
+      user: admin,
       isLoggedIn: req.session.isLoggedIn,
 
-      // keep original variables
       matkaUnsettled,
       matkaSettled,
       coinBets,
-
-      // merged for EJS
       allSettledBets,
+
+      // return filter values back to inputs
+      source: source || "",
+      start: start || "",
+      end: end || "",
     });
   } catch (err) {
     console.log(err);
     res.redirect("/");
   }
 };
+
 
 exports.getDeclareData = async (req, res, next) => {
   try {
@@ -689,7 +725,7 @@ exports.adminChangePasswordofUser = async (req, res) => {
 
 exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
   try {
-    // 1) Check admin session
+    // Admin Authentication
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
@@ -700,61 +736,90 @@ exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
       return;
     }
 
-    // 2) Get userId from params
     const userId = req.params.userId;
-
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).send("Invalid user ID");
     }
 
-    // 3) Get target user
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("User not found");
 
-    // 4) Fetch this user's MATKA bets
+    // -----------------------------
+    // FILTER SAME AS USER BET PAGE
+    // -----------------------------
+    let { source, start, end } = req.query;
+
+    let startDate, endDate;
+
+    if (source === "live") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    } else if (source === "backup") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    } else if (source === "old") {
+      endDate = new Date();
+      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    } else if (start && end) {
+      startDate = new Date(start);
+      endDate = new Date(end);
+      endDate.setHours(23, 59, 59);
+
+    } else {
+      startDate = new Date("2000-01-01");
+      endDate = new Date();
+    }
+
+    // ---------------------------------------------
+    // FILTERS APPLIED TO ADMIN BET HISTORY ALSO
+    // ---------------------------------------------
     const matkaUnsettled = await MatkaHistory.find({
       userId,
       status: "unsettled",
-    })
-      .populate("userId", "username")
-      .sort({ createdAt: -1 });
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).populate("userId", "username");
 
     const matkaSettled = await MatkaHistory.find({
       userId,
       status: "settled",
-    })
-      .populate("userId", "username")
-      .sort({ createdAt: -1 });
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).populate("userId", "username");
 
     const coinBets = await CoinBetHistory.find({
       userId,
-    })
-      .populate("userId", "username")
-      .sort({ createdAt: -1 });
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).populate("userId", "username");
 
-    // 6) Merge settled bets (matka + coin)
-    const allSettledBets = [...matkaSettled, ...coinBets].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
+    const allSettledBets = [...matkaSettled, ...coinBets]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // 7) Render with same EJS variables as main admin bet page
+    // ---------------------------------------------
+    // RENDER SAME VALUES AS USER PAGE
+    // ---------------------------------------------
     res.render("adminOneUserBet", {
       username: admin.username,
       wallet: admin.wallet,
       referCode: admin.referCode,
       isLoggedIn: req.session.isLoggedIn,
 
-      user, // selected user
-      admin: req.session.user,
-
+      user,
       matkaUnsettled,
       allSettledBets,
+
+      source: source || "",
+      start: start || "",
+      end: end || ""
     });
+
   } catch (error) {
-    console.error("Error fetching specific user bet history:", error);
+    console.error("Error:", error);
     res.status(500).send("Server error");
   }
 };
+
 
 
 exports.getAccountSettlement = async (req, res, next) => {
