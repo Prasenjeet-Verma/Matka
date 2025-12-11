@@ -521,6 +521,9 @@ exports.postAdmincreateuser = [
   },
 ];
 
+
+const AdminTransactionHistory = require("../model/AdminTransactionHistory");
+
 exports.postTransaction = async (req, res, next) => {
   try {
     const {
@@ -542,7 +545,7 @@ exports.postTransaction = async (req, res, next) => {
       return;
     }
 
-    // admin password check only for deposit/withdraw
+    // 🔐 Admin password check for deposit/withdraw
     if (
       (deposit || withdraw) &&
       (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))
@@ -550,18 +553,34 @@ exports.postTransaction = async (req, res, next) => {
       return res.json({ success: false, message: "Incorrect admin password!" });
     }
 
-    // Credit Referral
+    // Helper: formatted time/date
+    function getFormattedTime() {
+      return new Date().toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      });
+    }
+
+    function getFormattedDate() {
+      const d = new Date();
+      return `${d.getDate()},${d.getMonth() + 1},${d.getFullYear()}`;
+    }
+
+    // ✔ CREDIT REF
     if (creditRef) {
       const creditAmount = Number(creditRef);
       user.creditRef = creditAmount;
       user.refPl = (user.wallet || 0) - user.creditRef;
     }
 
-    // Deposit
+    // -----------------------------
+    // ✔ DEPOSIT
+    // -----------------------------
     if (deposit) {
       const amount = Number(deposit);
 
-      // ❌ Admin ke wallet me paise kam hai
       if (amount > admin.wallet) {
         return res.json({
           success: false,
@@ -569,20 +588,35 @@ exports.postTransaction = async (req, res, next) => {
         });
       }
 
-      // User ko credit
-      user.wallet += amount;
+      const userBefore = user.wallet;
+      const adminBefore = admin.wallet;
 
-      // Admin se balance cut
+      user.wallet += amount;
       admin.wallet -= amount;
 
       if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+
+      // Save history
+      await AdminTransactionHistory.create({
+        userId: user._id,
+        adminId: admin._id,
+        type: "deposit",
+        amount,
+        userWalletBefore: userBefore,
+        userWalletAfter: user.wallet,
+        adminWalletBefore: adminBefore,
+        adminWalletAfter: admin.wallet,
+        formattedTime: getFormattedTime(),
+        formattedDate: getFormattedDate(),
+      });
     }
 
-    // Withdraw
+    // -----------------------------
+    // ✔ WITHDRAW
+    // -----------------------------
     if (withdraw) {
       const amount = Number(withdraw);
 
-      // ❌ User ke wallet me paise kam hai
       if (amount > user.wallet) {
         return res.json({
           success: false,
@@ -590,16 +624,30 @@ exports.postTransaction = async (req, res, next) => {
         });
       }
 
-      // User se cut
-      user.wallet -= amount;
+      const userBefore = user.wallet;
+      const adminBefore = admin.wallet;
 
-      // Admin me add
+      user.wallet -= amount;
       admin.wallet += amount;
 
       if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+
+      // Save history
+      await AdminTransactionHistory.create({
+        userId: user._id,
+        adminId: admin._id,
+        type: "withdraw",
+        amount,
+        userWalletBefore: userBefore,
+        userWalletAfter: user.wallet,
+        adminWalletBefore: adminBefore,
+        adminWalletAfter: admin.wallet,
+        formattedTime: getFormattedTime(),
+        formattedDate: getFormattedDate(),
+      });
     }
 
-    // ✅ User Status Update
+    // ✔ User Status Update
     if (
       userStatus &&
       ["active", "suspended"].includes(userStatus.toLowerCase())
@@ -608,8 +656,9 @@ exports.postTransaction = async (req, res, next) => {
     }
 
     await user.save();
-    await admin.save(); // IMPORTANT: Save admin wallet update too
-    return res.json({ success: true, message: "Successful Submit " });
+    await admin.save();
+
+    return res.json({ success: true, message: "Successful Submit" });
   } catch (err) {
     console.log(err);
     return res.json({ success: false, message: "Server Error!" });
@@ -821,38 +870,82 @@ exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
 };
 
 
-
 exports.getAccountSettlement = async (req, res, next) => {
   try {
-    // Check login
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
-    // Logged admin
     const Adminuser = await User.findById(req.session.user._id);
-
     if (!Adminuser || Adminuser.role !== "admin") {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
-    // Target user for settlement
     const userId = req.params.userId;
     const user = await User.findById(userId);
+    if (!user) return res.status(400).send("User not found");
 
-    if (!user) {
-     return res.status(400).send("User ID not provided or invalid");
+    // -------------------------
+    // 🔍 Read filters
+    // -------------------------
+    const { source, start, end } = req.query;
+    let filter = { userId };
+
+    // -------------------------
+    // 🟢 Manual Date Range
+    // -------------------------
+    if (start && end) {
+      filter.createdAt = {
+        $gte: new Date(start),
+        $lte: new Date(end + "T23:59:59"),
+      };
     }
 
-    // Render page (same format you want)
+    // -------------------------
+    // 🟡 Data Source Filter
+    // -------------------------
+    else if (source === "live") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      };
+    }
+
+    else if (source === "backup") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      };
+    }
+
+    else if (source === "old") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      };
+    }
+
+    // -------------------------
+    // 📌 Fetch Transaction History
+    // -------------------------
+    const history = await AdminTransactionHistory.find(filter)
+      .sort({ createdAt: -1 });
+
+    // -------------------------
+    // 🔥 Render Page
+    // -------------------------
     res.render("accountSettlement", {
       user,
       username: Adminuser.username,
       wallet: Adminuser.wallet,
       referCode: Adminuser.referCode,
       isLoggedIn: req.session.isLoggedIn,
+
+      // Return values to EJS
+      source: source || "",
+      start: start || "",
+      end: end || "",
+
+      history,
     });
 
   } catch (err) {

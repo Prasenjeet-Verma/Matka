@@ -19,7 +19,6 @@
     <script src="/js/rendomsidebar.js"></script>
     <script src="/js/betbox.js"></script>
     <script src="/js/footer.js"></script>
-    <script src="/js/dateTimemodal.js"> </script>
 </head>
 <body>
 
@@ -35,28 +34,29 @@
 
 <body>
 
-    <div class="form-container">
-        <!-- Data Source Dropdown -->
-        <select class="custom-input text-gray-600">
-            <option value="" disabled selected>Data Source</option>
-            <option value="source1">Live Data</option>
-            <option value="source2">Backup Data</option>
-            <option value="source3">Old Data</option>
-        </select>
+     <!-- Data Source Dropdown -->
+  <select class="custom-input text-gray-600" id="dataSource">
+    <option value="" disabled <%= !source ? "selected" : "" %>>Data Source</option>
+    <option value="live"   <%= source === "live" ? "selected" : "" %>>Live Data (24H)</option>
+    <option value="backup" <%= source === "backup" ? "selected" : "" %>>Backup Data (7 Days)</option>
+    <option value="old"    <%= source === "old" ? "selected" : "" %>>Old Data (30 Days)</option>
+  </select>
 
-        <!-- Start Date Input -->
-        <!-- Value set to match screenshot: 2025-12-02 -->
-        <input type="date" class="custom-input" id="startDate" value="2025-12-02">
+<input type="date" class="custom-input" id="startDate"
+  data-placeholder="Start Date"
+  value="<%= start || '' %>">
 
-        <!-- End Date Input -->
-        <!-- Value set to match screenshot: 2025-12-10 -->
-        <input type="date" class="custom-input" id="endDate" value="2025-12-10">
+<input type="date" class="custom-input" id="endDate"
+  data-placeholder="End Date"
+  value="<%= end || '' %>">
 
-        <!-- Get History Button -->
-        <button class="btn-history" onclick="getHistory()">
-            Get History
-        </button>
-    </div>
+
+  <!-- Button -->
+  <button class="btn-history" onclick="getHistory()">
+    Get History
+  </button>
+</div>
+
 
 
 </body>
@@ -77,34 +77,38 @@
           <th>From -> To</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>01.02.2025 & 12:59:00</td>
-          <td>0</td>
-          <td style="color: red;">-500</td>
-          <td>500</td>
-          <td>Upline -> Adimin</td>
-        </tr>
-        
-        <tr>
-          <td>01.02.2025 & 12:59:00</td>
-          <td style="color: green;">1000</td>
-          <td>0</td>
-          <td>1000</td>
-          <td>Upline -> Adimin</td>
-        </tr>
-        <tr>
-          <td>01.02.2025 & 12:59:00</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>Upline -> Adimin</td>
-        </tr>
+<tbody>
+  <% if (history.length === 0) { %>
+    <tr>
+      <td colspan="5" style="text-align:center;">No records found</td>
+    </tr>
+  <% } %>
 
+  <% history.forEach(h => { %>
+    <tr>
+      <td><%= h.formattedDate %> & <%= h.formattedTime %></td>
 
+      <% if (h.type === "deposit") { %>
+        <td style="color:green;"><%= h.amount %></td>
+        <td>0</td>
+      <% } else { %>
+        <td>0</td>
+        <td style="color:red;">-<%= h.amount %></td>
+      <% } %>
 
+      <td><%= h.userWalletAfter %></td>
 
-      </tbody>
+      <td>
+        <% if (h.type === "deposit") { %>
+          Admin → User
+        <% } else { %>
+          User → Admin
+        <% } %>
+      </td>
+    </tr>
+  <% }) %>
+</tbody>
+
     </table>
   </div>
 
@@ -119,6 +123,48 @@
    
 <!-- =================================== Footer Start ============================== -->
  <%- include('partials/adminFooter') %>
-    
+    <script>
+function getHistory() {
+  const dataSource = document.getElementById("dataSource").value;
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+
+  const params = new URLSearchParams();
+
+  // 1️⃣ Manual dates ALWAYS win
+  if (start && end) {
+    params.set("start", start);
+    params.set("end", end);
+  }
+  // 2️⃣ If manual empty → source works
+  else if (dataSource) {
+    params.set("source", dataSource);
+  }
+
+  const userId = "<%= user._id %>";
+window.location.href = `/accountsettlement/${userId}?${params.toString()}`;
+}
+</script>
+
+<script>
+document.querySelectorAll('input[type="date"]').forEach(input => {
+  function update() {
+    if (input.value) input.classList.add('has-value');
+    else input.classList.remove('has-value');
+  }
+  update();
+  input.addEventListener('change', update);
+});
+</script>
+
+<script>
+// FIX: dropdown select → clear manual date
+document.getElementById("dataSource").addEventListener("change", () => {
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+  document.getElementById("startDate").classList.remove("has-value");
+  document.getElementById("endDate").classList.remove("has-value");
+});
+</script>
 </body>
 </html>
