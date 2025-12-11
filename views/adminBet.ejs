@@ -238,34 +238,49 @@
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/adminFooter') %>
-    <script>
+<script>
 function getHistory() {
-  const dataSource = document.getElementById('dataSource')?.value || '';
-  const start = document.getElementById('startDate')?.value || '';
-  const end = document.getElementById('endDate')?.value || '';
-
-  if (!dataSource && !start && !end) {
-    return;
-  }
+  const dataSource = document.getElementById("dataSource").value;
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
 
   const params = new URLSearchParams();
-  if (dataSource) params.set('source', dataSource);
-  if (start) params.set('start', start);
-  if (end) params.set('end', end);
 
-  window.location.href = `/adminBet?${params.toString()}`;
+  // 1️⃣ Manual dates ALWAYS win
+  if (start && end) {
+    params.set("start", start);
+    params.set("end", end);
+  }
+  // 2️⃣ If manual empty → source works
+  else if (dataSource) {
+    params.set("source", dataSource);
+  }
+
+window.location.href = `/adminBet?${params.toString()}`;
 }
 </script>
+
 <script>
 document.querySelectorAll('input[type="date"]').forEach(input => {
-    function update() {
-        if (input.value) input.classList.add('has-value');
-        else input.classList.remove('has-value');
-    }
-    update();
-    input.addEventListener('change', update);
+  function update() {
+    if (input.value) input.classList.add('has-value');
+    else input.classList.remove('has-value');
+  }
+  update();
+  input.addEventListener('change', update);
 });
 </script>
+
+<script>
+// FIX: dropdown select → clear manual date
+document.getElementById("dataSource").addEventListener("change", () => {
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+  document.getElementById("startDate").classList.remove("has-value");
+  document.getElementById("endDate").classList.remove("has-value");
+});
+</script>
+
 </body>
 
 </html>
