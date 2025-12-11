@@ -13,11 +13,13 @@
     <link rel="stylesheet" href="css/bets.css" />
     <link rel="stylesheet" href="css/slider.css" />
     <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="/css/dateTimemodal.css">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/rendomsidebar.js"></script>
     <script src="js/footer.js"></script>
     <script src="js/betshistry.js"></script>
+     <!-- <script src="js/dateTimemodal.js"> </script> -->
   </head>
 
   <body>
@@ -82,6 +84,29 @@
     </div>
 
     <!-- +++++++++++++++++++++++++++ body start +++++++++++++++++++++++ -->
+<div class="form-container">
+
+  <!-- Data Source Dropdown -->
+  <select class="custom-input text-gray-600" id="dataSource">
+    <option value="" disabled <%= !source ? "selected" : "" %>>Data Source</option>
+    <option value="live"   <%= source === "live" ? "selected" : "" %>>Live Data (24H)</option>
+    <option value="backup" <%= source === "backup" ? "selected" : "" %>>Backup Data (7 Days)</option>
+    <option value="old"    <%= source === "old" ? "selected" : "" %>>Old Data (30 Days)</option>
+  </select>
+
+  <!-- Start Date -->
+  <input type="date" class="custom-input" id="startDate" value="<%= start || '' %>">
+
+  <!-- End Date -->
+  <input type="date" class="custom-input" id="endDate" value="<%= end || '' %>">
+
+  <!-- Button -->
+  <button class="btn-history" onclick="getHistory()">
+    Get History
+  </button>
+</div>
+
+
 
     <div class="tab-container" role="tablist" aria-label="Example tabs">
       <div class="tab active" id="unsettledTab" role="tab" aria-selected="true">
@@ -243,5 +268,24 @@
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/footer') %>
+    <script>
+function getHistory() {
+  const dataSource = document.getElementById('dataSource')?.value || '';
+  const start = document.getElementById('startDate')?.value || '';
+  const end = document.getElementById('endDate')?.value || '';
+
+  if (!dataSource && !start && !end) {
+    return;
+  }
+
+  const params = new URLSearchParams();
+  if (dataSource) params.set('source', dataSource);
+  if (start) params.set('start', start);
+  if (end) params.set('end', end);
+
+  window.location.href = `/bets?${params.toString()}`;
+}
+</script>
+
   </body>
 </html>

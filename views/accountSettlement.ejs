@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matka  69</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/headerlogin.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/adminDasebord.css">
+     <link rel="stylesheet" href="/css/accountStatement.css">
+     <link rel="stylesheet" href="/css/dateTimemodal.css">
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/rendomsidebar.js"></script>
+    <script src="/js/betbox.js"></script>
+    <script src="/js/footer.js"></script>
+    <script src="/js/dateTimemodal.js"> </script>
+</head>
+<body>
+
+    
+    <!-- ==================================================Header======================================= -->
+
+
+<%- include('partials/header') %>
+
+   <div class="header"></div>  <!-- ========================= overflow header solve -->
+
+<!--  ================================== Body Start ================================ -->
+
+<body>
+
+    <div class="form-container">
+        <!-- Data Source Dropdown -->
+        <select class="custom-input text-gray-600">
+            <option value="" disabled selected>Data Source</option>
+            <option value="source1">Live Data</option>
+            <option value="source2">Backup Data</option>
+            <option value="source3">Old Data</option>
+        </select>
+
+        <!-- Start Date Input -->
+        <!-- Value set to match screenshot: 2025-12-02 -->
+        <input type="date" class="custom-input" id="startDate" value="2025-12-02">
+
+        <!-- End Date Input -->
+        <!-- Value set to match screenshot: 2025-12-10 -->
+        <input type="date" class="custom-input" id="endDate" value="2025-12-10">
+
+        <!-- Get History Button -->
+        <button class="btn-history" onclick="getHistory()">
+            Get History
+        </button>
+    </div>
+
+
+</body>
+</html>
+
+  <!-- ==================================================================== Table =================================== -->
+
+<div class="bbody">
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date & Time</th>
+          <th>Deposite</th>
+          <th>Withdrawal</th>
+          <th>Avalable Balance</th>
+          <th>From -> To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01.02.2025 & 12:59:00</td>
+          <td>0</td>
+          <td style="color: red;">-500</td>
+          <td>500</td>
+          <td>Upline -> Adimin</td>
+        </tr>
+        
+        <tr>
+          <td>01.02.2025 & 12:59:00</td>
+          <td style="color: green;">1000</td>
+          <td>0</td>
+          <td>1000</td>
+          <td>Upline -> Adimin</td>
+        </tr>
+        <tr>
+          <td>01.02.2025 & 12:59:00</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td>Upline -> Adimin</td>
+        </tr>
+
+
+
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button disabled>Prev</button>
+    <button class="active">1</button>
+    <button>Next</button>
+  </div>
+
+</div>
+
+   
+<!-- =================================== Footer Start ============================== -->
+ <%- include('partials/adminFooter') %>
+    
+</body>
+</html>

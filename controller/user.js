@@ -205,41 +205,72 @@ exports.getUserBetPage = async (req, res) => {
     }
 
     const user = await User.findById(req.session.user._id);
-    if (!user) {
+    if (!user || user.role !== "user") {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
-    if (!user || user.role !== "user") {
-      req.session.destroy(() => {
-        res.redirect("/login");
-      });
-      return;
+
+    // -----------------------------------------
+    // FILTER LOGIC (MAIN PART)
+    // -----------------------------------------
+    let { source, start, end } = req.query;
+
+    let startDate, endDate;
+
+    if (source === "live") {
+      // Last 24 Hours
+      endDate = new Date();
+      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    } else if (source === "backup") {
+      // Last 7 Days
+      endDate = new Date();
+      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    } else if (source === "old") {
+      // Last 30 Days
+      endDate = new Date();
+      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    } else if (start && end) {
+      // Manual Date Selection
+      startDate = new Date(start);
+      endDate = new Date(end);
+      endDate.setHours(23, 59, 59);
+      
+    } else {
+      // Default (no filter)
+      startDate = new Date("2000-01-01");
+      endDate = new Date();
     }
 
-// ... earlier code unchanged ...
+    // -----------------------------------------
+    // APPLY FILTERS TO DB QUERIES
+    // -----------------------------------------
+    const matkaUnsettled = await MatkaBetHistory.find({
+      userId: user._id,
+      status: "unsettled",
+      createdAt: { $gte: startDate, $lte: endDate }
+    });
 
-// USER ONLY sees own bets
-const matkaUnsettled = await MatkaBetHistory.find({
-  userId: user._id,
-  status: "unsettled",
-});
+    const matkaSettled = await MatkaBetHistory.find({
+      userId: user._id,
+      status: "settled",
+      createdAt: { $gte: startDate, $lte: endDate }
+    });
 
-const matkaSettled = await MatkaBetHistory.find({
-  userId: user._id,
-  status: "settled",
-});
+    const coinBets = await CoinBetHistory.find({
+      userId: user._id,
+      createdAt: { $gte: startDate, $lte: endDate }
+    });
 
-// keep coinBets for anywhere else you use them (unsettled view)
-// but also fetch coinSettled explicitly for combining into settled list
-const coinBets = await CoinBetHistory.find({
-  userId: user._id,
-});
+    const allSettledBets = [...matkaSettled, ...coinBets]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-// Merge Matka settled and Coin settled into one array and sort by createdAt (newest first)
-const allSettledBets = [...matkaSettled, ...coinBets].sort((a, b) => {
-  return new Date(b.createdAt) - new Date(a.createdAt); // newest first
-});
 
+    // -----------------------------------------
+    // RENDER PAGE
+    // -----------------------------------------
 res.render("userBets", {
   username: user.username,
   wallet: user.wallet,
@@ -248,14 +279,21 @@ res.render("userBets", {
   isLoggedIn: req.session.isLoggedIn,
 
   matkaUnsettled,
-  allSettledBets, // use this in EJS
+  allSettledBets,
+
+  // send filter values to ejs
+  source: req.query.source || "",
+  start: req.query.start || "",
+  end: req.query.end || ""
 });
+
 
   } catch (err) {
     console.log(err);
     res.redirect("/login");
   }
 };
+
 
 exports.logoutUser = (req, res, next) => {
   req.session.destroy((err) => {

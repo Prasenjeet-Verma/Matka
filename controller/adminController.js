@@ -755,3 +755,43 @@ exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
     res.status(500).send("Server error");
   }
 };
+
+
+exports.getAccountSettlement = async (req, res, next) => {
+  try {
+    // Check login
+    if (!req.session.isLoggedIn || !req.session.user) {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    // Logged admin
+    const Adminuser = await User.findById(req.session.user._id);
+
+    if (!Adminuser || Adminuser.role !== "admin") {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    // Target user for settlement
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+     return res.status(400).send("User ID not provided or invalid");
+    }
+
+    // Render page (same format you want)
+    res.render("accountSettlement", {
+      user,
+      username: Adminuser.username,
+      wallet: Adminuser.wallet,
+      referCode: Adminuser.referCode,
+      isLoggedIn: req.session.isLoggedIn,
+    });
+
+  } catch (err) {
+    console.log("Error in getAccountSettlement:", err);
+    next(err);
+  }
+};

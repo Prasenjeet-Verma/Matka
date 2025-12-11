@@ -186,7 +186,7 @@ exports.postLoginPage = [
       const user = await User.findOne({ username });
 
       // ❌ If user is inactive (Suspended)
-      if (user.userStatus === "inactive") {
+      if (user.userStatus === "suspended") {
         return res.status(200).render("login", {
           errors: [], // no error message
           oldInput: { username, password },

@@ -13,5 +13,6 @@ adminRouter.post('/postTransaction', adminRouterController.postTransaction);
 adminRouter.get('/userProfile/:userId', adminRouterController.getUserProfieByAdmin);
 adminRouter.post('/resetpasswordnotcheckoldpassword', adminRouterController.adminChangePasswordofUser);
 adminRouter.get("/adminseepersonallyuserbethistory/:userId", adminRouterController.adminSeeUserPersonallyBetHistory);
+adminRouter.get('/accountsettlement/:userId', adminRouterController.getAccountSettlement);
 
 module.exports = adminRouter;
