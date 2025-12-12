@@ -206,13 +206,14 @@
       class="scroll-row"
       style="display: flex; justify-content: space-between; gap: 10px"
     >
-      <!-- Date & Time -->
-      <ol class="col" style="flex: 2; text-align: center">
-        <strong>Date & Time</strong>
-        <% allSettledBets.forEach(bet => { %>
-        <li><%= bet.createdAt.toLocaleString("en-IN") %></li>
-        <% }) %>
-      </ol>
+  <!-- Date & Time -->
+<ol class="col" style="flex: 2; text-align: center">
+  <strong>Date & Time</strong>
+  <% allSettledBets.forEach(bet => { %>
+    <li><%= bet.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) %></li>
+  <% }) %>
+</ol>
+
 
       <!-- Game Name -->
       <ol class="col" style="flex: 2; text-align: center">

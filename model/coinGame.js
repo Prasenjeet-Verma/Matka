@@ -7,14 +7,11 @@ const coinBetHistorySchema = new mongoose.Schema({
   amount: Number,
   result: String,
   profit: Number,
- coinGame: { type: String, default: "Heads & Tails" },
+  coinGame: { type: String, default: "Heads & Tails" },
   createdAt: {
     type: Date,
-    default: () =>
-      new Date(
-        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      ),
+    default: () => new Date(Date.now() + 5.5 * 60 * 60 * 1000), // IST
   },
 });
 
-module.exports = mongoose.model("coinBetHistory", coinBetHistorySchema);
+module.exports = mongoose.model("CoinBetHistory", coinBetHistorySchema);

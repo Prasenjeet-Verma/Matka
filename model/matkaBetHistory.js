@@ -24,10 +24,7 @@ const matkaBetHistorySchema = new mongoose.Schema({
 
   createdAt: {
     type: Date,
-    default: () =>
-      new Date(
-        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      ),
+    default: () => new Date(Date.now() + 5.5 * 60 * 60 * 1000), // IST
   },
 });
 

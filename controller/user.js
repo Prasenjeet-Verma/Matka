@@ -198,6 +198,10 @@ exports.getAccountPage = async (req, res, next) => {
   }
 };
 
+const MatkaBetHistory = require("../models/MatkaBetHistory");
+const CoinBetHistory = require("../models/CoinBetHistory");
+const User = require("../models/User");
+
 exports.getUserBetPage = async (req, res) => {
   try {
     if (!req.session.isLoggedIn || !req.session.user) {
@@ -210,84 +214,67 @@ exports.getUserBetPage = async (req, res) => {
       return;
     }
 
-    // -----------------------------------------
-    // FILTER LOGIC (MAIN PART)
-    // -----------------------------------------
+    // ------------------- FILTER LOGIC -------------------
     let { source, start, end } = req.query;
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST offset in ms
 
     let startDate, endDate;
 
     if (source === "live") {
-      // Last 24 Hours
-      endDate = new Date();
-      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
     } else if (source === "backup") {
-      // Last 7 Days
-      endDate = new Date();
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
     } else if (source === "old") {
-      // Last 30 Days
-      endDate = new Date();
-      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
     } else if (start && end) {
-      // Manual Date Selection
-      startDate = new Date(start);
-      endDate = new Date(end);
+      startDate = new Date(new Date(start).getTime() + IST_OFFSET);
+      endDate = new Date(new Date(end).getTime() + IST_OFFSET);
       endDate.setHours(23, 59, 59);
-      
     } else {
-      // Default (no filter)
       startDate = new Date("2000-01-01");
-      endDate = new Date();
+      endDate = new Date(Date.now() + IST_OFFSET);
     }
 
-    // -----------------------------------------
-    // APPLY FILTERS TO DB QUERIES
-    // -----------------------------------------
+    // ------------------- FETCH BETS -------------------
     const matkaUnsettled = await MatkaBetHistory.find({
       userId: user._id,
       status: "unsettled",
-      createdAt: { $gte: startDate, $lte: endDate }
+      createdAt: { $gte: startDate, $lte: endDate },
     });
 
     const matkaSettled = await MatkaBetHistory.find({
       userId: user._id,
       status: "settled",
-      createdAt: { $gte: startDate, $lte: endDate }
+      createdAt: { $gte: startDate, $lte: endDate },
     });
 
     const coinBets = await CoinBetHistory.find({
       userId: user._id,
-      createdAt: { $gte: startDate, $lte: endDate }
+      createdAt: { $gte: startDate, $lte: endDate },
     });
 
-    const allSettledBets = [...matkaSettled, ...coinBets]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const allSettledBets = [...matkaSettled, ...coinBets].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
+    // ------------------- RENDER -------------------
+    res.render("userBets", {
+      username: user.username,
+      wallet: user.wallet,
+      referCode: user.referCode,
+      user,
+      isLoggedIn: req.session.isLoggedIn,
 
-    // -----------------------------------------
-    // RENDER PAGE
-    // -----------------------------------------
-res.render("userBets", {
-  username: user.username,
-  wallet: user.wallet,
-  referCode: user.referCode,
-  user,
-  isLoggedIn: req.session.isLoggedIn,
+      matkaUnsettled,
+      allSettledBets,
 
-  matkaUnsettled,
-  allSettledBets,
-
-  // send filter values to ejs
-  source: req.query.source || "",
-  start: req.query.start || "",
-  end: req.query.end || ""
-});
-
-
+      source: req.query.source || "",
+      start: req.query.start || "",
+      end: req.query.end || "",
+    });
   } catch (err) {
     console.log(err);
     res.redirect("/login");
