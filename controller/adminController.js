@@ -52,43 +52,52 @@ exports.getAdminBetPage = async (req, res, next) => {
     }
 
     const admin = await User.findById(req.session.user._id);
-
     if (!admin || admin.role !== "admin") {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
     // -----------------------------
-    // FILTER HANDLING (same as others)
+    // FILTER HANDLING
     // -----------------------------
     let { source, start, end } = req.query;
+
     let startDate, endDate;
 
     if (source === "live") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      // LIVE → last 24 hours (IST)
+      endDate = new Date(Date.now()); 
+      startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
 
     } else if (source === "backup") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      // last 7 days
+      endDate = new Date(Date.now());
+      startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     } else if (source === "old") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      // last 30 days
+      endDate = new Date(Date.now());
+      startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     } else if (start && end) {
-      startDate = new Date(start);
-      endDate = new Date(end);
-      endDate.setHours(23, 59, 59);
+      // -----------------------------
+      // MANUAL DATE (IST START & END)
+      // -----------------------------
+
+      // Start → 00:00:00 IST
+      startDate = new Date(`${start}T00:00:00.000+05:30`);
+
+      // End → 23:59:59 IST
+      endDate = new Date(`${end}T23:59:59.999+05:30`);
 
     } else {
-      // default: show all (admin purpose)
+      // default: show all
       startDate = new Date("2000-01-01");
       endDate = new Date();
     }
 
     // ---------------------------------------------
-    // FILTER APPLIED TO ALL ADMIN BET HISTORY
+    // APPLY FILTERS
     // ---------------------------------------------
     const matkaUnsettled = await MatkaHistory.find({
       status: "unsettled",
@@ -104,7 +113,6 @@ exports.getAdminBetPage = async (req, res, next) => {
       createdAt: { $gte: startDate, $lte: endDate }
     }).populate("userId");
 
-    // merge for table
     const allSettledBets = [...matkaSettled, ...coinBets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
@@ -121,11 +129,11 @@ exports.getAdminBetPage = async (req, res, next) => {
       coinBets,
       allSettledBets,
 
-      // return filter values back to inputs
       source: source || "",
       start: start || "",
       end: end || "",
     });
+
   } catch (err) {
     console.log(err);
     res.redirect("/");
@@ -774,7 +782,7 @@ exports.adminChangePasswordofUser = async (req, res) => {
 
 exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
   try {
-    // Admin Authentication
+    // Authentication
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
@@ -793,38 +801,38 @@ exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("User not found");
 
-    // -----------------------------
-    // FILTER SAME AS USER BET PAGE
-    // -----------------------------
+    // -------------------------------------
+    //  FIXED FILTER (IST + EXACT MATCH)
+    // -------------------------------------
     let { source, start, end } = req.query;
 
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000;
     let startDate, endDate;
 
     if (source === "live") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
 
     } else if (source === "backup") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     } else if (source === "old") {
-      endDate = new Date();
-      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     } else if (start && end) {
-      startDate = new Date(start);
-      endDate = new Date(end);
-      endDate.setHours(23, 59, 59);
+      startDate = new Date(`${start}T00:00:00.000+05:30`);
+      endDate = new Date(`${end}T23:59:59.999+05:30`);
 
     } else {
       startDate = new Date("2000-01-01");
-      endDate = new Date();
+      endDate = new Date(Date.now() + IST_OFFSET);
     }
 
-    // ---------------------------------------------
-    // FILTERS APPLIED TO ADMIN BET HISTORY ALSO
-    // ---------------------------------------------
+    // -------------------------------------
+    //  FIXED DB FILTER (UTC STORE + IST RANGE)
+    // -------------------------------------
     const matkaUnsettled = await MatkaHistory.find({
       userId,
       status: "unsettled",
@@ -845,9 +853,9 @@ exports.adminSeeUserPersonallyBetHistory = async (req, res, next) => {
     const allSettledBets = [...matkaSettled, ...coinBets]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // ---------------------------------------------
-    // RENDER SAME VALUES AS USER PAGE
-    // ---------------------------------------------
+    // -------------------------------------
+    //  RENDER
+    // -------------------------------------
     res.render("adminOneUserBet", {
       username: admin.username,
       wallet: admin.wallet,

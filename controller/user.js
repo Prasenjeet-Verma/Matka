@@ -198,8 +198,6 @@ exports.getAccountPage = async (req, res, next) => {
   }
 };
 
-
-
 exports.getUserBetPage = async (req, res) => {
   try {
     if (!req.session.isLoggedIn || !req.session.user) {
@@ -227,16 +225,13 @@ exports.getUserBetPage = async (req, res) => {
     } else if (source === "old") {
       endDate = new Date(Date.now() + IST_OFFSET);
       startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-    }  else if (start && end) {
+    } else if (start && end) {
+      // IST start of day
+      startDate = new Date(`${start}T00:00:00.000+05:30`);
 
-  // IST start of day
-  startDate = new Date(`${start}T00:00:00.000+05:30`);
-
-  // IST end of day
-  endDate = new Date(`${end}T23:59:59.999+05:30`);
-  
-}
- else {
+      // IST end of day
+      endDate = new Date(`${end}T23:59:59.999+05:30`);
+    } else {
       startDate = new Date("2000-01-01");
       endDate = new Date(Date.now() + IST_OFFSET);
     }
@@ -283,7 +278,6 @@ exports.getUserBetPage = async (req, res) => {
     res.redirect("/login");
   }
 };
-
 
 exports.logoutUser = (req, res, next) => {
   req.session.destroy((err) => {
