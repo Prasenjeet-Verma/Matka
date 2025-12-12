@@ -213,13 +213,22 @@ exports.getUserBetPage = async (req, res) => {
     let { source, start, end } = req.query;
     let dateFilter = {}; // DEFAULT: no filter
 
+    // IST offset in minutes
+    const IST_OFFSET = 5.5 * 60;
+
     // -------------------------------------------
     // 1) MANUAL DATE FILTER (User selects dates)
     // -------------------------------------------
     if (start && end) {
       let startDate = new Date(start);
+      startDate.setHours(0, 0, 0, 0);
+
       let endDate = new Date(end);
-      endDate.setHours(23, 59, 59);
+      endDate.setHours(23, 59, 59, 999);
+
+      // Convert IST → UTC for MongoDB
+      startDate = new Date(startDate.getTime() - IST_OFFSET * 60 * 1000);
+      endDate = new Date(endDate.getTime() - IST_OFFSET * 60 * 1000);
 
       dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
     }
@@ -227,31 +236,36 @@ exports.getUserBetPage = async (req, res) => {
     // -------------------------------------------
     // 2) SOURCE FILTER
     // -------------------------------------------
-    else if (source === "live") {
-      let startDate = new Date();
-      startDate.setHours(0, 0, 0, 0);
+    else if (source) {
+      let now = new Date();
+      let istNow = new Date(now.getTime() + IST_OFFSET * 60 * 1000);
+      let startDate, endDate;
 
-      let endDate = new Date();
+      if (source === "live") {
+        startDate = new Date(istNow);
+        startDate.setHours(0, 0, 0, 0);
 
-      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
-    }
+        endDate = new Date(istNow);
+        endDate.setHours(23, 59, 59, 999);
+      } else if (source === "backup") {
+        startDate = new Date(istNow);
+        startDate.setDate(startDate.getDate() - 7);
+        startDate.setHours(0, 0, 0, 0);
 
-    else if (source === "backup") {
-      let startDate = new Date();
-      startDate.setDate(startDate.getDate() - 7);
-      startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(istNow);
+        endDate.setHours(23, 59, 59, 999);
+      } else if (source === "old") {
+        startDate = new Date(istNow);
+        startDate.setDate(startDate.getDate() - 30);
+        startDate.setHours(0, 0, 0, 0);
 
-      let endDate = new Date();
+        endDate = new Date(istNow);
+        endDate.setHours(23, 59, 59, 999);
+      }
 
-      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
-    }
-
-    else if (source === "old") {
-      let startDate = new Date();
-      startDate.setDate(startDate.getDate() - 30);
-      startDate.setHours(0, 0, 0, 0);
-
-      let endDate = new Date();
+      // Convert IST → UTC for MongoDB
+      startDate = new Date(startDate.getTime() - IST_OFFSET * 60 * 1000);
+      endDate = new Date(endDate.getTime() - IST_OFFSET * 60 * 1000);
 
       dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
     }
@@ -259,30 +273,25 @@ exports.getUserBetPage = async (req, res) => {
     // ---------------------------------------------------------
     // 3) DEFAULT → NO filter provided → Show TODAY IST data
     // ---------------------------------------------------------
-    else if (!start && !end && !source) {
-
+    else {
       let now = new Date();
+      let istNow = new Date(now.getTime() + IST_OFFSET * 60 * 1000);
 
-      // Convert UTC → IST
-      let ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
-
-      // Start of day IST
-      let startDate = new Date(ist);
+      let startDate = new Date(istNow);
       startDate.setHours(0, 0, 0, 0);
 
-      // End of day IST
-      let endDate = new Date(ist);
-      endDate.setHours(23, 59, 59);
+      let endDate = new Date(istNow);
+      endDate.setHours(23, 59, 59, 999);
 
-      // Convert back IST → UTC (MongoDB stores UTC)
-      startDate = new Date(startDate.getTime() - (5.5 * 60 * 60 * 1000));
-      endDate = new Date(endDate.getTime() - (5.5 * 60 * 60 * 1000));
+      // Convert IST → UTC for MongoDB
+      startDate = new Date(startDate.getTime() - IST_OFFSET * 60 * 1000);
+      endDate = new Date(endDate.getTime() - IST_OFFSET * 60 * 1000);
 
       dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
     }
 
     // -------------------------------------------
-    // APPLY FILTER
+    // FETCH DATA
     // -------------------------------------------
     const matkaUnsettled = await MatkaBetHistory.find({
       userId: user._id,
