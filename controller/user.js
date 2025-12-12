@@ -210,89 +210,120 @@ exports.getUserBetPage = async (req, res) => {
       return;
     }
 
-    // -----------------------------------------
-    // FILTER LOGIC (MAIN PART)
-    // -----------------------------------------
     let { source, start, end } = req.query;
+    let dateFilter = {}; // DEFAULT: no filter
 
-    let startDate, endDate;
-
-    if (source === "live") {
-      // Last 24 Hours
-      endDate = new Date();
-      startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    } else if (source === "backup") {
-      // Last 7 Days
-      endDate = new Date();
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-    } else if (source === "old") {
-      // Last 30 Days
-      endDate = new Date();
-      startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
-    } else if (start && end) {
-      // Manual Date Selection
-      startDate = new Date(start);
-      endDate = new Date(end);
+    // -------------------------------------------
+    // 1) MANUAL DATE FILTER (User selects dates)
+    // -------------------------------------------
+    if (start && end) {
+      let startDate = new Date(start);
+      let endDate = new Date(end);
       endDate.setHours(23, 59, 59);
-      
-    } else {
-      // Default (no filter)
-      startDate = new Date("2000-01-01");
-      endDate = new Date();
+
+      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
     }
 
-    // -----------------------------------------
-    // APPLY FILTERS TO DB QUERIES
-    // -----------------------------------------
+    // -------------------------------------------
+    // 2) SOURCE FILTER
+    // -------------------------------------------
+    else if (source === "live") {
+      let startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+
+      let endDate = new Date();
+
+      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
+    }
+
+    else if (source === "backup") {
+      let startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      startDate.setHours(0, 0, 0, 0);
+
+      let endDate = new Date();
+
+      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
+    }
+
+    else if (source === "old") {
+      let startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      startDate.setHours(0, 0, 0, 0);
+
+      let endDate = new Date();
+
+      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
+    }
+
+    // ---------------------------------------------------------
+    // 3) DEFAULT → NO filter provided → Show TODAY IST data
+    // ---------------------------------------------------------
+    else if (!start && !end && !source) {
+
+      let now = new Date();
+
+      // Convert UTC → IST
+      let ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+
+      // Start of day IST
+      let startDate = new Date(ist);
+      startDate.setHours(0, 0, 0, 0);
+
+      // End of day IST
+      let endDate = new Date(ist);
+      endDate.setHours(23, 59, 59);
+
+      // Convert back IST → UTC (MongoDB stores UTC)
+      startDate = new Date(startDate.getTime() - (5.5 * 60 * 60 * 1000));
+      endDate = new Date(endDate.getTime() - (5.5 * 60 * 60 * 1000));
+
+      dateFilter = { createdAt: { $gte: startDate, $lte: endDate } };
+    }
+
+    // -------------------------------------------
+    // APPLY FILTER
+    // -------------------------------------------
     const matkaUnsettled = await MatkaBetHistory.find({
       userId: user._id,
       status: "unsettled",
-      createdAt: { $gte: startDate, $lte: endDate }
+      ...dateFilter
     });
 
     const matkaSettled = await MatkaBetHistory.find({
       userId: user._id,
       status: "settled",
-      createdAt: { $gte: startDate, $lte: endDate }
+      ...dateFilter
     });
 
     const coinBets = await CoinBetHistory.find({
       userId: user._id,
-      createdAt: { $gte: startDate, $lte: endDate }
+      ...dateFilter
     });
 
     const allSettledBets = [...matkaSettled, ...coinBets]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-
-    // -----------------------------------------
-    // RENDER PAGE
-    // -----------------------------------------
-res.render("userBets", {
-  username: user.username,
-  wallet: user.wallet,
-  referCode: user.referCode,
-  user,
-  isLoggedIn: req.session.isLoggedIn,
-
-  matkaUnsettled,
-  allSettledBets,
-
-  // send filter values to ejs
-  source: req.query.source || "",
-  start: req.query.start || "",
-  end: req.query.end || ""
-});
-
+    res.render("userBets", {
+      username: user.username,
+      wallet: user.wallet,
+      referCode: user.referCode,
+      user,
+      isLoggedIn: req.session.isLoggedIn,
+      matkaUnsettled,
+      allSettledBets,
+      source: source || "",
+      start: start || "",
+      end: end || "",
+    });
 
   } catch (err) {
     console.log(err);
     res.redirect("/login");
   }
 };
+
+
 
 
 exports.logoutUser = (req, res, next) => {
