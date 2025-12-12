@@ -22,10 +22,11 @@ const matkaBetHistorySchema = new mongoose.Schema({
   result: { type: String, default: null }, // WIN / LOSS
   profit: { type: Number, default: 0 },
 
-  createdAt: {
-    type: Date,
-    default: () => new Date(Date.now() + 5.5 * 60 * 60 * 1000), // IST
-  },
+createdAt: {
+  type: Date,
+  default: () => new Date(), // UTC store
+},
+
 });
 
 module.exports = mongoose.model("MatkaBetHistory", matkaBetHistorySchema);
