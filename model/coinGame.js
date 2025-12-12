@@ -3,14 +3,17 @@ const mongoose = require("mongoose");
 const coinBetHistorySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   gameName: String,
+  matkaNo: String,
+  coinGame: { type: String, default: "Heads & Tails" },
   userPick: String,
+  number: String,
   amount: Number,
   result: String,
   profit: Number,
-  coinGame: { type: String, default: "Heads & Tails" },
   createdAt: {
     type: Date,
-    default: () => new Date(Date.now() + 5.5 * 60 * 60 * 1000), // IST
+    default: () =>
+      new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
   },
 });
 
