@@ -125,7 +125,7 @@ function getMatkaNo(ts) {
   const hour = date.hour();
   const minute = date.minute();
 
-  if (hour === 12 && minute <= 50) return "Matka#1";
+  if (hour === 9 && minute <= 50) return "Matka#1";
   if (hour === 10 && minute <= 50) return "Matka#2";
   if (hour === 11 && minute <= 50) return "Matka#3";
   if (hour === 12 && minute <= 50) return "Matka#4";
