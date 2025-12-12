@@ -100,9 +100,9 @@
 
       <td>
         <% if (h.type === "deposit") { %>
-          Admin → User
+          Apline → <%= user.username %>
         <% } else { %>
-          User → Admin
+          <%= user.username %> → Apline
         <% } %>
       </td>
     </tr>
