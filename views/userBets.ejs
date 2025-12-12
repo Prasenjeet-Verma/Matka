@@ -120,39 +120,95 @@
       </div>
     </div>
 
-   <!-- Unsettled Section -->
-<div id="unsettledSection" class="section active">
-  <div class="scroll-wrapper">
-    <div class="scroll-row" style="display: flex; justify-content: space-between; gap:10px">
+    <div
+      id="unsettledSection"
+      class="section active"
+      role="tabpanel"
+      aria-labelledby="unsettledTab"
+    >
+      <div class="scroll-wrapper">
+        <div
+          class="scroll-row"
+          style="display: flex; justify-content: space-between; gap: 10px"
+        >
+          <!-- S.No -->
+          <ol class="col" style="flex: 1; text-align: center">
+            <strong>S.No</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet, index)=> { %>
+            <li><%= index + 1 %></li>
+            <% }) %>
+          </ol>
 
-      <ol class="col" style="flex:2; text-align:center">
-        <strong>Date & Time</strong>
-        <% matkaUnsettled.slice().reverse().forEach(bet => { %>
-          <li>
-            <%= bet.date ? bet.date : "N/A" %> -
-            <%= bet.time ? bet.time : "00:00:00" %>
-          </li>
-        <% }) %>
-      </ol>
+          <!-- Game Name -->
+          <ol class="col" style="flex: 2; text-align: center">
+            <strong>Game Name</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
+            <li><%= bet.matkaNo %></li>
+            <% }) %>
+          </ol>
 
-      <!-- Other columns like Game Name, Selection, Amount -->
+          <!-- Event Name -->
+          <ol class="col" style="flex: 2; text-align: center">
+            <strong>Event Name</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
+            <li><%= bet.gameName %></li>
+            <% }) %>
+          </ol>
+
+          <!-- Selection -->
+          <ol class="col" style="flex: 1; text-align: center">
+            <strong>Selection</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
+            <li style="color: skyblue"><%= bet.number %></li>
+            <% }) %>
+          </ol>
+
+          <!-- Amount -->
+          <ol class="col" style="flex: 1; text-align: center">
+            <strong>Amount</strong>
+            <% matkaUnsettled.slice().reverse().forEach((bet)=> { %>
+            <li>₹<%= bet.amount %></li>
+            <% }) %>
+          </ol>
+
+        
+<ol class="col" style="flex: 2; text-align: center">
+  <strong>Date & Time</strong>
+  <% matkaUnsettled.slice().reverse().forEach(bet => { %>
+    <li>
+      <%= bet.createdAt.toLocaleString("en-IN", { 
+            timeZone: "Asia/Kolkata", 
+            hour12: true 
+          }) %>
+    </li>
+  <% }) %>
+</ol>
+
+
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+
+
 
 <!-- Settled Section -->
 <div id="settledSection" class="section">
   <div class="scroll-wrapper">
     <div class="scroll-row" style="display: flex; justify-content: space-between; gap:10px">
 
-      <ol class="col" style="flex:2; text-align:center">
-        <strong>Date & Time</strong>
-        <% allSettledBets.forEach(bet => { %>
-          <li>
-            <%= bet.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", hour12:true }) %>
-          </li>
-        <% }) %>
-      </ol>
+<ol class="col" style="flex:2; text-align:center">
+  <strong>Date & Time</strong>
+  <% allSettledBets.forEach(bet => { %>
+    <li>
+      <%= bet.createdAt.toLocaleString("en-IN", { 
+            timeZone: "Asia/Kolkata", 
+            hour12: true 
+          }) %>
+    </li>
+  <% }) %>
+</ol>
+
 
       <ol class="col" style="flex:2; text-align:center">
         <strong>Game Name</strong>
@@ -203,7 +259,6 @@
     </div>
   </div>
 </div>
-
 
     <!-- =================================== Footer Start ============================== -->
     <%- include('partials/footer') %>

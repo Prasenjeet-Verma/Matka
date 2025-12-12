@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const coinBetHistorySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   gameName: String,
@@ -12,9 +10,6 @@ const coinBetHistorySchema = new mongoose.Schema({
   profit: Number,
   createdAt: {
     type: Date,
-    default: () =>
-      new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })),
+    default: () => new Date(), // UTC date store
   },
 });
-
-module.exports = mongoose.model("CoinBetHistory", coinBetHistorySchema);
