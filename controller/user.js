@@ -198,9 +198,7 @@ exports.getAccountPage = async (req, res, next) => {
   }
 };
 
-const MatkaBetHistory = require("../models/MatkaBetHistory");
-const CoinBetHistory = require("../models/CoinBetHistory");
-const User = require("../models/User");
+
 
 exports.getUserBetPage = async (req, res) => {
   try {
