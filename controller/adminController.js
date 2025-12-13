@@ -1034,7 +1034,8 @@ exports.getAdminAccountStatement = async (req, res, next) => {
 exports.getMasterPanelDashboard = async (req, res) => {
   try {
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/login");
+        req.session.destroy(() => res.redirect("/login"));
+      return;
     }
 
     const userId = req.session.user._id;
@@ -1048,7 +1049,7 @@ exports.getMasterPanelDashboard = async (req, res) => {
 
     // ⭐ MASTER CAN SEE: master + agent + user
     const visibleUsers = await User.find({
-      role: { $in: ["agent", "user"] },
+      role: { $in: ["agent", "user", "admin"] },
     });
 
      if (user.role === "admin") {
@@ -1074,20 +1075,21 @@ exports.getMasterPanelDashboard = async (req, res) => {
 exports.getAgentPanelDashboard = async (req, res) => {
   try {
     if (!req.isLoggedIn || !req.session.user) {
-      return res.redirect("/login");
+       req.session.destroy(() => res.redirect("/login"));
+      return;
     }
 
     const userId = req.session.user._id;
     const user = await User.findById(userId);
 
-    if (!user || user.role !== "agent") {
+    if (!user || user.role !== "admin") {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
     // ⭐ MASTER CAN SEE: master + agent + user
     const visibleUsers = await User.find({
-      role: { $in: ["user"] },
+      role: { $in: ["agent", "user", "admin"] },
     });
 
   if (user.role === "agent") {
