@@ -32,8 +32,13 @@
     <option value="old"    <%= source === "old" ? "selected" : "" %>>30 Days</option>
   </select>
 
-  <input type="date" class="custom-input" id="startDate" value="<%= start || '' %>">
-  <input type="date" class="custom-input" id="endDate" value="<%= end || '' %>">
+<input type="date" class="custom-input" id="startDate"
+  data-placeholder="Start Date"
+  value="<%= start || '' %>">
+
+<input type="date" class="custom-input" id="endDate"
+  data-placeholder="End Date"
+  value="<%= end || '' %>">
 
   <button class="btn-history" onclick="getHistory()">Get History</button>
 </div>
@@ -75,9 +80,9 @@
 
             <td>
               <% if (h.type === "deposit") { %>
-                Upline → <%= h.userId.username %>
+                Admin → <%= h.userId.username %>
               <% } else { %>
-                <%= h.userId.username %> → Upline
+                <%= h.userId.username %> → Admin
               <% } %>
             </td>
           </tr>
@@ -90,6 +95,7 @@
 <%- include('partials/adminFooter') %>
 
 <!-- ================= JS ================= -->
+
 <script>
 function getHistory() {
   const dataSource = document.getElementById("dataSource").value;
@@ -108,13 +114,25 @@ function getHistory() {
   window.location.href = `/adminaccountsettlement?${params.toString()}`;
 }
 </script>
-
+<script>
+document.querySelectorAll('input[type="date"]').forEach(input => {
+  function update() {
+    if (input.value) input.classList.add('has-value');
+    else input.classList.remove('has-value');
+  }
+  update();
+  input.addEventListener('change', update);
+});
+</script>
 <script>
 document.getElementById("dataSource").addEventListener("change", () => {
   document.getElementById("startDate").value = "";
   document.getElementById("endDate").value = "";
+  document.getElementById("startDate").classList.remove("has-value");
+  document.getElementById("endDate").classList.remove("has-value");
 });
 </script>
+
 
 </body>
 </html>
