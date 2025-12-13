@@ -1,8 +1,8 @@
-const express = require('express');
-const masterRouter = express.Router();
-const masterRouterController = require('../controller/masterController');
+// const express = require('express');
+// const masterRouter = express.Router();
+// const masterRouterController = require('../controller/masterController');
 
-masterRouter.get('/masterpaneldashboard', masterRouterController.getMasterPanelDashboard);
+//masterRouter.get('/masterpaneldashboard', masterRouterController.getMasterPanelDashboard);
 
 
-module.exports = masterRouter;
+// module.exports = masterRouter;

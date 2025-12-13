@@ -15,4 +15,6 @@ adminRouter.post('/resetpasswordnotcheckoldpassword', adminRouterController.admi
 adminRouter.get("/adminseepersonallyuserbethistory/:userId", adminRouterController.adminSeeUserPersonallyBetHistory);
 adminRouter.get('/accountsettlement/:userId', adminRouterController.getAccountSettlement);
 adminRouter.get('/adminaccountsettlement', adminRouterController.getAdminAccountStatement);
+adminRouter.get('/masterpanelbyadmindashboard', adminRouterController.getMasterPanelDashboard);
+adminRouter.get('/agentpanelbyadmindashboard', adminRouterController.getAgentPanelDashboard);
 module.exports = adminRouter;
