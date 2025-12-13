@@ -136,9 +136,12 @@ document.querySelectorAll('input[type="date"]').forEach(input => {
 </script>
 
 <script>
+// FIX: dropdown select → clear manual date
 document.getElementById("dataSource").addEventListener("change", () => {
   document.getElementById("startDate").value = "";
   document.getElementById("endDate").value = "";
+  document.getElementById("startDate").classList.remove("has-value");
+  document.getElementById("endDate").classList.remove("has-value");
 });
 </script>
 

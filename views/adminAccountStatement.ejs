@@ -6,6 +6,8 @@
   <title>Admin Account Statement</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="/style.css" />   
+<link rel="stylesheet" href="/css/bets.css" /> 
   <link rel="stylesheet" href="/css/headerlogin.css" />
   <link rel="stylesheet" href="/css/footer.css" />
   <link rel="stylesheet" href="/css/adminDasebord.css" />
@@ -52,42 +54,50 @@
           <th>Date & Time</th>
           <th>Deposit</th>
           <th>Withdrawal</th>
-          <th>User Balance</th>
+          <th>DownLine Balance</th>
+           <th>Available Balance</th> 
           <th>From → To</th>
         </tr>
       </thead>
 
       <tbody>
-        <% if (history.length === 0) { %>
-          <tr>
-            <td colspan="5" style="text-align:center;">No records found</td>
-          </tr>
+  <% if (history.length === 0) { %>
+    <tr>
+      <td colspan="6" style="text-align:center;">No records found</td>
+    </tr>
+  <% } %>
+
+  <% history.forEach(h => { %>
+    <tr>
+      <td><%= h.formattedDate %> <%= h.formattedTime %></td>
+
+      <% if (h.type === "deposit") { %>
+        <td style="color:green;">₹<%= h.amount %></td>
+        <td>—</td>
+      <% } else { %>
+        <td>—</td>
+        <td style="color:red;">₹<%= h.amount %></td>
+      <% } %>
+
+      <!-- USER BALANCE -->
+      <td>₹<%= h.userWalletAfter %></td>
+
+      <!-- ADMIN BALANCE -->
+      <td style="font-weight:600; color:#1e40af;">
+        ₹<%= h.adminWalletAfter %>
+      </td>
+
+      <td>
+        <% if (h.type === "deposit") { %>
+          Admin → <%= h.userId.username %>
+        <% } else { %>
+          <%= h.userId.username %> → Admin
         <% } %>
+      </td>
+    </tr>
+  <% }) %>
+</tbody>
 
-        <% history.forEach(h => { %>
-          <tr>
-            <td><%= h.formattedDate %> <%= h.formattedTime %></td>
-
-            <% if (h.type === "deposit") { %>
-              <td style="color:green;">₹<%= h.amount %></td>
-              <td>—</td>
-            <% } else { %>
-              <td>—</td>
-              <td style="color:red;">₹<%= h.amount %></td>
-            <% } %>
-
-            <td>₹<%= h.userWalletAfter %></td>
-
-            <td>
-              <% if (h.type === "deposit") { %>
-                Admin → <%= h.userId.username %>
-              <% } else { %>
-                <%= h.userId.username %> → Admin
-              <% } %>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
     </table>
   </div>
 </div>
