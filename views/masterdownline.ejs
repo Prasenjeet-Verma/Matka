@@ -1,345 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matka  69</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matka 69</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-    <link rel="stylesheet" href="css/headerlogin.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/adminDasebord.css">
-    <link rel="stylesheet" href="css/userlistpage.css">
-    <link rel="stylesheet" href="css/modallist.css">
+  <link rel="stylesheet" href="/css/headerlogin.css"/>
+  <link rel="stylesheet" href="/css/footer.css"/>
+  <link rel="stylesheet" href="/css/adminDasebord.css"/>
+  <link rel="stylesheet" href="/css/userlistpage.css"/>
+  <link rel="stylesheet" href="/css/modallist.css"/>
 
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/modal.js"></script>
-    <script src="js/depositmodal.js"></script>
-    <script src="js/footer.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/masterModal.js"></script>
+  <script src="/js/depositmodal.js"></script>
+  <script src="/js/footer.js"></script>
 </head>
-<body>
 
-    
-  
+<body>
   <!-- ==================================================Header======================================= -->
 
   <%- include('partials/header') %>
 
-   <div class="header"></div>  <!-- ========================= overflow header solve -->
+    <div class="header"></div>
+    <!-- ========================= overflow header solve -->
 
-  <div class="panel">
-    <div class="row">
-      <input type="text" placeholder="Find member...">
-      <button class="btn" style="border: 1px solid gray;">Search</button>
-    </div>
-
-    <select>
-      <option>ACTIVE</option>
-      <option>INACTIVE</option>
-    </select>
-
-    <div class="referral">
-      <button class="btn-outline btn-icon" id="openModalBtn">Add Master</button>
-      <button class="btn-outline">Referral </button>
-    </div>
-  </div>
-
-  <!-- ==================================================================== Table =================================== -->
-
-<div class="bbody">
-
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>S.No</th>
-          <th>Username</th>
-          <th>Credit Ref.</th>
-          <th>Balance</th>
-          <th>Avail. bal.</th>
-          <th>Ref. P/L</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>WH Arya01</td>
-          <td>10,000.00 <button class="btn editBtn" id="edit" style="height: 200; width: 2rem;"> <img src="svg/edit.svg" alt=""></button></td>
-          <td>4,000.00</td>
-          <td>4,000.00</td>
-          <td class="red">(447.00)</td>
-          <td><span class="status">Active</span></td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn deposit-btn"><img src="svg/deposit.svg" alt="Deposit"></button>
-              <button class="btn withdraw-btn"><img src="svg/withdrowl.svg" alt="Withdraw" width="40"></button>
-              <button class="btn settingsBtn" id="settings" style="height: 100; width: 2.5rem;"> <img src="svg/setting.svg" alt=""></button>
-              <button class="btn" id="history" style="height: 100; width: 2.5rem;"> <img src="svg/graph.svg" alt=""></button>
-              <button class="btn" id="profile" style="height: 100; width: 2.5rem;"> <img src="svg/profile.svg" alt=""></button>
-            </div>
-          </td>
-        </tr>
-        
-        <tr>
-          <td>2</td>
-          <td>PL Demo@1234</td>
-          <td>0.00 <button class="btn editBtn" id="edit" style="height: 200; width: 2rem;"> <img src="svg/edit.svg" alt=""></button></td></td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td><span class="status">Active</span></td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn deposit-btn"><img src="svg/deposit.svg" alt="Deposit"></button>
-              <button class="btn withdraw-btn"><img src="svg/withdrowl.svg" alt="Withdraw" width="40"></button>
-              <button class="btn settingsBtn" id="settings" style="height: 100; width: 2.5rem;"> <img src="svg/setting.svg" alt=""></button>
-              <button class="btn" id="history" style="height: 100; width: 2.5rem;"> <img src="svg/graph.svg" alt=""></button>
-              <button class="btn" id="profile" style="height: 100; width: 2.5rem;"> <img src="svg/profile.svg" alt=""></button>
-            </div>
-          </td>
-        </tr>
-       
-          <td>3</td>
-          <td>WH Testing</td>
-          <td>10,000.00 <button class="btn editBtn" id="edit" style="height: 200; width: 2rem;"> <img src="svg/edit.svg" alt=""></button></td></td>
-          <td>4,000.00</td>
-          <td>4,000.00</td>
-          <td>100,000.00</td>
-          <td><span class="status">Active</span></td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn deposit-btn"><img src="svg/deposit.svg" alt="Deposit"></button>
-              <button class="btn withdraw-btn"><img src="svg/withdrowl.svg" alt="Withdraw" width="40"></button>
-              <button class="btn settingsBtn" id="settings" style="height: 100; width: 2.5rem;"> <img src="svg/setting.svg" alt=""></button>
-              <button class="btn" id="history" style="height: 100; width: 2.5rem;"> <img src="svg/graph.svg" alt=""></button>
-              <button class="btn" id="profile" style="height: 100; width: 2.5rem;"> <img src="svg/profile.svg" alt=""></button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="pagination">
-    <button disabled>Prev</button>
-    <button class="active">1</button>
-    <button>Next</button>
-  </div>
-
-</div>
-
-
-<!-- ============================================================================ Add Master Modal ========================================== -->
-
-
-  
-
-  <!-- Modal Overlay -->
-  <div class="modal-overlay" id="userModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <!-- Header -->
-      <div class="modal-header" style="background-color: white;">
-        <h2 id="modalTitle">Add Master</h2>
-        <button class="close-btn" id="closeModalBtn" aria-label="Close modal">&times;</button>
+    <div class="panel">
+      <div class="row">
+        <input type="text" id="searchInput" placeholder="Find member..." />
+        <button class="btn" style="border: 1px solid gray">Search</button>
       </div>
 
-      <!-- Form Content -->
-      <div class="form-content">
-        <div class="form-row">
-          <label for="username">Username <span class="required-star">*</span></label>
-          <input type="text" id="username" autocomplete="username" />
-        </div>
+      <select id="statusFilter" onchange="filterStatus(this.value)">
+        <option value="ACTIVE" <%=selectedStatus==='ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+        <option value="INACTIVE" <%=selectedStatus==='INACTIVE' ? 'selected' : '' %>>SUSPENDED</option>
+      </select>
 
-        <div class="form-row  input-group" style="display: flex;">
-            
-          <label for="password">Password <span class="required-star">*</span></label>
-          <i class="fas fa-eye toggle-password" data-target="password"></i>
-          <input type="password" id="password" autocomplete="new-password" />
-        </div>
 
-        <div class="form-row   input-group">
-          <label for="confirm-password">Confirm Password <span class="required-star">*</span></label>
-          <i class="fas fa-eye toggle-password" data-target="confirm-password"></i>
-          <input type="password" id="confirm-password" autocomplete="new-password" />
-        </div>
-
-        <div class="form-row">
-          <label for="exposure">Credit Ref<span class="required-star">*</span></label>
-          <input type="number" id="exposure" value="0" min="0" />
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button type="button" class="create-btn" id="createBtn">Create</button>
+      <div class="referral">
+        <button class="btn-outline btn-icon" id="openModalBtn">Add Master</button>
+        <a href="/masterpanelbyadmindashboard">
+          <button class="btn-outline">Refresh</button></a>
       </div>
     </div>
-  </div>
+
+    <!-- ==================================================================== Table =================================== -->
+
+    <div class="bbody">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Username</th>
+              <th>Credit Ref.</th>
+              <th>Balance</th>
+              <th>Avail. bal.</th>
+              <th>Ref. P/L</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach((u, index)=> { %>
+              <tr>
+                <td>
+                  <%= index + 1 %>
+                </td>
+                <td style="font-weight: 600">
+                  <%= u.username %>
+                </td>
+
+                <!-- Credit Ref -->
+                <td>
+                  <%= u.creditRef.toLocaleString() %>
+                    <button class="btn editBtn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/edit.svg" />
+                    </button>
+                </td>
+
+                <!-- Balance -->
+                <td>
+                  <%= u.wallet.toLocaleString() %>
+                </td>
+                <td>
+                  <%= u.wallet.toLocaleString() %>
+                </td>
+
+                <!-- Ref P/L -->
+                <td class="<%= u.refPl < 0 ? 'text-red-600' : 'text-green-600' %>">
+                  <%= u.refPl.toLocaleString() %>
+                </td>
+
+                <!-- Status -->
+                <td>
+                  <span class="status <%= u.userStatus === 'suspended' ? 'status-suspended' : 'status-active' %>">
+                    <%= u.userStatus==='suspended' ? 'Suspended' : 'Active' %>
+                  </span>
 
 
-  <!-- ========================================================== deposit modal==== -->
+                </td>
 
+                <!-- Action Buttons -->
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn deposit-btn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/deposit.svg" />
+                    </button>
 
-  <!-- Deposit Modal -->
-  <div class="deposit-overlay" id="depositModal">
-    <div class="deposit-card-wrapper">
-      <div class="deposit-header-bar">
-        Deposit
-        <button class="close-form-btn" id="closeDeposit">&times;</button>
+                    <button class="btn withdraw-btn" data-userid="<%= u._id %>" data-wallet="<%= u.wallet %>">
+                      <img src="svg/withdrowl.svg" />
+                    </button>
+
+                    <button class="btn settingsBtn" data-userid="<%= u._id %>" data-status="<%= u.userStatus %>">
+
+                      <img src="svg/setting.svg" />
+                    </button>
+
+                    <a href="/adminseepersonallyuserbethistory/<%= u._id %>">
+                      <button class="btn">
+                        <img src="svg/graph.svg" />
+                      </button>
+                    </a>
+                    <a href="/userProfile/<%= u._id %>">
+                      <button class="btn">
+                        <img src="svg/profile.svg" />
+                      </button>
+                    </a>
+
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
       </div>
 
-      <div class="deposit-form-body">
-        <div class="form-input-field">
-          <input type="number" id="deposit-amount-input" placeholder="Enter your amount..." min="0" required>
-        </div>
+      <div class="pagination">
+        <button disabled>Prev</button>
+        <button class="active">1</button>
+        <button>Next</button>
+      </div>
+    </div>
 
-        <div class="form-input-field">
-          <div class="deposit-input-group">
-            <input type="password" id="deposit-credential" placeholder="Your password..." required>
-            <span class="pwd-toggle-btn" onclick="togglePassword()">👁️</span>
+    <!-- =================================== Footer Start ============================== -->
+    <%- include('partials/adminFooter') %>
+      <!-- ============================================================================ Add user Modal ========================================== -->
+
+      <!-- Modal Overlay -->
+      <form action="/admincreatemaster" id="registerForm" method="POST">
+        <div class="modal-overlay" id="userModal" aria-hidden="true">
+          <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <!-- Header -->
+            <div class="modal-header" style="background-color: white">
+              <h2 id="modalTitle">Add Master</h2>
+              <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close modal">
+                &times;
+              </button>
+            </div>
+
+            <!-- Form Content -->
+            <div class="form-content">
+              <%- include('partials/errors') %>
+                <div class="form-row">
+                  <label for="username">Username <span class="required-star">*</span></label>
+                  <input type="text" id="username" name="username" value="<%= oldInput?.username || '' %>"
+                    autocomplete="username" required />
+                </div>
+
+                <div class="form-row input-group">
+                  <label for="password">Password <span class="required-star">*</span></label>
+                  <input type="password" id="password" value="<%= oldInput?.password || '' %>" name="password"
+                    required />
+                  <i class="fas fa-eye toggle-password" data-target="password"></i>
+                </div>
+
+                <div class="form-row input-group">
+                  <label for="confirm-password">Confirm Password <span class="required-star">*</span></label>
+                  <input type="password" id="confirm-password" name="confirmPassword" required />
+                  <i class="fas fa-eye toggle-password" data-target="confirm-password"></i>
+
+                </div>
+                <small id="matchMsg" class="text-sm mt-1 block"></small>
+                <input type="hidden" name="referCode" value="<%= user.referCode %>" />
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+              <button type="submit" class="create-btn" id="createBtn">
+                Create
+              </button>
+            </div>
           </div>
         </div>
+      </form>
 
-        <div class="submit-btn-wrapper">
-          <button class="submit-deposit-btn" id="submitDeposit">Deposit</button>
-        </div>
-      </div>
-    </div>
-  </div>
+      <!-- ========================== Deposit Modal ========================== -->
+      <form action="/postTransactionofmaster" method="POST">
+        <div class="deposit-overlay" id="depositModal" aria-hidden="true">
+          <div class="deposit-card-wrapper">
+            <div class="deposit-header-bar">
+              Deposit
+              <button type="button" class="close-form-btn" id="closeDeposit">
+                &times;
+              </button>
+            </div>
 
+            <div class="deposit-form-body">
+              <div class="form-input-field">
+                <input type="number" name="deposit" id="deposit-amount-input" placeholder="Enter amount..." min="0"
+                  required />
+                <input type="hidden" id="depositUserId" name="userId" />
+                <input type="hidden" id="depositWallet" name="wallet" />
+              </div>
 
-
-
-
-  <!---------------------------------------------------------- Withdraw Modal ---------------------------------------------->
-
-  
-  <div class="withdraw-modal" id="withdrawModal">
-    <div class="withdraw-card-wrapper">
-      <div class="withdraw-header-bar">
-        Withdraw
-        <button class="close-form-btn" id="closeWithdraw">&times;</button>
-      </div>
-
-      <div class="withdraw-form-body">
-        <div class="form-input-field">
-          <input type="number" id="withdraw-amount-input" placeholder="Enter your amount..." min="0" required>
-        </div>
-
-
-         <!-- Password Input -->
-            <div class="form-input-field">
-                <div class="withdraw-input-group">
-                    <input type="password" id="withdraw-credential" placeholder="your password......" required>
-                    <i class="fas fa-eye pwd-toggle-btn" data-target="withdraw-credential"></i>
+              <div class="form-input-field">
+                <div class="deposit-input-group">
+                  <input type="password" name="adminPassword" id="deposit-credential" placeholder="Admin password..."
+                    required />
+                  <span class="pwd-toggle-btn toggle-password fa fa-eye" data-target="deposit-credential"></span>
                 </div>
+              </div>
+
+              <div class="submit-btn-wrapper">
+                <button type="submit" class="submit-deposit-btn" id="submitDeposit">
+                  Deposit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ========================== Withdraw Modal ========================== -->
+      <form action="/postTransactionofmaster" method="POST">
+        <div class="withdraw-modal" id="withdrawModal" aria-hidden="true">
+          <div class="withdraw-card-wrapper">
+            <div class="withdraw-header-bar">
+              Withdraw
+              <button type="button" class="close-form-btn" id="closeWithdraw">
+                &times;
+              </button>
             </div>
 
-        <div class="submit-btn-wrapper">
-          <button class="submit-withdraw-btn">Withdraw</button>
+            <div class="withdraw-form-body">
+              <div class="form-input-field">
+                <input type="number" name="withdraw" id="withdraw-amount-input" placeholder="Enter amount..." min="0"
+                  required />
+                <input type="hidden" id="withdrawUserId" name="userId" />
+                <input type="hidden" id="withdrawWallet" name="wallet" />
+              </div>
+
+              <div class="form-input-field">
+                <div class="withdraw-input-group">
+                  <input type="password" name="adminPassword" id="withdraw-credential" placeholder="Admin password..."
+                    required />
+                  <i class="fas fa-eye toggle-password" data-target="withdraw-credential"></i>
+                </div>
+              </div>
+
+              <div class="submit-btn-wrapper">
+                <button type="submit" class="submit-withdraw-btn">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </form>
+      <!-- ========================== Credit Referral Modal ========================== -->
+      <form action="/postTransactionofmaster" method="POST">
+        <div id="creditReferralFormWrapper" aria-hidden="true">
+          <div id="creditReferralForm">
+            <header class="header-box">
+              CREDIT REF
+              <button type="button" class="close-button" id="closeBtn">✕</button>
+            </header>
 
+            <div class="content">
+              <div class="input-box">
+                <input id="referralNumber" name="creditRef" class="input-field" type="text" placeholder="number here"
+                  oninput="this.value = this.value.replace(/[^0-9]/g,'');" />
+                <input type="hidden" id="creditUserId" name="userId" />
+                <input type="hidden" id="creditWallet" name="wallet" />
+              </div>
 
-   <!---------------------------------------------------------- Cradit Refral Modal ---------------------------------------------->
-
-<body class="antialiased">
-
-  <!-- Modal Wrapper -->
-  <div id="creditReferralFormWrapper" aria-hidden="true">
-    <div id="creditReferralForm">
-
-      <!-- Header -->
-      <header class="header-box">
-        CREDIT REF
-        <button class="close-button" id="closeBtn">✕</button>
-      </header>
-
-      <!-- Content -->
-      <div class="content">
-        <div class="input-box">
-          <input id="referralNumber" class="input-field" type="text" placeholder="number here"
-                 oninput="this.value = this.value.replace(/[^0-9]/g,'');">
+              <button type="submit" id="updateBtn" class="update-button">
+                Update <span class="arrow-icon-update">↑</span>
+              </button>
+              <div id="creditMessageBox" class="text-sm font-semibold"></div>
+            </div>
+          </div>
         </div>
+      </form>
 
-        <button id="updateBtn" class="update-button">
-          Update <span class="arrow-icon-update">↑</span>
-        </button>
-
-        <div id="messageBox" class="text-sm font-semibold"></div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!---------------------------------------------------------- Status Modal ---------------------------------------------->
-
-
-<body class="bg-gray-100">
-
-<!-- Multiple buttons -->
-<div class="p-6 flex gap-4">
-    <button class="btn settingsBtn bg-black text-white p-3 rounded">⚙</button>
-    <button class="btn settingsBtn bg-black text-white p-3 rounded">⚙</button>
-    <button class="btn settingsBtn bg-black text-white p-3 rounded">⚙</button>
-</div>
-
-<!-- Backdrop -->
-<div id="statusModalWrapper" 
-     class="fixed inset-0 bg-black/40 hidden flex justify-center items-start z-50 p-4">
-
-
-    <!-- Modal -->
-    <div id="statusModal" class="status-container ">
-
-        <header class="header-box">
+      <!-- ========================== Status Modal ========================== -->
+      <div id="statusModalWrapper" class="fixed inset-0 bg-black/40 hidden flex justify-center items-start z-50 p-4"
+        aria-hidden="true">
+        <div id="statusModal" class="status-container">
+          <header class="header-box">
             Status
-            <button class="close-button" id="closeStatusModal">✕</button>
-        </header>
+            <button type="button" class="close-button" id="closeStatusModal">
+              ✕
+            </button>
+          </header>
 
-        <main class="p-6">
-
-            <!-- Buttons become vertical on small screens -->
+          <main class="p-6">
             <div class="flex sm:flex-row justify-between gap-4 mb-10">
-
-                <button 
-                    id="btn-active"
-                    class="status-button active-button"
-                    onclick="selectStatus('Active')"
-                >
-                    Active
-                </button>
-
-                <button 
-                    id="btn-suspended"
-                    class="status-button suspended-button"
-                    onclick="selectStatus('Suspended')"
-                >
-                    Suspended
-                </button>
-
+              <button id="btn-active" class="status-button active-button">
+                Active
+              </button>
+              <button id="btn-suspended" class="status-button suspended-button">
+                Suspended
+              </button>
             </div>
 
-            <button class="submit-button" onclick="handleSubmit()">Submit</button>
+            <button type="button" class="submit-button" id="submitStatusBtn">
+              Submit
+            </button>
+            <div id="statusMessageBox" class="mt-6 text-center text-lg font-bold text-gray-700 hidden"></div>
+          </main>
+        </div>
+      </div>
 
-            <div id="messageBox" class="mt-6 text-center text-lg font-bold text-gray-700 hidden"></div>
-        </main>
-    </div>
-</div>
+      <script>
+        const form = document.getElementById("registerForm"); const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const matchMsg = document.getElementById("matchMsg");
+        confirmPassword.addEventListener("input", () => {
+          if (confirmPassword.value === "") { matchMsg.textContent = ""; }
+          else if (password.value === confirmPassword.value) { matchMsg.textContent = "✅ Passwords match"; matchMsg.style.color = "green"; }
+          else {
+            matchMsg.textContent = "❌ Passwords do not match";
+            matchMsg.style.color = "red";
+          }
+        });
+
+        function filterStatus(status) {
+          window.location.href = `/masterpanelbyadmindashboard?status=${status}`;
+        }
+
+      <% if (typeof openModal !== 'undefined' && openModal) { %>
+          document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("userModal");
+            modal.classList.add("open");     // <-- ADD THIS
+            modal.style.display = "flex";    // <-- KEEP THIS
+          });
+      <% } %>
 
 
 
-   
-<!-- =================================== Footer Start ============================== -->
-<%- include('partials/adminFooter') %>
 
-    
+
+
+      </script>
 </body>
+
 </html>

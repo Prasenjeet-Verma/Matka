@@ -32,6 +32,7 @@
     <!-- +++++++++++++++++++++++++++ body start +++++++++++++++++++++++ -->
 
       <!-- Data Source Dropdown -->
+       <div class="form-container">
   <select class="custom-input text-gray-600" id="dataSource">
     <option value="" disabled <%= !source ? "selected" : "" %>>Data Source</option>
     <option value="live"   <%= source === "live" ? "selected" : "" %>>Live Data (24H)</option>
