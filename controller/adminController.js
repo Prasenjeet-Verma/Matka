@@ -961,3 +961,71 @@ exports.getAccountSettlement = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAdminAccountStatement = async (req, res, next) => {
+  try {
+    // ---------------- AUTH ----------------
+    if (!req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const admin = await User.findById(req.session.user._id);
+    if (!admin || admin.role !== "admin") {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    // ---------------- FILTER ----------------
+    let { source, start, end } = req.query;
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+
+    let startDate, endDate;
+
+    if (source === "live") {
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
+
+    } else if (source === "backup") {
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    } else if (source === "old") {
+      endDate = new Date(Date.now() + IST_OFFSET);
+      startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    } else if (start && end) {
+      startDate = new Date(`${start}T00:00:00.000+05:30`);
+      endDate   = new Date(`${end}T23:59:59.999+05:30`);
+
+    } else {
+      startDate = new Date("2000-01-01");
+      endDate = new Date(Date.now() + IST_OFFSET);
+    }
+
+    // ---------------- FETCH HISTORY ----------------
+    const history = await AdminTransactionHistory.find({
+      adminId: admin._id,
+      createdAt: { $gte: startDate, $lte: endDate },
+    })
+      .populate("userId", "username")
+      .sort({ createdAt: -1 });
+
+    // ---------------- RENDER ----------------
+    res.render("adminAccountStatement", {
+      username: admin.username,
+      wallet: admin.wallet,
+      referCode: admin.referCode,
+      isLoggedIn: req.session.isLoggedIn,
+
+      history,
+
+      source: source || "",
+      start: start || "",
+      end: end || "",
+    });
+
+  } catch (err) {
+    console.log("Admin Account Statement Error:", err);
+    res.redirect("/");
+  }
+};

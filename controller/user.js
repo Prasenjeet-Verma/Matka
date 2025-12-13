@@ -327,3 +327,85 @@ exports.postResetPassword = async (req, res, next) => {
     res.json({ success: false, message: "Server error. Try again later." });
   }
 };
+
+
+const AdminTransactionHistory = require("../model/AdminTransactionHistory");
+exports.getUserAccountStatement = async (req, res, next) => {
+  try {
+    // 🔐 Auth check
+    if (!req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const user = await User.findById(req.session.user._id);
+    if (!user || user.role !== "user") {
+      req.session.destroy(() => res.redirect("/login"));
+      return;
+    }
+
+    // -------------------------
+    // 🔍 Filters
+    // -------------------------
+    const { source, start, end } = req.query;
+
+    let filter = { userId: user._id };
+
+    // 🟢 Manual date (IST safe)
+    if (start && end) {
+      filter.createdAt = {
+        $gte: new Date(`${start}T00:00:00.000+05:30`),
+        $lte: new Date(`${end}T23:59:59.999+05:30`)
+      };
+    }
+
+    // 🟡 Live 24h
+    else if (source === "live") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+      };
+    }
+
+    // 🔵 Last 7 days
+    else if (source === "backup") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      };
+    }
+
+    // 🟣 Last 30 days
+    else if (source === "old") {
+      filter.createdAt = {
+        $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      };
+    }
+
+    // -------------------------
+    // 📌 Fetch history
+    // -------------------------
+    const history = await AdminTransactionHistory
+      .find(filter)
+      .sort({ createdAt: -1 });
+
+    // -------------------------
+    // 🖥 Render page
+    // -------------------------
+    res.render("userAccountStatement", {
+      user,
+      history,
+
+      username: user.username,
+      wallet: user.wallet,
+      referCode: user.referCode,
+      isLoggedIn: req.session.isLoggedIn,
+
+      source: source || "",
+      start: start || "",
+      end: end || ""
+    });
+
+  } catch (err) {
+    console.error("getUserAccountStatement error:", err);
+    next(err);
+  }
+};
+

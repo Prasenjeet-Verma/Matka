@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Account Statement</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="/css/headerlogin.css" />
+  <link rel="stylesheet" href="/css/footer.css" />
+  <link rel="stylesheet" href="/css/adminDasebord.css" />
+  <link rel="stylesheet" href="/css/accountStatement.css" />
+  <link rel="stylesheet" href="/css/dateTimemodal.css" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/rendomsidebar.js"></script>
+  <script src="/js/footer.js"></script>
+</head>
+
+<body>
+
+<%- include('partials/header') %>
+<div class="header"></div>
+
+<!-- ================= FILTER ================= -->
+<div class="form-container">
+
+  <select class="custom-input text-gray-600" id="dataSource">
+    <option value="" disabled <%= !source ? "selected" : "" %>>Data Source</option>
+    <option value="live"   <%= source === "live" ? "selected" : "" %>>Live (24H)</option>
+    <option value="backup" <%= source === "backup" ? "selected" : "" %>>7 Days</option>
+    <option value="old"    <%= source === "old" ? "selected" : "" %>>30 Days</option>
+  </select>
+
+  <input type="date" class="custom-input" id="startDate" value="<%= start || '' %>">
+  <input type="date" class="custom-input" id="endDate" value="<%= end || '' %>">
+
+  <button class="btn-history" onclick="getHistory()">Get History</button>
+</div>
+
+<!-- ================= TABLE ================= -->
+<div class="bbody">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date & Time</th>
+          <th>Deposit</th>
+          <th>Withdrawal</th>
+          <th>User Balance</th>
+          <th>From → To</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (history.length === 0) { %>
+          <tr>
+            <td colspan="5" style="text-align:center;">No records found</td>
+          </tr>
+        <% } %>
+
+        <% history.forEach(h => { %>
+          <tr>
+            <td><%= h.formattedDate %> <%= h.formattedTime %></td>
+
+            <% if (h.type === "deposit") { %>
+              <td style="color:green;">₹<%= h.amount %></td>
+              <td>—</td>
+            <% } else { %>
+              <td>—</td>
+              <td style="color:red;">₹<%= h.amount %></td>
+            <% } %>
+
+            <td>₹<%= h.userWalletAfter %></td>
+
+            <td>
+              <% if (h.type === "deposit") { %>
+                Upline → <%= h.userId.username %>
+              <% } else { %>
+                <%= h.userId.username %> → Upline
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('partials/adminFooter') %>
+
+<!-- ================= JS ================= -->
+<script>
+function getHistory() {
+  const dataSource = document.getElementById("dataSource").value;
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+
+  const params = new URLSearchParams();
+
+  if (start && end) {
+    params.set("start", start);
+    params.set("end", end);
+  } else if (dataSource) {
+    params.set("source", dataSource);
+  }
+
+  window.location.href = `/adminaccountsettlement?${params.toString()}`;
+}
+</script>
+
+<script>
+document.getElementById("dataSource").addEventListener("change", () => {
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+});
+</script>
+
+</body>
+</html>

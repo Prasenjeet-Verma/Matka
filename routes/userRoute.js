@@ -12,5 +12,7 @@ userRouter.get('/logout', userRouterController.logoutUser);
 userRouter.get('/account', userRouterController.getAccountPage);
 
 userRouter.get('/bets', userRouterController.getUserBetPage);
+userRouter.get('/useraccountstatement', userRouterController.getUserAccountStatement);
+
 
 module.exports = userRouter;
