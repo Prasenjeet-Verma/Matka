@@ -18,8 +18,10 @@ adminRouter.get('/adminaccountsettlement', adminRouterController.getAdminAccount
 adminRouter.get('/masterpanelbyadmindashboard', adminRouterController.getMasterDownlineList);
 adminRouter.post('/admincreatemaster', adminRouterController.postAdmincreatemaster);
 adminRouter.post('/postTransactionofmaster', adminRouterController.postTransactionofmaster);
-adminRouter.get('/adminseemasterprofile/:userId', adminRouterController.getAdminSeeMasterProfile);
-adminRouter.get('/accountstatementofmaster/:userId', adminRouterController.getAdminSeeMasterAccountStatement);
-adminRouter.post('/resetpasswordnotcheckoldpasswordofmaster', adminRouterController.adminChangePasswordofMaster);
-// adminRouter.get('/agentpanelbyadmindashboard', adminRouterController.getAgentPanelDashboard);
+// adminRouter.get('/adminseemasterprofile/:userId', adminRouterController.getAdminSeeMasterProfile);
+// adminRouter.get('/accountstatementofmaster/:userId', adminRouterController.getAdminSeeMasterAccountStatement);
+// adminRouter.post('/resetpasswordnotcheckoldpasswordofmaster', adminRouterController.adminChangePasswordofMaster);
+adminRouter.get('/agentpanelbyadmindashboard', adminRouterController.getAgentPanelDashboard);
+adminRouter.post('/admincreateagent', adminRouterController.postAdmincreatagent);
+adminRouter.post('/postTransactionofagent', adminRouterController.postTransactionofagent);
 module.exports = adminRouter;

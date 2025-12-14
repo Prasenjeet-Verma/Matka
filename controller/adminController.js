@@ -432,6 +432,10 @@ exports.postAdmincreateuser = [
 
   // ================= CONTROLLER =================
   async (req, res) => {
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
     /* 🔐 SESSION CHECK */
     if (!req.session.isLoggedIn || !req.session.user) {
       return req.session.destroy(() => res.redirect("/login"));
@@ -449,7 +453,10 @@ exports.postAdmincreateuser = [
     const { username, password, referCode } = req.body;
 
     const renderError = async (msgs) => {
-      const allUsers = await User.find({ role: "user" }).sort({
+      const allUsers = await User.find({
+        role: "user",
+        userStatus: statusValue,
+      }).sort({
         createdAt: -1,
       });
       return res.status(400).render("userdownline", {
@@ -462,6 +469,7 @@ exports.postAdmincreateuser = [
         errors: msgs,
         oldInput: { username },
         openModal: true,
+        selectedStatus: statusFilter,
       });
     };
 
@@ -1125,7 +1133,6 @@ exports.getMasterDownlineList = async (req, res, next) => {
   }
 };
 
-
 exports.postAdmincreatemaster = [
   // Validation checks
   check("username")
@@ -1156,6 +1163,10 @@ exports.postAdmincreatemaster = [
 
   // Controller logic
   async (req, res, next) => {
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
     // 1️⃣ Check admin
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
@@ -1172,7 +1183,10 @@ exports.postAdmincreatemaster = [
     const { username, password, referCode } = req.body;
 
     const renderWithErrors = async (errorsArr, oldInput = {}) => {
-      const allUsers = await User.find({ role: "master" }).sort({
+      const allUsers = await User.find({
+        role: "master",
+        userStatus: statusValue,
+      }).sort({
         createdAt: -1,
       });
       return res.status(400).render("masterdownline", {
@@ -1185,6 +1199,7 @@ exports.postAdmincreatemaster = [
         errors: errorsArr,
         oldInput,
         openModal: true,
+        selectedStatus: statusFilter,
       });
     };
 
@@ -1383,180 +1398,487 @@ exports.postTransactionofmaster = async (req, res, next) => {
   }
 };
 
-exports.getAdminSeeMasterProfile = async (req, res, next) => {
+// exports.getAdminSeeMasterProfile = async (req, res, next) => {
+//   try {
+//     // 1️⃣ Check admin login session (use session flag consistently)
+//     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+//       return res.redirect("/login");
+//     }
+
+//     const Adminuser = await User.findById(req.session.user._id);
+//     if (!Adminuser || Adminuser.role !== "admin") {
+//       return req.session.destroy(() => res.redirect("/login"));
+//     }
+
+//     // 2️⃣ Validate userId param
+//     const userId = req.params.userId;
+//     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).send("User ID not provided or invalid");
+//     }
+
+//     // 3️⃣ Fetch user details using ID
+//     const user = await User.findById(userId);
+//     if (!user) return res.status(404).send("User not found");
+
+//     // 4️⃣ Render with both admin + user data
+//     res.render("adminSeeMasterProfile", {
+//       user,
+//       username: Adminuser.username,
+//       wallet: Adminuser.wallet,
+//       referCode: Adminuser.referCode,
+//       isLoggedIn: req.session.isLoggedIn,
+//     });
+//   } catch (err) {
+//     console.error("getUserProfieByAdmin error:", err);
+//     res.status(500).send("Server error");
+//   }
+// };
+
+// exports.getAdminSeeMasterAccountStatement = async (req, res, next) => {
+//   try {
+//     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+//       return res.redirect("/login");
+//     }
+
+//     const Adminuser = await User.findById(req.session.user._id);
+//     if (!Adminuser || Adminuser.role !== "admin") {
+//       req.session.destroy(() => res.redirect("/login"));
+//       return;
+//     }
+
+//     const userId = req.params.userId;
+//     const user = await User.findById(userId);
+//     if (!user) return res.status(400).send("User not found");
+
+//     // -------------------------
+//     // 🔍 Read filters
+//     // -------------------------
+//     const { source, start, end } = req.query;
+//     let filter = { userId };
+
+//     // -------------------------
+//     // 🟢 Manual Date Range
+//     // -------------------------
+//     if (start && end) {
+//       filter.createdAt = {
+//         $gte: new Date(start),
+//         $lte: new Date(end + "T23:59:59"),
+//       };
+//     }
+
+//     // -------------------------
+//     // 🟡 Data Source Filter
+//     // -------------------------
+//     else if (source === "live") {
+//       filter.createdAt = {
+//         $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+//       };
+//     } else if (source === "backup") {
+//       filter.createdAt = {
+//         $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+//       };
+//     } else if (source === "old") {
+//       filter.createdAt = {
+//         $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+//       };
+//     }
+
+//     // -------------------------
+//     // 📌 Fetch Transaction History
+//     // -------------------------
+//     const history = await AdminTransactionHistory.find(filter).sort({
+//       createdAt: -1,
+//     });
+
+//     // -------------------------
+//     // 🔥 Render Page
+//     // -------------------------
+//     res.render("adminSeeMasterAccountStatement", {
+//       user,
+//       username: Adminuser.username,
+//       wallet: Adminuser.wallet,
+//       referCode: Adminuser.referCode,
+//       isLoggedIn: req.session.isLoggedIn,
+
+//       // Return values to EJS
+//       source: source || "",
+//       start: start || "",
+//       end: end || "",
+
+//       history,
+//     });
+//   } catch (err) {
+//     console.log("Error in getAccountSettlement:", err);
+//     next(err);
+//   }
+// };
+
+// exports.adminChangePasswordofMaster = async (req, res, next) => {
+//   try {
+//     // 1) Check admin session and role
+//     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+//       return res.redirect("/login");
+//     }
+//     const admin = await User.findById(req.session.user._id);
+//     if (!admin || admin.role !== "admin") {
+//       req.session.destroy(() => {
+//         res.redirect("/login");
+//       });
+//       return;
+//     }
+
+//     // 2) Validate input
+//     const { userId, newPassword, confirmNewPassword } = req.body;
+//     if (!userId)
+//       return res.json({ success: false, message: "No user ID provided" });
+//     if (!newPassword || !confirmNewPassword)
+//       return res.json({ success: false, message: "All fields are required" });
+//     if (newPassword !== confirmNewPassword)
+//       return res.json({ success: false, message: "Passwords do not match" });
+//     if (typeof newPassword !== "string" || newPassword.length < 6) {
+//       return res.json({
+//         success: false,
+//         message: "Password must be at least 6 characters",
+//       });
+//     }
+
+//     // 3) Validate userId
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.json({ success: false, message: "Invalid user ID" });
+//     }
+
+//     const targetUser = await User.findById(userId);
+//     if (!targetUser)
+//       return res.json({ success: false, message: "User not found" });
+
+//     // 4) Hash new password
+//     const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+//     // 5) Update user password
+//     await User.findByIdAndUpdate(userId, { password: hashed });
+
+//     // Optional: log the change (to DB or console) for audit
+//     console.log(
+//       `Admin ${admin.username} (${admin._id}) changed password for user ${
+//         targetUser.username
+//       } (${userId}) at ${new Date().toISOString()}`
+//     );
+
+//     // Optional: Invalidate user's sessions if using server-stored sessions (implementation depends on your session store)
+
+//     return res.json({
+//       success: true,
+//       message: "Password changed successfully!",
+//     });
+//   } catch (err) {
+//     console.error("adminChangePasswordofUser error:", err);
+//     return res.json({ success: false, message: "Server error" });
+//   }
+// };
+
+// Agent
+exports.getAgentPanelDashboard = async (req, res, next) => {
   try {
-    // 1️⃣ Check admin login session (use session flag consistently)
+    // ✅ Check if admin is logged in
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
 
-    const Adminuser = await User.findById(req.session.user._id);
-    if (!Adminuser || Adminuser.role !== "admin") {
+    const loggedUser = await User.findById(req.session.user._id);
+    if (!loggedUser || loggedUser.role !== "admin") {
       return req.session.destroy(() => res.redirect("/login"));
     }
 
-    // 2️⃣ Validate userId param
-    const userId = req.params.userId;
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).send("User ID not provided or invalid");
-    }
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
 
-    // 3️⃣ Fetch user details using ID
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).send("User not found");
+    // 🟢 Fetch users based on filter
+    const allUsers = await User.find({
+      role: "agent",
+      userStatus: statusValue,
+    }).sort({ createdAt: -1 });
 
-    // 4️⃣ Render with both admin + user data
-    res.render("adminSeeMasterProfile", {
-      user,
-      username: Adminuser.username,
-      wallet: Adminuser.wallet,
-      referCode: Adminuser.referCode,
+    // 🟢 Render page
+    res.render("agentdownline", {
+      username: loggedUser.username,
+      wallet: loggedUser.wallet,
+      referCode: loggedUser.referCode,
+      user: loggedUser,
+      users: allUsers,
+      errors: [],
       isLoggedIn: req.session.isLoggedIn,
+      oldInput: { username: "", password: "" },
+      selectedStatus: statusFilter,
     });
   } catch (err) {
-    console.error("getUserProfieByAdmin error:", err);
-    res.status(500).send("Server error");
+    console.error(err);
+    res.status(500).send("Server Error");
   }
 };
 
-exports.getAdminSeeMasterAccountStatement = async (req, res, next) => {
-  try {
+exports.postAdmincreatagent = [
+  // Validation checks
+  check("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters")
+    .custom(async (value) => {
+      const existingUser = await User.findOne({ username: value });
+      if (existingUser) throw new Error("Username already in use");
+      return true;
+    }),
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+  check("confirmPassword")
+    .notEmpty()
+    .withMessage("Confirm Password is required")
+    .custom((value, { req }) => {
+      if (value !== req.body.password)
+        throw new Error("Passwords do not match");
+      return true;
+    }),
+  check("referCode").trim().notEmpty().withMessage("Referral code is required"),
+
+  // Controller logic
+  async (req, res, next) => {
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
+    // 1️⃣ Check admin
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
 
-    const Adminuser = await User.findById(req.session.user._id);
-    if (!Adminuser || Adminuser.role !== "admin") {
+    const currentUser = await User.findById(req.session.user._id);
+    if (!currentUser || currentUser.role !== "admin") {
+      return res
+        .status(403)
+        .send("Unauthorized: Only admin can create masters");
+    }
+
+    const errors = validationResult(req);
+    const { username, password, referCode } = req.body;
+
+    const renderWithErrors = async (errorsArr, oldInput = {}) => {
+      const allUsers = await User.find({
+        role: "agent",
+        userStatus: statusValue,
+      }).sort({
+        createdAt: -1,
+      });
+      return res.status(400).render("agentdownline", {
+        username: req.session.user.username,
+        wallet: req.session.user.wallet,
+        referCode: req.session.user.referCode,
+        user: req.session.user,
+        users: allUsers,
+        isLoggedIn: req.session.isLoggedIn,
+        errors: errorsArr,
+        oldInput,
+        openModal: true,
+        selectedStatus: statusFilter,
+      });
+    };
+
+    if (!errors.isEmpty())
+      return renderWithErrors(
+        errors.array().map((e) => e.msg),
+        { username, password }
+      );
+
+    try {
+      // 2️⃣ Check duplicate username (extra safety)
+      const existingUser = await User.findOne({ username });
+      if (existingUser)
+        return renderWithErrors(["Username already exists"], {
+          username,
+          password,
+        });
+
+      // 3️⃣ Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // 4️⃣ Generate unique refer code
+      let newUserReferCode;
+      do {
+        newUserReferCode = Math.random()
+          .toString(36)
+          .substring(2, 10)
+          .toUpperCase();
+      } while (await User.findOne({ referCode: newUserReferCode }));
+
+      // 5️⃣ Create master
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        referCode: newUserReferCode,
+        referredBy: referCode,
+        role: "agent",
+      });
+
+      await newUser.save();
+      res.redirect("/agentpanelbyadmindashboard");
+    } catch (err) {
+      console.error("Registration Error:", err);
+      res.status(500).send("Server Error");
+    }
+  },
+];
+
+exports.postTransactionofagent = async (req, res, next) => {
+  try {
+    const {
+      userId,
+      wallet,
+      creditRef,
+      deposit,
+      withdraw,
+      adminPassword,
+      userStatus,
+    } = req.body;
+
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const admin = await User.findById(req.session.user._id);
+    if (!admin || admin.role !== "admin") {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
-    const userId = req.params.userId;
     const user = await User.findById(userId);
-    if (!user) return res.status(400).send("User not found");
 
-    // -------------------------
-    // 🔍 Read filters
-    // -------------------------
-    const { source, start, end } = req.query;
-    let filter = { userId };
+    if (!user) return res.json({ success: false, message: "User not found!" });
 
-    // -------------------------
-    // 🟢 Manual Date Range
-    // -------------------------
-    if (start && end) {
-      filter.createdAt = {
-        $gte: new Date(start),
-        $lte: new Date(end + "T23:59:59"),
-      };
+    if (!user || user.role !== "agent") {
+      return res.json({ success: false, message: "User is not master" });
     }
 
-    // -------------------------
-    // 🟡 Data Source Filter
-    // -------------------------
-    else if (source === "live") {
-      filter.createdAt = {
-        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      };
-    } else if (source === "backup") {
-      filter.createdAt = {
-        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      };
-    } else if (source === "old") {
-      filter.createdAt = {
-        $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      };
+    // 🔐 Admin password check for deposit/withdraw
+    if (
+      (deposit || withdraw) &&
+      (!adminPassword || !(await bcrypt.compare(adminPassword, admin.password)))
+    ) {
+      return res.json({ success: false, message: "Incorrect admin password!" });
     }
 
-    // -------------------------
-    // 📌 Fetch Transaction History
-    // -------------------------
-    const history = await AdminTransactionHistory.find(filter).sort({
-      createdAt: -1,
-    });
-
-    // -------------------------
-    // 🔥 Render Page
-    // -------------------------
-    res.render("adminSeeMasterAccountStatement", {
-      user,
-      username: Adminuser.username,
-      wallet: Adminuser.wallet,
-      referCode: Adminuser.referCode,
-      isLoggedIn: req.session.isLoggedIn,
-
-      // Return values to EJS
-      source: source || "",
-      start: start || "",
-      end: end || "",
-
-      history,
-    });
-  } catch (err) {
-    console.log("Error in getAccountSettlement:", err);
-    next(err);
-  }
-};
-
-exports.adminChangePasswordofMaster = async (req, res, next) => {
-  try {
-    // 1) Check admin session and role
-    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
-      return res.redirect("/login");
-    }
-    const admin = await User.findById(req.session.user._id);
-    if (!admin || admin.role !== "admin") {
-      req.session.destroy(() => {
-        res.redirect("/login");
-      });
-      return;
-    }
-
-    // 2) Validate input
-    const { userId, newPassword, confirmNewPassword } = req.body;
-    if (!userId)
-      return res.json({ success: false, message: "No user ID provided" });
-    if (!newPassword || !confirmNewPassword)
-      return res.json({ success: false, message: "All fields are required" });
-    if (newPassword !== confirmNewPassword)
-      return res.json({ success: false, message: "Passwords do not match" });
-    if (typeof newPassword !== "string" || newPassword.length < 6) {
-      return res.json({
-        success: false,
-        message: "Password must be at least 6 characters",
+    // Helper: formatted time/date
+    function getFormattedTime() {
+      return new Date().toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
       });
     }
 
-    // 3) Validate userId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.json({ success: false, message: "Invalid user ID" });
+    function getFormattedDate() {
+      const d = new Date();
+      return `${d.getDate()},${d.getMonth() + 1},${d.getFullYear()}`;
     }
 
-    const targetUser = await User.findById(userId);
-    if (!targetUser)
-      return res.json({ success: false, message: "User not found" });
+    // ✔ CREDIT REF
+    if (creditRef) {
+      const creditAmount = Number(creditRef);
+      user.creditRef = creditAmount;
+      user.refPl = (user.wallet || 0) - user.creditRef;
+    }
 
-    // 4) Hash new password
-    const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    // -----------------------------
+    // ✔ DEPOSIT
+    // -----------------------------
+    if (deposit) {
+      const amount = Number(deposit);
 
-    // 5) Update user password
-    await User.findByIdAndUpdate(userId, { password: hashed });
+      if (amount > admin.wallet) {
+        return res.json({
+          success: false,
+          message: "Admin has insufficient balance!",
+        });
+      }
 
-    // Optional: log the change (to DB or console) for audit
-    console.log(
-      `Admin ${admin.username} (${admin._id}) changed password for user ${
-        targetUser.username
-      } (${userId}) at ${new Date().toISOString()}`
-    );
+      const userBefore = user.wallet;
+      const adminBefore = admin.wallet;
 
-    // Optional: Invalidate user's sessions if using server-stored sessions (implementation depends on your session store)
+      user.wallet += amount;
+      admin.wallet -= amount;
 
-    return res.json({
-      success: true,
-      message: "Password changed successfully!",
-    });
+      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+
+      // Save history
+      await AdminTransactionHistory.create({
+        userId: user._id,
+        adminId: admin._id,
+        type: "deposit",
+        amount,
+        userWalletBefore: userBefore,
+        userWalletAfter: user.wallet,
+        adminWalletBefore: adminBefore,
+        adminWalletAfter: admin.wallet,
+        formattedTime: getFormattedTime(),
+        formattedDate: getFormattedDate(),
+      });
+    }
+
+    // -----------------------------
+    // ✔ WITHDRAW
+    // -----------------------------
+    if (withdraw) {
+      const amount = Number(withdraw);
+
+      if (amount > user.wallet) {
+        return res.json({
+          success: false,
+          message: "Agent has insufficient balance!",
+        });
+      }
+
+      const userBefore = user.wallet;
+      const adminBefore = admin.wallet;
+
+      user.wallet -= amount;
+      admin.wallet += amount;
+
+      if (user.creditRef) user.refPl = user.wallet - user.creditRef;
+
+      // Save history
+      await AdminTransactionHistory.create({
+        userId: user._id,
+        adminId: admin._id,
+        type: "withdraw",
+        amount,
+        userWalletBefore: userBefore,
+        userWalletAfter: user.wallet,
+        adminWalletBefore: adminBefore,
+        adminWalletAfter: admin.wallet,
+        formattedTime: getFormattedTime(),
+        formattedDate: getFormattedDate(),
+      });
+    }
+
+    // ✔ User Status Update
+    if (
+      userStatus &&
+      ["active", "suspended"].includes(userStatus.toLowerCase())
+    ) {
+      user.userStatus = userStatus.toLowerCase();
+    }
+
+    await user.save();
+    await admin.save();
+
+    return res.json({ success: true, message: "Successful Submit" });
   } catch (err) {
-    console.error("adminChangePasswordofUser error:", err);
-    return res.json({ success: false, message: "Server error" });
+    console.log(err);
+    return res.json({ success: false, message: "Server Error!" });
   }
 };
