@@ -1083,87 +1083,87 @@ exports.getAdminAccountStatement = async (req, res, next) => {
 //   }
 // };
 
-// exports.getMasterDownlineList = async (req, res, next) => {
-//   try {
-//     // ✅ Check if admin is logged in
-//     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
-//       return res.redirect("/login");
-//     }
-
-//     const loggedUser = await User.findById(req.session.user._id);
-//     if (!loggedUser || loggedUser.role !== "admin") {
-//       return req.session.destroy(() => res.redirect("/login"));
-//     }
-
-//     // 🟢 Map frontend dropdown to DB values
-//     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
-//     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
-//     const statusValue = statusMap[statusFilter] || "active"; // fallback to active
-
-//     // 🟢 Fetch users based on filter
-//     const allUsers = await User.find({
-//       role: "master",
-//       userStatus: statusValue,
-//     }).sort({ createdAt: -1 });
-
-//     // 🟢 Render page
-//     res.render("masterDownline", {
-//       username: loggedUser.username,
-//       wallet: loggedUser.wallet,
-//       referCode: loggedUser.referCode,
-//       user: loggedUser,
-//       users: allUsers,
-//       errors: [],
-//       isLoggedIn: req.session.isLoggedIn,
-//       oldInput: { username: "", password: "" },
-//       selectedStatus: statusFilter,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server Error");
-//   }
-// };
-
-exports.getMasterDownlineList = async (req, res) => {
+exports.getMasterDownlineList = async (req, res, next) => {
   try {
-    if (!req.session || !req.session.user) {
+    // ✅ Check if admin is logged in
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
 
     const loggedUser = await User.findById(req.session.user._id);
     if (!loggedUser || loggedUser.role !== "admin") {
-      return res.redirect("/login");
+      return req.session.destroy(() => res.redirect("/login"));
     }
 
+    // 🟢 Map frontend dropdown to DB values
     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
-    const statusValue = statusMap[statusFilter] || "active";
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
 
+    // 🟢 Fetch users based on filter
     const allUsers = await User.find({
       role: "master",
-      $or: [
-        { userStatus: statusValue },
-        { userStatus: { $exists: false } }
-      ]
+      userStatus: statusValue,
     }).sort({ createdAt: -1 });
 
+    // 🟢 Render page
     res.render("masterDownline", {
-      username: loggedUser.username || "",
-      wallet: loggedUser.wallet || 0,
-      referCode: loggedUser.referCode || "",
+      username: loggedUser.username,
+      wallet: loggedUser.wallet,
+      referCode: loggedUser.referCode,
       user: loggedUser,
       users: allUsers,
       errors: [],
-      isLoggedIn: true,
+      isLoggedIn: req.session.isLoggedIn,
       oldInput: { username: "", password: "" },
       selectedStatus: statusFilter,
     });
-
   } catch (err) {
-  console.error("MASTER DOWNLINE ERROR 👉", err);
-  res.status(500).send(err.message);
-}
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
 };
+
+// exports.getMasterDownlineList = async (req, res) => {
+//   try {
+//     if (!req.session || !req.session.user) {
+//       return res.redirect("/login");
+//     }
+
+//     const loggedUser = await User.findById(req.session.user._id);
+//     if (!loggedUser || loggedUser.role !== "admin") {
+//       return res.redirect("/login");
+//     }
+
+//     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+//     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+//     const statusValue = statusMap[statusFilter] || "active";
+
+//     const allUsers = await User.find({
+//       role: "master",
+//       $or: [
+//         { userStatus: statusValue },
+//         { userStatus: { $exists: false } }
+//       ]
+//     }).sort({ createdAt: -1 });
+
+//     res.render("masterDownline", {
+//       username: loggedUser.username || "",
+//       wallet: loggedUser.wallet || 0,
+//       referCode: loggedUser.referCode || "",
+//       user: loggedUser,
+//       users: allUsers,
+//       errors: [],
+//       isLoggedIn: true,
+//       oldInput: { username: "", password: "" },
+//       selectedStatus: statusFilter,
+//     });
+
+//   } catch (err) {
+//   console.error("MASTER DOWNLINE ERROR 👉", err);
+//   res.status(500).send(err.message);
+// }
+// };
 
 
 exports.postAdmincreatemaster = [
