@@ -986,7 +986,7 @@ exports.getAdminAccountStatement = async (req, res, next) => {
       .sort({ createdAt: -1 });
 
     // ---------------- RENDER ----------------
-    res.render("adminAccountStatement", {
+    res.render("adminaccountstatement", {
       username: admin.username,
       wallet: admin.wallet,
       referCode: admin.referCode,
@@ -1123,47 +1123,6 @@ exports.getMasterDownlineList = async (req, res, next) => {
     res.status(500).send("Server Error");
   }
 };
-
-// exports.getMasterDownlineList = async (req, res) => {
-//   try {
-//     if (!req.session || !req.session.user) {
-//       return res.redirect("/login");
-//     }
-
-//     const loggedUser = await User.findById(req.session.user._id);
-//     if (!loggedUser || loggedUser.role !== "admin") {
-//       return res.redirect("/login");
-//     }
-
-//     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
-//     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
-//     const statusValue = statusMap[statusFilter] || "active";
-
-//     const allUsers = await User.find({
-//       role: "master",
-//       $or: [
-//         { userStatus: statusValue },
-//         { userStatus: { $exists: false } }
-//       ]
-//     }).sort({ createdAt: -1 });
-
-//     res.render("masterDownline", {
-//       username: loggedUser.username || "",
-//       wallet: loggedUser.wallet || 0,
-//       referCode: loggedUser.referCode || "",
-//       user: loggedUser,
-//       users: allUsers,
-//       errors: [],
-//       isLoggedIn: true,
-//       oldInput: { username: "", password: "" },
-//       selectedStatus: statusFilter,
-//     });
-
-//   } catch (err) {
-//   console.error("MASTER DOWNLINE ERROR 👉", err);
-//   res.status(500).send(err.message);
-// }
-// };
 
 
 exports.postAdmincreatemaster = [
