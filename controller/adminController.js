@@ -987,7 +987,7 @@ exports.getAdminAccountStatement = async (req, res, next) => {
       .sort({ createdAt: -1 });
 
     // ---------------- RENDER ----------------
-    res.render("adminaccountstatement", {
+    res.render("accountstatementofadmin", {
       username: admin.username,
       wallet: admin.wallet,
       referCode: admin.referCode,
