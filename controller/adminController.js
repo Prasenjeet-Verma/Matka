@@ -1160,9 +1160,9 @@ exports.getMasterDownlineList = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("MasterDownline Error:", err);
-    res.status(500).send("Server Error");
-  }
+  console.error("MASTER DOWNLINE ERROR 👉", err);
+  res.status(500).send(err.message);
+}
 };
 
 
