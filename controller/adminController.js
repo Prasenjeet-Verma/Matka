@@ -1107,7 +1107,7 @@ exports.getMasterDownlineList = async (req, res, next) => {
     }).sort({ createdAt: -1 });
 
     // 🟢 Render page
-    res.render("masterDownline", {
+    res.render("masterdownline", {
       username: loggedUser.username,
       wallet: loggedUser.wallet,
       referCode: loggedUser.referCode,
@@ -1215,7 +1215,7 @@ exports.postAdmincreatemaster = [
       const allUsers = await User.find({ role: "master" }).sort({
         createdAt: -1,
       });
-      return res.status(400).render("masterDownline", {
+      return res.status(400).render("masterdownline", {
         username: req.session.user.username,
         wallet: req.session.user.wallet,
         referCode: req.session.user.referCode,
