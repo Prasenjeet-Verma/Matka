@@ -401,9 +401,11 @@ exports.postAdmincreateuser = [
   // ================= VALIDATION =================
   check("username")
     .trim()
-    .notEmpty().withMessage("Username is required")
-    .isLength({ min: 3 }).withMessage("Username must be at least 3 characters")
-    .custom(async value => {
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters")
+    .custom(async (value) => {
       if (await User.findOne({ username: value })) {
         throw new Error("Username already in use");
       }
@@ -411,11 +413,14 @@ exports.postAdmincreateuser = [
     }),
 
   check("password")
-    .notEmpty().withMessage("Password is required")
-    .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
 
   check("confirmPassword")
-    .notEmpty().withMessage("Confirm Password is required")
+    .notEmpty()
+    .withMessage("Confirm Password is required")
     .custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error("Passwords do not match");
@@ -423,10 +428,7 @@ exports.postAdmincreateuser = [
       return true;
     }),
 
-  check("referCode")
-    .trim()
-    .notEmpty()
-    .withMessage("Referral code is required"),
+  check("referCode").trim().notEmpty().withMessage("Referral code is required"),
 
   // ================= CONTROLLER =================
   async (req, res) => {
@@ -436,7 +438,10 @@ exports.postAdmincreateuser = [
     }
 
     const loggedUser = await User.findById(req.session.user._id);
-    if (!loggedUser || !["admin", "master", "agent"].includes(loggedUser.role)) {
+    if (
+      !loggedUser ||
+      !["admin", "master", "agent"].includes(loggedUser.role)
+    ) {
       return req.session.destroy(() => res.redirect("/login"));
     }
 
@@ -444,7 +449,9 @@ exports.postAdmincreateuser = [
     const { username, password, referCode } = req.body;
 
     const renderError = async (msgs) => {
-      const allUsers = await User.find({ role: "user" }).sort({ createdAt: -1 });
+      const allUsers = await User.find({ role: "user" }).sort({
+        createdAt: -1,
+      });
       return res.status(400).render("userdownline", {
         username: loggedUser.username,
         wallet: loggedUser.wallet,
@@ -459,7 +466,7 @@ exports.postAdmincreateuser = [
     };
 
     if (!errors.isEmpty()) {
-      return renderError(errors.array().map(e => e.msg));
+      return renderError(errors.array().map((e) => e.msg));
     }
 
     try {
@@ -505,14 +512,12 @@ exports.postAdmincreateuser = [
       await newUser.save();
 
       return res.redirect("/userDownLine");
-
     } catch (err) {
       console.error("Create User Error:", err);
       return res.status(500).send("Server Error");
     }
   },
 ];
-
 
 const AdminTransactionHistory = require("../model/AdminTransactionHistory");
 exports.postTransaction = async (req, res, next) => {
@@ -655,7 +660,6 @@ exports.postTransaction = async (req, res, next) => {
     return res.json({ success: false, message: "Server Error!" });
   }
 };
-
 
 const mongoose = require("mongoose");
 
@@ -1082,8 +1086,8 @@ exports.getAdminAccountStatement = async (req, res, next) => {
 exports.getMasterDownlineList = async (req, res, next) => {
   try {
     // ✅ Check if admin is logged in
-    if (!req.session.isLoggedIn || !req.session.user) {
-      return req.session.destroy(() => res.redirect("/login"));
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
     }
 
     const loggedUser = await User.findById(req.session.user._id);
@@ -1124,20 +1128,26 @@ exports.postAdmincreatemaster = [
   // Validation checks
   check("username")
     .trim()
-    .notEmpty().withMessage("Username is required")
-    .isLength({ min: 3 }).withMessage("Username must be at least 3 characters")
-    .custom(async value => {
+    .notEmpty()
+    .withMessage("Username is required")
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters")
+    .custom(async (value) => {
       const existingUser = await User.findOne({ username: value });
       if (existingUser) throw new Error("Username already in use");
       return true;
     }),
   check("password")
-    .notEmpty().withMessage("Password is required")
-    .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
   check("confirmPassword")
-    .notEmpty().withMessage("Confirm Password is required")
+    .notEmpty()
+    .withMessage("Confirm Password is required")
     .custom((value, { req }) => {
-      if (value !== req.body.password) throw new Error("Passwords do not match");
+      if (value !== req.body.password)
+        throw new Error("Passwords do not match");
       return true;
     }),
   check("referCode").trim().notEmpty().withMessage("Referral code is required"),
@@ -1145,19 +1155,24 @@ exports.postAdmincreatemaster = [
   // Controller logic
   async (req, res) => {
     // 1️⃣ Check admin
-    if (!req.session.isLoggedIn || !req.session.user) {
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
+
     const currentUser = await User.findById(req.session.user._id);
     if (!currentUser || currentUser.role !== "admin") {
-      return res.status(403).send("Unauthorized: Only admin can create masters");
+      return res
+        .status(403)
+        .send("Unauthorized: Only admin can create masters");
     }
 
     const errors = validationResult(req);
     const { username, password, referCode } = req.body;
 
     const renderWithErrors = async (errorsArr, oldInput = {}) => {
-      const allUsers = await User.find({ role: "master" }).sort({ createdAt: -1 });
+      const allUsers = await User.find({ role: "master" }).sort({
+        createdAt: -1,
+      });
       return res.status(400).render("masterDownline", {
         username: req.session.user.username,
         wallet: req.session.user.wallet,
@@ -1171,12 +1186,20 @@ exports.postAdmincreatemaster = [
       });
     };
 
-    if (!errors.isEmpty()) return renderWithErrors(errors.array().map(e => e.msg), { username, password });
+    if (!errors.isEmpty())
+      return renderWithErrors(
+        errors.array().map((e) => e.msg),
+        { username, password }
+      );
 
     try {
       // 2️⃣ Check duplicate username (extra safety)
       const existingUser = await User.findOne({ username });
-      if (existingUser) return renderWithErrors(["Username already exists"], { username, password });
+      if (existingUser)
+        return renderWithErrors(["Username already exists"], {
+          username,
+          password,
+        });
 
       // 3️⃣ Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -1184,7 +1207,10 @@ exports.postAdmincreatemaster = [
       // 4️⃣ Generate unique refer code
       let newUserReferCode;
       do {
-        newUserReferCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+        newUserReferCode = Math.random()
+          .toString(36)
+          .substring(2, 10)
+          .toUpperCase();
       } while (await User.findOne({ referCode: newUserReferCode }));
 
       // 5️⃣ Create master
@@ -1198,14 +1224,12 @@ exports.postAdmincreatemaster = [
 
       await newUser.save();
       res.redirect("/masterpanelbyadmindashboard");
-
     } catch (err) {
       console.error("Registration Error:", err);
       res.status(500).send("Server Error");
     }
-  }
+  },
 ];
-
 
 exports.postTransactionofmaster = async (req, res, next) => {
   try {
@@ -1353,14 +1377,11 @@ exports.postTransactionofmaster = async (req, res, next) => {
   }
 };
 
-
-exports.getAdminSeeMasterProfile = async (req,res,next) => {
-    try {
+exports.getAdminSeeMasterProfile = async (req, res, next) => {
+  try {
     // 1️⃣ Check admin login session (use session flag consistently)
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
-      return req.session
-        ? req.session.destroy(() => res.redirect("/login"))
-        : res.redirect("/login");
+      return res.redirect("/login");
     }
 
     const Adminuser = await User.findById(req.session.user._id);
@@ -1390,10 +1411,10 @@ exports.getAdminSeeMasterProfile = async (req,res,next) => {
     console.error("getUserProfieByAdmin error:", err);
     res.status(500).send("Server error");
   }
-}
+};
 
-exports.getAdminSeeMasterAccountStatement = async (req,res,next) => {
-        try {
+exports.getAdminSeeMasterAccountStatement = async (req, res, next) => {
+  try {
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
@@ -1470,10 +1491,10 @@ exports.getAdminSeeMasterAccountStatement = async (req,res,next) => {
     console.log("Error in getAccountSettlement:", err);
     next(err);
   }
-}
+};
 
-exports.adminChangePasswordofMaster = async (req,res,next) => {
-     try {
+exports.adminChangePasswordofMaster = async (req, res, next) => {
+  try {
     // 1) Check admin session and role
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res
@@ -1535,4 +1556,4 @@ exports.adminChangePasswordofMaster = async (req,res,next) => {
     console.error("adminChangePasswordofUser error:", err);
     return res.json({ success: false, message: "Server error" });
   }
-}
+};
