@@ -59,9 +59,8 @@
           <th>From → To</th>
         </tr>
       </thead>
-
-      <tbody>
-  <% if (history.length === 0) { %>
+<tbody>
+  <% if (!history || history.length === 0) { %>
     <tr>
       <td colspan="6" style="text-align:center;">No records found</td>
     </tr>
@@ -69,7 +68,10 @@
 
   <% history.forEach(h => { %>
     <tr>
-      <td><%= h.formattedDate %> <%= h.formattedTime %></td>
+      <td>
+        <%= h.formattedDate || "-" %>
+        <%= h.formattedTime || "" %>
+      </td>
 
       <% if (h.type === "deposit") { %>
         <td style="color:green;">₹<%= h.amount %></td>
@@ -80,23 +82,33 @@
       <% } %>
 
       <!-- USER BALANCE -->
-      <td>₹<%= h.userWalletAfter %></td>
+      <td>
+        ₹<%= typeof h.userWalletAfter === "number" ? h.userWalletAfter : "-" %>
+      </td>
 
       <!-- ADMIN BALANCE -->
       <td style="font-weight:600; color:#1e40af;">
-        ₹<%= h.adminWalletAfter %>
+        ₹<%= typeof h.adminWalletAfter === "number" ? h.adminWalletAfter : "-" %>
       </td>
 
+      <!-- FROM → TO (NULL SAFE) -->
       <td>
         <% if (h.type === "deposit") { %>
-          Admin → <%= h.userId.username %>
+          Admin →
+          <span class="font-semibold">
+            <%= h.userId ? h.userId.username : "Deleted User" %>
+          </span>
         <% } else { %>
-          <%= h.userId.username %> → Admin
+          <span class="font-semibold">
+            <%= h.userId ? h.userId.username : "Deleted User" %>
+          </span>
+          → Admin
         <% } %>
       </td>
     </tr>
   <% }) %>
 </tbody>
+
 
     </table>
   </div>

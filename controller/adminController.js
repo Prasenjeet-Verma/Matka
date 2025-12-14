@@ -937,14 +937,15 @@ exports.getAccountSettlement = async (req, res, next) => {
     });
   } catch (err) {
     console.log("Error in getAccountSettlement:", err);
-    next(err);
+    res.redirect("/");
   }
 };
 
 exports.getAdminAccountStatement = async (req, res, next) => {
   try {
     // ---------------- AUTH ----------------
-    if (!req.session.isLoggedIn || !req.session.user) {
+    // ✅ Check if admin is logged in
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
 
