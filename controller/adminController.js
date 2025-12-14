@@ -1083,46 +1083,88 @@ exports.getAdminAccountStatement = async (req, res, next) => {
 //   }
 // };
 
-exports.getMasterDownlineList = async (req, res, next) => {
+// exports.getMasterDownlineList = async (req, res, next) => {
+//   try {
+//     // ✅ Check if admin is logged in
+//     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+//       return res.redirect("/login");
+//     }
+
+//     const loggedUser = await User.findById(req.session.user._id);
+//     if (!loggedUser || loggedUser.role !== "admin") {
+//       return req.session.destroy(() => res.redirect("/login"));
+//     }
+
+//     // 🟢 Map frontend dropdown to DB values
+//     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+//     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+//     const statusValue = statusMap[statusFilter] || "active"; // fallback to active
+
+//     // 🟢 Fetch users based on filter
+//     const allUsers = await User.find({
+//       role: "master",
+//       userStatus: statusValue,
+//     }).sort({ createdAt: -1 });
+
+//     // 🟢 Render page
+//     res.render("masterDownline", {
+//       username: loggedUser.username,
+//       wallet: loggedUser.wallet,
+//       referCode: loggedUser.referCode,
+//       user: loggedUser,
+//       users: allUsers,
+//       errors: [],
+//       isLoggedIn: req.session.isLoggedIn,
+//       oldInput: { username: "", password: "" },
+//       selectedStatus: statusFilter,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// };
+
+exports.getMasterDownlineList = async (req, res) => {
   try {
-    // ✅ Check if admin is logged in
-    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+    if (!req.session || !req.session.user) {
       return res.redirect("/login");
     }
 
     const loggedUser = await User.findById(req.session.user._id);
     if (!loggedUser || loggedUser.role !== "admin") {
-      return req.session.destroy(() => res.redirect("/login"));
+      return res.redirect("/login");
     }
 
-    // 🟢 Map frontend dropdown to DB values
     const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
     const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
-    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
+    const statusValue = statusMap[statusFilter] || "active";
 
-    // 🟢 Fetch users based on filter
     const allUsers = await User.find({
       role: "master",
-      userStatus: statusValue,
+      $or: [
+        { userStatus: statusValue },
+        { userStatus: { $exists: false } }
+      ]
     }).sort({ createdAt: -1 });
 
-    // 🟢 Render page
     res.render("masterDownline", {
-      username: loggedUser.username,
-      wallet: loggedUser.wallet,
-      referCode: loggedUser.referCode,
+      username: loggedUser.username || "",
+      wallet: loggedUser.wallet || 0,
+      referCode: loggedUser.referCode || "",
       user: loggedUser,
       users: allUsers,
       errors: [],
-      isLoggedIn: req.session.isLoggedIn,
+      isLoggedIn: true,
       oldInput: { username: "", password: "" },
       selectedStatus: statusFilter,
     });
+
   } catch (err) {
-    console.error(err);
+    console.error("MasterDownline Error:", err);
     res.status(500).send("Server Error");
   }
 };
+
 
 exports.postAdmincreatemaster = [
   // Validation checks
@@ -1153,7 +1195,7 @@ exports.postAdmincreatemaster = [
   check("referCode").trim().notEmpty().withMessage("Referral code is required"),
 
   // Controller logic
-  async (req, res) => {
+  async (req, res, next) => {
     // 1️⃣ Check admin
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
@@ -1243,18 +1285,22 @@ exports.postTransactionofmaster = async (req, res, next) => {
       userStatus,
     } = req.body;
 
-    const user = await User.findById(userId);
-
-    if (!user) return res.json({ success: false, message: "User not found!" });
-
-    if (!user || user.role !== "master") {
-      return res.json({ success: false, message: "User is not master" });
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
     }
 
     const admin = await User.findById(req.session.user._id);
     if (!admin || admin.role !== "admin") {
       req.session.destroy(() => res.redirect("/login"));
       return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) return res.json({ success: false, message: "User not found!" });
+
+    if (!user || user.role !== "master") {
+      return res.json({ success: false, message: "User is not master" });
     }
 
     // 🔐 Admin password check for deposit/withdraw
@@ -1415,9 +1461,8 @@ exports.getAdminSeeMasterProfile = async (req, res, next) => {
 
 exports.getAdminSeeMasterAccountStatement = async (req, res, next) => {
   try {
-    if (!req.session.isLoggedIn || !req.session.user) {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
+    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+      return res.redirect("/login");
     }
 
     const Adminuser = await User.findById(req.session.user._id);
@@ -1497,9 +1542,7 @@ exports.adminChangePasswordofMaster = async (req, res, next) => {
   try {
     // 1) Check admin session and role
     if (!req.session || !req.session.isLoggedIn || !req.session.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Not authenticated" });
+      return res.redirect("/login");
     }
     const admin = await User.findById(req.session.user._id);
     if (!admin || admin.role !== "admin") {
