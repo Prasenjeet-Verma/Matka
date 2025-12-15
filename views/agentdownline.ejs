@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/css/modallist.css"/>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/agentModal.js"></script>
+  <script src="/js/modal.js"></script>
   <!-- <script src="/js/depositmodal.js"></script> -->
   <script src="/js/footer.js"></script>
 </head>
@@ -147,11 +147,16 @@
     </div>
 
     <!-- =================================== Footer Start ============================== -->
-    <%- include('partials/adminFooter') %>
+<% if (user.role === 'admin') { %>
+  <%- include('partials/adminFooter') %>
+<% } else { %>
+  <%- include('partials/masterFooter') %>
+<% } %>
+
       <!-- ============================================================================ Add user Modal ========================================== -->
 
       <!-- Modal Overlay -->
-      <form action="/admincreateagent" id="registerForm" method="POST">
+      <form action="/opretorscreateagent" id="registerForm" method="POST">
         <div class="modal-overlay" id="userModal" aria-hidden="true">
           <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <!-- Header -->
@@ -199,7 +204,7 @@
       </form>
 
       <!-- ========================== Deposit Modal ========================== -->
-      <form action="/postTransactionofagent" method="POST">
+      <form action="/postTransaction" method="POST">
         <div class="deposit-overlay" id="depositModal" aria-hidden="true">
           <div class="deposit-card-wrapper">
             <div class="deposit-header-bar">
@@ -236,7 +241,7 @@
       </form>
 
       <!-- ========================== Withdraw Modal ========================== -->
-      <form action="/postTransactionofagent" method="POST">
+      <form action="/postTransaction" method="POST">
         <div class="withdraw-modal" id="withdrawModal" aria-hidden="true">
           <div class="withdraw-card-wrapper">
             <div class="withdraw-header-bar">
@@ -272,7 +277,7 @@
         </div>
       </form>
       <!-- ========================== Credit Referral Modal ========================== -->
-      <form action="/postTransactionofagent" method="POST">
+      <form action="/postTransaction" method="POST">
         <div id="creditReferralFormWrapper" aria-hidden="true">
           <div id="creditReferralForm">
             <header class="header-box">

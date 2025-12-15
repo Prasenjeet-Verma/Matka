@@ -124,7 +124,14 @@
 
    
 <!-- =================================== Footer Start ============================== -->
- <%- include('partials/adminFooter') %>
+<% if (operator.role === 'admin') { %>
+  <%- include('partials/adminFooter') %>
+<% } else if (operator.role === 'master') { %>
+  <%- include('partials/masterFooter') %>
+<% } else if (operator.role === 'agent') { %>
+  <%- include('partials/agentFooter') %>
+<% } %>
+
     <script>
 function getHistory() {
   const dataSource = document.getElementById("dataSource").value;

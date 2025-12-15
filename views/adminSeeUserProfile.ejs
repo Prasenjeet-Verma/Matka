@@ -153,7 +153,13 @@
       </div>
     </div>
     <!-- =================================== Footer Start ============================== -->
-    <%- include('partials/adminFooter') %>
+        <% if (role === 'admin') { %>
+  <%- include('partials/adminFooter') %>
+<% } else if (role === 'master') { %>
+  <%- include('partials/masterFooter') %>
+<% } else { %>
+  <%- include('partials/agentFooter') %>
+<% } %>
     <script src="/js/myProfile.js"></script>
     <script src="/js/resetbyadmin.js"></script>
   </body>

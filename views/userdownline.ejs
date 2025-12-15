@@ -146,11 +146,18 @@
     </div>
 
     <!-- =================================== Footer Start ============================== -->
-    <%- include('partials/adminFooter') %>
+    <% if (user.role === 'admin') { %>
+  <%- include('partials/adminFooter') %>
+<% } else if (user.role === 'master') { %>
+  <%- include('partials/masterFooter') %>
+<% } else if (user.role === 'agent') { %>
+  <%- include('partials/agentFooter') %>
+<% } %>
+
       <!-- ============================================================================ Add user Modal ========================================== -->
 
       <!-- Modal Overlay -->
-      <form action="/admincreateuser" id="registerForm" method="POST">
+      <form action="/createuser" id="registerForm" method="POST">
         <div class="modal-overlay" id="userModal" aria-hidden="true">
           <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <!-- Header -->
