@@ -3,7 +3,7 @@ const adminRouter = express.Router();
 const adminRouterController = require('../controller/adminController');
 
 adminRouter.get('/adminpaneldashboard', adminRouterController.getAdminPanelDashboard);
-adminRouter.get('/adminBet', adminRouterController.getAdminBetPage);
+adminRouter.get('/alloperatorynethistory', adminRouterController.getAllOpretorsbetHistory);
 adminRouter.get('/declareMatka', adminRouterController.getDeclareData);
 adminRouter.post('/declareSingle', adminRouterController.postDeclareSingleResult);
 adminRouter.post('/declarePatti', adminRouterController.postDeclarePattiResult);
@@ -14,7 +14,7 @@ adminRouter.get('/userProfile/:userId', adminRouterController.getUserProfileByAd
 adminRouter.post('/resetpasswordnotcheckoldpassword', adminRouterController.changeUserPasswordByOperator);
 adminRouter.get("/adminseepersonallyuserbethistory/:userId", adminRouterController.seeUserPersonallyBetHistory);
 adminRouter.get('/accountsettlement/:userId', adminRouterController.getOpretorSeeUsersAccountStatement);
-adminRouter.get('/adminaccountsettlement', adminRouterController.getAdminAccountStatement);
+adminRouter.get('/allopretorsaccountstatement', adminRouterController.getAccountOfAllOpretorsStatement);
 adminRouter.get('/masterpanelbyadmindashboard', adminRouterController.getMasterDownlineList);
 adminRouter.post('/admincreatemaster', adminRouterController.postAdmincreatemaster);
 // adminRouter.post('/postTransactionofmaster', adminRouterController.postTransactionofmaster);

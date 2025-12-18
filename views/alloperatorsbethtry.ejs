@@ -237,7 +237,14 @@
 </div>
 
     <!-- =================================== Footer Start ============================== -->
-    <%- include('partials/adminFooter') %>
+   <% if (role === "admin") { %>
+  <%- include("partials/adminFooter") %>
+<% } else if (role === "master") { %>
+  <%- include("partials/masterFooter") %>
+<% } else { %>
+  <%- include("partials/agentFooter") %>
+<% } %>
+
 <script>
 function getHistory() {
   const dataSource = document.getElementById("dataSource").value;
@@ -256,7 +263,7 @@ function getHistory() {
     params.set("source", dataSource);
   }
 
-window.location.href = `/adminBet?${params.toString()}`;
+window.location.href = `/alloperatorynethistory?${params.toString()}`;
 }
 </script>
 

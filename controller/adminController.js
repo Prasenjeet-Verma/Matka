@@ -44,18 +44,56 @@ exports.getAdminPanelDashboard = async (req, res, next) => {
   }
 };
 
-exports.getAdminBetPage = async (req, res, next) => {
+
+async function getBetDownlineUserIds(loginUser) {
+  let ids = [];
+
+  if (loginUser.role === "admin") {
+    const masters = await User.find({ role: "master" });
+    const agents  = await User.find({ role: "agent" });
+    const users   = await User.find({ role: "user" });
+
+    ids = [
+      ...masters.map(m => m._id),
+      ...agents.map(a => a._id),
+      ...users.map(u => u._id),
+    ];
+
+  } else if (loginUser.role === "master") {
+    // Agents referred by master
+    const agents = await User.find({ role: "agent", referredBy: loginUser.referCode });
+    // Users directly referred by master
+    const directUsers = await User.find({ role: "user", referredBy: loginUser.referCode });
+    // Users referred by master's agents
+    const agentUsers = await User.find({ role: "user", referredBy: { $in: agents.map(a => a.referCode) } });
+
+    ids = [
+      ...directUsers.map(u => u._id),
+      ...agentUsers.map(u => u._id),
+    ];
+
+  } else if (loginUser.role === "agent") {
+    // Only users directly referred by agent
+    const users = await User.find({ role: "user", referredBy: loginUser.referCode });
+    ids = users.map(u => u._id);
+  }
+
+  return ids;
+}
+
+exports.getAllOpretorsbetHistory = async (req, res, next) => {
   try {
     if (!req.session.isLoggedIn || !req.session.user) {
       req.session.destroy(() => res.redirect("/login"));
       return;
     }
 
-    const admin = await User.findById(req.session.user._id);
-    if (!admin || admin.role !== "admin") {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
-    }
+const loginUser = await User.findById(req.session.user._id);
+if (!loginUser || !["admin", "master", "agent"].includes(loginUser.role)) {
+  req.session.destroy(() => res.redirect("/login"));
+  return;
+}
+
 
     // -----------------------------
     // FILTER HANDLING
@@ -95,42 +133,45 @@ exports.getAdminBetPage = async (req, res, next) => {
     // ---------------------------------------------
     // APPLY FILTERS
     // ---------------------------------------------
-    const matkaUnsettled = await MatkaHistory.find({
-      status: "unsettled",
-      createdAt: { $gte: startDate, $lte: endDate },
-    }).populate("userId");
+const allowedUserIds = await getBetDownlineUserIds(loginUser);
 
-    const matkaSettled = await MatkaHistory.find({
-      status: "settled",
-      createdAt: { $gte: startDate, $lte: endDate },
-    }).populate("userId");
+const matkaUnsettled = await MatkaHistory.find({
+  status: "unsettled",
+  userId: { $in: allowedUserIds },
+  createdAt: { $gte: startDate, $lte: endDate },
+}).populate("userId");
 
-    const coinBets = await CoinBetHistory.find({
-      createdAt: { $gte: startDate, $lte: endDate },
-    }).populate("userId");
+const matkaSettled = await MatkaHistory.find({
+  status: "settled",
+  userId: { $in: allowedUserIds },
+  createdAt: { $gte: startDate, $lte: endDate },
+}).populate("userId");
 
+const coinBets = await CoinBetHistory.find({
+  userId: { $in: allowedUserIds },
+  createdAt: { $gte: startDate, $lte: endDate },
+}).populate("userId");
 
     
     const allSettledBets = [...matkaSettled, ...coinBets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
-    res.render("adminBet", {
-      username: admin.username,
-      wallet: admin.wallet,
-      referCode: admin.referCode,
-      user: admin,
-      isLoggedIn: req.session.isLoggedIn,
-
-      matkaUnsettled,
-      matkaSettled,
-      coinBets,
-      allSettledBets,
-
-      source: source || "",
-      start: start || "",
-      end: end || "",
-    });
+res.render("alloperatorsbethtry", {
+  username: loginUser.username,
+  wallet: loginUser.wallet,
+  referCode: loginUser.referCode,
+  user: loginUser,
+  role: loginUser.role,
+  isLoggedIn: req.session.isLoggedIn,
+  matkaUnsettled,
+  matkaSettled,
+  coinBets,
+  allSettledBets,
+  source: source || "",
+  start: start || "",
+  end: end || "",
+});
   } catch (err) {
     console.log(err);
     res.redirect("/");
@@ -548,167 +589,6 @@ exports.postCreateuser = [
 
 
 
-// const getRenderConfigByRole = (role) => {
-//   switch (role) {
-//     case "admin":
-//       return {
-//         view: "userdownline",
-//         redirect: "/userDownLine",
-//       };
-
-//     case "master":
-//       return {
-//         view: "masterFolder/userdownlineofmaster",
-//         redirect: "/userdownLinebymasterdashboard",
-//       };
-
-//     case "agent":
-//       return {
-//         view: "agentFolder/userdownlineofagent",
-//         redirect: "/userDownLinebyagentdashboard",
-//       };
-
-//     default:
-//       return null;
-//   }
-// };
-
-
-
-// exports.postCreateUser = [
-//   // ================= VALIDATION =================
-//   check("username")
-//     .trim()
-//     .notEmpty().withMessage("Username is required")
-//     .isLength({ min: 3 }).withMessage("Username must be at least 3 characters")
-//     .custom(async (value) => {
-//       if (await User.findOne({ username: value })) {
-//         throw new Error("Username already in use");
-//       }
-//       return true;
-//     }),
-
-//   check("password")
-//     .notEmpty().withMessage("Password is required")
-//     .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
-
-//   check("confirmPassword")
-//     .notEmpty().withMessage("Confirm Password is required")
-//     .custom((value, { req }) => {
-//       if (value !== req.body.password) {
-//         throw new Error("Passwords do not match");
-//       }
-//       return true;
-//     }),
-
-//   check("referCode").trim().notEmpty().withMessage("Referral code is required"),
-
-//   // ================= CONTROLLER =================
-//   async (req, res) => {
-//     try {
-//       // 🔐 SESSION CHECK
-//       if (!req.session.isLoggedIn || !req.session.user) {
-//         return req.session.destroy(() => res.redirect("/login"));
-//       }
-
-//       const loggedUser = await User.findById(req.session.user._id);
-//       if (!loggedUser || !["admin", "master", "agent"].includes(loggedUser.role)) {
-//         return req.session.destroy(() => res.redirect("/login"));
-//       }
-
-//       // 🟢 Status filter (same for all)
-//       const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
-//       const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
-//       const statusValue = statusMap[statusFilter] || "active";
-
-//       const { username, password, referCode } = req.body;
-//       const errors = validationResult(req);
-
-//       const roleConfig = getRenderConfigByRole(loggedUser.role);
-//       if (!roleConfig) return res.redirect("/login");
-
-//       // 🟡 COMMON ERROR RENDER
-//       const renderError = async (msgs) => {
-//         const usersQuery = {
-//           role: "user",
-//           userStatus: statusValue,
-//         };
-
-//         // 🔑 master/agent sirf apne users dekhenge
-//         if (loggedUser.role !== "admin") {
-//           usersQuery.referredBy = loggedUser.referCode;
-//         }
-
-//         const allUsers = await User.find(usersQuery).sort({ createdAt: -1 });
-
-//         return res.status(400).render(roleConfig.view, {
-//           username: loggedUser.username,
-//           wallet: loggedUser.wallet,
-//           referCode: loggedUser.referCode,
-//           user: loggedUser,
-//           users: allUsers,
-//           isLoggedIn: true,
-//           errors: msgs,
-//           oldInput: { username },
-//           openModal: true,
-//           selectedStatus: statusFilter,
-//           referredBy: loggedUser.referCode,
-//         });
-//       };
-
-//       if (!errors.isEmpty()) {
-//         return renderError(errors.array().map((e) => e.msg));
-//       }
-
-//       // 🔐 REFER CODE CHECK
-//       const referrer = await User.findOne({
-//         referCode,
-//         role: { $in: ["admin", "master", "agent"] },
-//       });
-
-//       if (!referrer) {
-//         return renderError(["Invalid referral code"]);
-//       }
-
-//       // 🚫 Non-admin apna hi referCode use kar sakta hai
-//       if (
-//         loggedUser.role !== "admin" &&
-//         referrer._id.toString() !== loggedUser._id.toString()
-//       ) {
-//         return renderError(["You cannot use another user's referral code"]);
-//       }
-
-//       // 🔐 HASH PASSWORD
-//       const hashedPassword = await bcrypt.hash(password, 10);
-
-//       // 🔐 UNIQUE REFER CODE
-//       let newUserReferCode;
-//       do {
-//         newUserReferCode = Math.random()
-//           .toString(36)
-//           .substring(2, 10)
-//           .toUpperCase();
-//       } while (await User.findOne({ referCode: newUserReferCode }));
-
-//       // ✅ CREATE USER
-//       await User.create({
-//         username,
-//         password: hashedPassword,
-//         referCode: newUserReferCode,
-//         referredBy: referCode,
-//         role: "user",
-//       });
-
-//       // 🎯 SUCCESS REDIRECT (ROLE BASED)
-//       return res.redirect(roleConfig.redirect);
-
-//     } catch (err) {
-//       console.error("Create User Error:", err);
-//       return res.status(500).send("Server Error");
-//     }
-//   },
-// ];
-
 
 
 const AdminTransactionHistory = require("../model/AdminTransactionHistory");
@@ -1062,24 +942,71 @@ exports.getOpretorSeeUsersAccountStatement = async (req, res, next) => {
 };
 
 
-exports.getAdminAccountStatement = async (req, res, next) => {
+
+async function getDownlineUserIds(loginUser) {
+  let ids = [];
+
+  if (loginUser.role === "admin") {
+    const masters = await User.find({ role: "master" });
+    const agents  = await User.find({ role: "agent" });
+    const users   = await User.find({ role: "user" });
+
+    ids = [
+      loginUser._id,
+      ...masters.map(m => m._id),
+      ...agents.map(a => a._id),
+      ...users.map(u => u._id),
+    ];
+
+  } else if (loginUser.role === "master") {
+    const agents = await User.find({
+      role: "agent",
+      referredBy: loginUser.referCode
+    });
+
+    const users = await User.find({
+      role: "user",
+      referredBy: { $in: agents.map(a => a.referCode) }
+    });
+
+    ids = [
+      loginUser._id,
+      ...agents.map(a => a._id),
+      ...users.map(u => u._id)
+    ];
+
+  } else if (loginUser.role === "agent") {
+    const users = await User.find({
+      role: "user",
+      referredBy: loginUser.referCode
+    });
+
+    ids = [
+      loginUser._id,
+      ...users.map(u => u._id)
+    ];
+  }
+
+  return ids;
+}
+
+exports.getAccountOfAllOpretorsStatement = async (req, res) => {
   try {
     // ---------------- AUTH ----------------
-    // ✅ Check if admin is logged in
-    if (!req.session || !req.session.isLoggedIn || !req.session.user) {
+    if (!req.session?.isLoggedIn || !req.session.user) {
       return res.redirect("/login");
     }
 
-    const admin = await User.findById(req.session.user._id);
-    if (!admin || admin.role !== "admin") {
-      req.session.destroy(() => res.redirect("/login"));
-      return;
+    const loginUser = await User.findById(req.session.user._id);
+    if (!loginUser) {
+      return req.session.destroy(() => res.redirect("/login"));
     }
 
-    // ---------------- FILTER ----------------
+    const role = loginUser.role; // admin | master | agent
+
+    // ---------------- DATE FILTER ----------------
     let { source, start, end } = req.query;
     const IST_OFFSET = 5.5 * 60 * 60 * 1000;
-
     let startDate, endDate;
 
     if (source === "live") {
@@ -1099,33 +1026,43 @@ exports.getAdminAccountStatement = async (req, res, next) => {
       endDate = new Date(Date.now() + IST_OFFSET);
     }
 
-    // ---------------- FETCH HISTORY ----------------
-    const history = await AdminTransactionHistory.find({
-      adminId: admin._id,
-      createdAt: { $gte: startDate, $lte: endDate },
-    })
-      .populate("userId", "username")
-      .sort({ createdAt: -1 });
+
+    // ---------------- TRANSACTION HISTORY ----------------
+const allowedIds = await getDownlineUserIds(loginUser);
+
+const history = await AdminTransactionHistory.find({
+  createdAt: { $gte: startDate, $lte: endDate },
+
+  $or: [
+    { adminId: { $in: allowedIds } },
+    { userId:  { $in: allowedIds } }
+  ]
+})
+.populate("adminId", "username role")
+.populate("userId", "username role")
+.sort({ createdAt: -1 });
+
+
+
 
     // ---------------- RENDER ----------------
-    res.render("accountstatementofadmin", {
-      username: admin.username,
-      wallet: admin.wallet,
-      referCode: admin.referCode,
-      isLoggedIn: req.session.isLoggedIn,
-
+    res.render("accountstatementofoperators", {
+      username: loginUser.username, // 👈 ADD THIS
+      wallet: loginUser.wallet,
+      loginUser,
+      role,
       history,
-
       source: source || "",
       start: start || "",
       end: end || "",
+      isLoggedIn: true
     });
+
   } catch (err) {
-    console.log("Admin Account Statement Error:", err);
+    console.log("Account Statement Error:", err);
     res.redirect("/");
   }
 };
-
 
 
 exports.getMasterDownlineList = async (req, res, next) => {

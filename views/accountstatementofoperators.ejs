@@ -92,19 +92,36 @@
       </td>
 
       <!-- FROM → TO (NULL SAFE) -->
-      <td>
-        <% if (h.type === "deposit") { %>
-          Admin →
-          <span class="font-semibold">
-            <%= h.userId ? h.userId.username : "Deleted User" %>
-          </span>
-        <% } else { %>
-          <span class="font-semibold">
-            <%= h.userId ? h.userId.username : "Deleted User" %>
-          </span>
-          → Admin
-        <% } %>
-      </td>
+<td>
+  <% if (h.type === "deposit") { %>
+    <span class="font-semibold">
+      <% if (role !== "admin" && h.adminId && h.adminId.role !== role && h.adminId.role !== "user") { %>
+        Upline
+      <% } else { %>
+        <%= h.adminId ? h.adminId.username : "Deleted User" %>
+      <% } %>
+    </span>
+    →
+    <span class="font-semibold">
+      <%= h.userId ? h.userId.username : "Deleted User" %>
+    </span>
+  <% } else { %>
+    <span class="font-semibold">
+      <%= h.userId ? h.userId.username : "Deleted User" %>
+    </span>
+    →
+    <span class="font-semibold">
+      <% if (role !== "admin" && h.adminId && h.adminId.role !== role && h.adminId.role !== "user") { %>
+        Upline
+      <% } else { %>
+        <%= h.adminId ? h.adminId.username : "Deleted User" %>
+      <% } %>
+    </span>
+  <% } %>
+</td>
+
+
+
     </tr>
   <% }) %>
 </tbody>
@@ -114,7 +131,14 @@
   </div>
 </div>
 
-<%- include('partials/adminFooter') %>
+<% if (role === "admin") { %>
+  <%- include("partials/adminFooter") %>
+<% } else if (role === "master") { %>
+  <%- include("partials/masterFooter") %>
+<% } else { %>
+  <%- include("partials/agentFooter") %>
+<% } %>
+
 
 <!-- ================= JS ================= -->
 
@@ -133,7 +157,7 @@ function getHistory() {
     params.set("source", dataSource);
   }
 
-  window.location.href = `/adminaccountsettlement?${params.toString()}`;
+  window.location.href = `/allopretorsaccountstatement?${params.toString()}`;
 }
 </script>
 <script>
