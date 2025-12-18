@@ -42,17 +42,6 @@ const User = require("../model/user");
 //   }
 // };
 
-exports.getloginPage = (req, res, next) => {
-  res.render("login", {
-    pageTitle: "Login",
-    isLoggedIn: false,
-    errors: [],
-    oldInput: {
-      username: "",
-      password: "",
-    },
-  });
-};
 
 exports.getregisterPage = (req, res, next) => {
   res.render("register", {
@@ -166,7 +155,27 @@ exports.postRegisterPage = [
 ];
 
 // ✅ Login Validation Rules
+
+/* ============================
+   GET LOGIN PAGE
+============================ */
+exports.getloginPage = (req, res, next) => {
+  res.render("login", {
+    pageTitle: "Login",
+    isLoggedIn: false,
+    errors: [],
+    oldInput: {
+      username: "",
+      password: "",
+    },
+  });
+};
+
+/* ============================
+   POST LOGIN PAGE
+============================ */
 exports.postLoginPage = [
+  // 🔐 VALIDATIONS
   check("username").trim().notEmpty().withMessage("Username is required"),
   check("password").notEmpty().withMessage("Password is required"),
 
@@ -174,78 +183,99 @@ exports.postLoginPage = [
     const errors = validationResult(req);
     const { username, password } = req.body;
 
-    // Validation errors
+    /* ----------------------------
+       1️⃣ FORM VALIDATION ERROR
+    ---------------------------- */
     if (!errors.isEmpty()) {
       return res.status(400).render("login", {
-        errors: errors.array().map((error) => error.msg),
+        pageTitle: "Login",
+        isLoggedIn: false,
+        errors: errors.array().map((e) => e.msg),
         oldInput: { username, password },
       });
     }
 
     try {
+      /* ----------------------------
+         2️⃣ FIND USER
+      ---------------------------- */
       const user = await User.findOne({ username });
 
-      // ❌ If user is inactive (Suspended)
-      if (user.userStatus === "suspended") {
-        return res.status(200).render("login", {
-          errors: [], // no error message
-          oldInput: { username, password },
-        });
-      }
-
-      // ❌ User not found
+      // ❌ USER NOT FOUND
       if (!user) {
         return res.status(400).render("login", {
+          pageTitle: "Login",
+          isLoggedIn: false,
           errors: ["Invalid username or password"],
           oldInput: { username, password },
         });
       }
 
+      /* ----------------------------
+         3️⃣ USER STATUS CHECK
+      ---------------------------- */
+      if (user.userStatus && user.userStatus === "suspended") {
+        return res.status(200).render("login", {
+          pageTitle: "Login",
+          isLoggedIn: false,
+          errors: [], // intentionally blank
+          oldInput: { username: "", password: "" },
+        });
+      }
+
+      /* ----------------------------
+         4️⃣ PASSWORD MATCH
+      ---------------------------- */
       const isMatch = await bcrypt.compare(password, user.password);
 
-      // ❌ Password mismatch
       if (!isMatch) {
         return res.status(400).render("login", {
+          pageTitle: "Login",
+          isLoggedIn: false,
           errors: ["Invalid username or password"],
           oldInput: { username, password },
         });
       }
 
-      // 🎯 ROLE-BASED REDIRECT
-      if (user.role === "admin") {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        await new Promise((r) => req.session.save(r));
-
-        return res.redirect("/adminpaneldashboard");
-      }
-
-      if (user.role === "master") {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        await new Promise((r) => req.session.save(r));
-
-        return res.redirect("/masterpaneldashboard");
-      }
-
-      if (user.role === "agent") {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        await new Promise((r) => req.session.save(r));
-
-        return res.redirect("/agentpaneldashboard");
-      }
-
-      // ✅ Login success
+      /* ----------------------------
+         5️⃣ SESSION CREATE
+      ---------------------------- */
       req.session.isLoggedIn = true;
-      req.session.user = user;
-      await new Promise((r) => req.session.save(r));
+      req.session.user = {
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+      };
 
-      // Default → Normal user
-      return res.redirect("/");
+      await new Promise((resolve) => req.session.save(resolve));
+
+      /* ----------------------------
+         6️⃣ ROLE BASED REDIRECT
+      ---------------------------- */
+      switch (user.role) {
+        case "admin":
+          return res.redirect("/adminpaneldashboard");
+
+        case "master":
+          return res.redirect("/masterpaneldashboard");
+
+        case "agent":
+          return res.redirect("/agentpaneldashboard");
+
+        default:
+          // Normal User
+          return res.redirect("/");
+      }
     } catch (err) {
-      console.error("❌ Login error:", err);
-      res.status(500).send("Server Error");
+      console.error("❌ LOGIN ERROR:", err);
+
+      return res.status(500).render("login", {
+        pageTitle: "Login",
+        isLoggedIn: false,
+        errors: ["Internal server error. Please try again."],
+        oldInput: { username: "", password: "" },
+      });
     }
   },
 ];
+
