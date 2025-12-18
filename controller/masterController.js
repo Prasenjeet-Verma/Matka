@@ -28,7 +28,7 @@ exports.getMasterPanelDashboard = async (req , res,next) => {
     
         if (user.role === "master") {
           // 2️⃣ Render admin dashboard EJS with user data
-          res.render("masterFolder/masterPanelDashboard", {
+          res.render("masterFolder/masterPanelDashBoard", {
             username: user.username,
             wallet: user.wallet, // ⭐ FIX
             referCode: user.referCode,
