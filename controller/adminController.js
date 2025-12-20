@@ -1542,3 +1542,75 @@ exports.postTransaction = async (req, res) => {
   }
 };
 
+exports.getMasterLink = async (req, res) => {
+  try {
+    // 🔐 Admin auth
+    if (!req.session?.isLoggedIn || !req.session.user) {
+      return req.session.destroy(() => res.redirect("/login"));
+    }
+
+    const admin = await User.findById(req.session.user._id);
+    if (!admin || admin.role !== "admin") {
+      return req.session.destroy(() => res.redirect("/login"));
+    }
+
+    const masterId = req.params.userId;
+
+    // 🧑 master
+    const master = await User.findById(masterId);
+    if (!master || master.role !== "master") {
+      return res.redirect("/masterlinks");
+    }
+
+
+    // 🟢 Map frontend dropdown to DB values
+    const statusMap = { ACTIVE: "active", INACTIVE: "suspended" };
+    const statusFilter = (req.query.status || "ACTIVE").toUpperCase();
+    const statusValue = statusMap[statusFilter] || "active"; // fallback to active
+
+
+
+    //👥 Direct users of master
+    const directUsers = await User.find({
+      role: "user",
+      referredBy: master.referCode,
+      userStatus: statusValue,
+    });
+
+    // 🕴️ Agents of master
+    const agents = await User.find({
+      role: "agent",
+       userStatus: statusValue,
+      referredBy: master.referCode,
+    });
+
+    // (optional) users of agents
+    const agentUsers = await User.find({
+      role: "user",
+       userStatus: statusValue,
+      referredBy: { $in: agents.map(a => a.referCode) },
+    });
+
+    // ✅ render single page
+    res.render("masterLinks", {
+      username: admin.username,
+      wallet: admin.wallet,
+      user: admin,
+
+      master,
+      directUsers,
+      agents,
+      agentUsers,
+
+      directUserCount: directUsers.length,
+      agentCount: agents.length,
+      agentUserCount: agentUsers.length,
+selectedStatus: statusFilter,
+      isLoggedIn: true,
+    });
+
+  } catch (err) {
+    console.log("getMasterLink error:", err);
+    res.redirect("/masterlinks");
+  }
+};

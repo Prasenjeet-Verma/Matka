@@ -17,11 +17,12 @@ adminRouter.get('/accountsettlement/:userId', adminRouterController.getOpretorSe
 adminRouter.get('/allopretorsaccountstatement', adminRouterController.getAccountOfAllOpretorsStatement);
 adminRouter.get('/masterpanelbyadmindashboard', adminRouterController.getMasterDownlineList);
 adminRouter.post('/admincreatemaster', adminRouterController.postAdmincreatemaster);
-// adminRouter.post('/postTransactionofmaster', adminRouterController.postTransactionofmaster);
-// adminRouter.get('/adminseemasterprofile/:userId', adminRouterController.getAdminSeeMasterProfile);
-// adminRouter.get('/accountstatementofmaster/:userId', adminRouterController.getAdminSeeMasterAccountStatement);
-// adminRouter.post('/resetpasswordnotcheckoldpasswordofmaster', adminRouterController.adminChangePasswordofMaster);
 adminRouter.get('/agentpanelbyadmindashboard', adminRouterController.getAgentPanelDashboard);
 adminRouter.post('/opretorscreateagent', adminRouterController.postAdminandMastercreatagent);
-// adminRouter.post('/postTransactionofagent', adminRouterController.postTransactionofagent);
+
+
+// list link
+adminRouter.get('/masterlinks/:userId', adminRouterController.getMasterLink);
+
+
 module.exports = adminRouter;

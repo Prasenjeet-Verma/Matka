@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matka 69</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <link rel="stylesheet" href="/css/headerlogin.css"/>
+  <link rel="stylesheet" href="/css/footer.css"/>
+  <link rel="stylesheet" href="/css/adminDasebord.css"/>
+  <link rel="stylesheet" href="/css/userlistpage.css"/>
+  <link rel="stylesheet" href="/css/modallist.css"/>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+ <script defer src="/js/allTables.js"></script>
+  <script src="/js/footer.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+  <%- include('partials/header') %>
+   <div class="header"></div>
+    <!-- ========================= overflow header solve -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= TOP BAR ================= -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold">All Operators Account</h2>
+
+      <div class="flex gap-2">
+        <select
+          id="statusFilter"
+          onchange="filterStatus(this.value)"
+          class="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
+        >
+          <option value="ACTIVE" <%= selectedStatus==='ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+          <option value="INACTIVE" <%= selectedStatus==='INACTIVE' ? 'selected' : '' %>>SUSPENDED</option>
+        </select>
+
+        <a href="/masterlinks">
+          <button class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-semibold">
+            Refresh
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <!-- ================= DIRECT USERS ================= -->
+    <section class="bg-white rounded-lg shadow mb-8 p-4" data-table>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h3 class="text-lg font-semibold">Direct Users</h3>
+
+        <input
+          type="text"
+          class="table-search w-full sm:w-64 border rounded-md px-3 py-2 text-sm focus:ring focus:ring-blue-300"
+          placeholder="Search user..."
+        />
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-3 py-2 border">#</th>
+              <th class="px-3 py-2 border text-left">Username</th>
+              <th class="px-3 py-2 border">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% directUsers.forEach((u,i)=>{ %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 border text-center"><%= i+1 %></td>
+                <td class="px-3 py-2 border font-medium"><%= u.username %></td>
+                <td class="px-3 py-2 border text-center">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold
+                    <%= u.userStatus === 'suspended'
+                      ? 'bg-red-100 text-red-600'
+                      : 'bg-green-100 text-green-600' %>">
+                    <%= u.userStatus === 'suspended' ? 'Suspended' : 'Active' %>
+                  </span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center items-center gap-3 mt-4">
+        <button class="prev px-3 py-1 bg-gray-200 rounded">Prev</button>
+        <button class="page px-3 py-1 bg-gray-300 rounded font-semibold">1</button>
+        <button class="next px-3 py-1 bg-gray-200 rounded">Next</button>
+      </div>
+    </section>
+
+    <!-- ================= AGENTS ================= -->
+    <section class="bg-white rounded-lg shadow p-4" data-table>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h3 class="text-lg font-semibold">Agents</h3>
+
+        <input
+          type="text"
+          class="table-search w-full sm:w-64 border rounded-md px-3 py-2 text-sm focus:ring focus:ring-blue-300"
+          placeholder="Search agent..."
+        />
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-3 py-2 border">#</th>
+              <th class="px-3 py-2 border text-left">Username</th>
+              <th class="px-3 py-2 border">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% agents.forEach((u,i)=>{ %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 border text-center"><%= i+1 %></td>
+                <td class="px-3 py-2 border font-medium"><%= u.username %></td>
+                <td class="px-3 py-2 border text-center">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold
+                    <%= u.userStatus === 'suspended'
+                      ? 'bg-red-100 text-red-600'
+                      : 'bg-green-100 text-green-600' %>">
+                    <%= u.userStatus === 'suspended' ? 'Suspended' : 'Active' %>
+                  </span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center items-center gap-3 mt-4">
+        <button class="prev px-3 py-1 bg-gray-200 rounded">Prev</button>
+        <button class="page px-3 py-1 bg-gray-300 rounded font-semibold">1</button>
+        <button class="next px-3 py-1 bg-gray-200 rounded">Next</button>
+      </div>
+    </section>
+
+  </main>
+
+  <%- include('partials/adminFooter') %>
+
+</body>
+</html>
