@@ -174,28 +174,17 @@ exports.getAccountPage = async (req, res, next) => {
     }
 
     // 3️⃣ Decide which page to render based on ROLE
-    if (user.role === "admin") {
-      return res.render("adminAccount", {
-        username: user.username,
-        wallet: user.wallet || 0,
-        referCode: user.referCode,
-        user,
-        isLoggedIn: req.session.isLoggedIn,
-      });
-    }
-
-    // 3️⃣ Decide which page to render based on ROLE
-    if (user.role === "master") {
-      return res.render("masterFolder/masterAccount", {
-        username: user.username,
-        wallet: user.wallet || 0,
-        referCode: user.referCode,
-        user,
-        isLoggedIn: req.session.isLoggedIn,
-      });
-    }
-
-
+// 3️⃣ Decide which page to render based on ROLE
+if (["admin", "master", "agent"].includes(user.role)) {
+  return res.render("allOperatorsAccount", {
+    username: user.username,
+    wallet: user.wallet || 0,
+    referCode: user.referCode,
+    user,
+    role: user.role,          // 🔥 IMPORTANT (EJS me condition lagane ke liye)
+    isLoggedIn: req.session.isLoggedIn,
+  });
+}
 
     // Normal user / agent / master ka account
     return res.render("account", {

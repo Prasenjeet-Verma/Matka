@@ -14,7 +14,7 @@ const betSubmitRoute = require("./routes/betSubmitRoute");
 const coinRoute = require("./routes/coin");
 const adminRouter = require("./routes/adminRoute");
 const masterRouter = require("./routes/masterRoute");
-// const agentRouter = require("./routes/agentRoute");
+const agentRouter = require("./routes/agentRoute");
 // ---------------- EXPRESS APP ----------------
 const app = express();
 app.set("view engine", "ejs");
@@ -59,7 +59,7 @@ app.use(betSubmitRoute);
 app.use(coinRoute);
 app.use(adminRouter);
 app.use(masterRouter);
-// app.use(agentRouter);
+app.use(agentRouter);
 
 // ---------------- ERROR HANDLING ---------------- <--- isko bhi krna h important
 // 404 Page
